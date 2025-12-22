@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio 3D | Walter Custodio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="loader-container" id="loader">
+      <div class="loader-content">
+        <div class="loader-circle">
+          <span class="loader-progress">0%</span>
+        </div>
+        <p class="loader-text">LOADING ASSETS</p>
+      </div>
+    </div>
+
+    <div id="particle-overlay"></div>
+
+    <header class="sticky-nav">
+      <div class="nav-left">
+        <a href="#" class="nav-logo interactive-btn">
+          <span>WALTER</span>
+          <span>CUSTODIO</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <button id="lang-switch-nav" class="nav-btn lang-btn interactive-btn">
+          ES
+        </button>
+        <a
+          href="mailto:waltercustodio.dm@gmail.com"
+          class="nav-btn contact-nav-btn interactive-btn"
+          data-es="CONTACTAR"
+          data-en="CONTACT"
+          >CONTACTAR</a
+        >
+        <a
+          href="#hero"
+          class="nav-btn back-to-top-btn interactive-btn"
+          data-es="↑ ARRIBA"
+          data-en="↑ TOP"
+          >↑ ARRIBA</a
+        >
+      </div>
+    </header>
+
+    <button id="lang-switch-hero" class="lang-switch-floating interactive-btn">
+      <span class="flag">🇦🇷</span> <span class="lang-text">ES</span>
+    </button>
+
+    <div class="canvas-container">
+      <canvas id="hero-canvas"></canvas>
+    </div>
+
+    <main id="home-view">
+      <section class="hero" id="hero">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <h1
+              class="hero-title reveal-text blend-mode-text"
+              data-es="WALTER CUSTODIO"
+              data-en="WALTER CUSTODIO"
+            >
+              WALTER <br />
+              CUSTODIO
+            </h1>
+            <h2 class="hero-subtitle reveal-text" style="animation-delay: 0.1s">
+              <span data-es="DISEÑADOR" data-en="MULTIMEDIA">DISEÑADOR</span>
+              <span class="glitch" data-es="MULTIMEDIA" data-en="DESIGNER"
+                >MULTIMEDIA</span
+              >
+            </h2>
+            <p
+              class="location reveal-text"
+              style="animation-delay: 0.2s"
+              data-es="BASED IN ARGENTINA"
+              data-en="BASED IN ARGENTINA"
+            >
+              BASED IN ARGENTINA
+            </p>
+          </div>
+          <div class="hero-spacer"></div>
+        </div>
+
+        <div
+          class="scroll-indicator reveal-text"
+          style="animation-delay: 0.3s"
+          data-es="SCROLL PARA EXPLORAR"
+          data-en="SCROLL TO EXPLORE"
+        >
+          SCROLL PARA EXPLORAR
+        </div>
+      </section>
+
+      <section class="projects-container" id="projects-start">
+        <h3
+          class="section-title heavy-title"
+          data-es="TRABAJOS SELECCIONADOS"
+          data-en="SELECTED WORK"
+        >
+          TRABAJOS SELECCIONADOS
+        </h3>
+
+        <article
+          class="project-item project-trigger interactive-card"
+          data-id="1"
+        >
+          <div class="corner-accent top-left"></div>
+          <div class="corner-accent top-right"></div>
+          <div class="corner-accent bottom-left"></div>
+          <div class="corner-accent bottom-right"></div>
+
+          <span class="project-number">01</span>
+          <div class="project-media">
+            <img src="assets/proyecto1.png" alt="P1" />
+            <video src="assets/proyecto1.mp4" loop muted playsinline></video>
+          </div>
+          <div class="project-info">
+            <h3 data-es="Daylight" data-en="Daylight">Daylight</h3>
+            <p data-es="Diseño Web / 3D" data-en="Web Design / 3D">
+              Diseño Web / 3D
+            </p>
+            <div class="project-tags"><span>WEBGL</span><span>REACT</span></div>
+          </div>
+        </article>
+
+        <article
+          class="project-item project-trigger interactive-card"
+          data-id="2"
+        >
+          <div class="corner-accent top-left"></div>
+          <div class="corner-accent top-right"></div>
+          <div class="corner-accent bottom-left"></div>
+          <div class="corner-accent bottom-right"></div>
+          <span class="project-number">02</span>
+          <div class="project-media">
+            <img src="assets/proyecto2.png" alt="P2" />
+            <video src="assets/proyecto2.mp4" loop muted playsinline></video>
+          </div>
+          <div class="project-info">
+            <h3 data-es="KidSuper" data-en="KidSuper">KidSuper</h3>
+            <p data-es="Dirección Creativa" data-en="Creative Direction">
+              Dirección Creativa
+            </p>
+            <div class="project-tags">
+              <span>ART DIR</span><span>MOTION</span>
+            </div>
+          </div>
+        </article>
+
+        <article
+          class="project-item project-trigger interactive-card"
+          data-id="3"
+        >
+          <div class="corner-accent top-left"></div>
+          <div class="corner-accent top-right"></div>
+          <div class="corner-accent bottom-left"></div>
+          <div class="corner-accent bottom-right"></div>
+          <span class="project-number">03</span>
+          <div class="project-media">
+            <img src="assets/proyecto1.png" alt="P3" />
+            <video src="assets/proyecto1.mp4" loop muted playsinline></video>
+          </div>
+          <div class="project-info">
+            <h3 data-es="Nike Lab" data-en="Nike Lab">Nike Lab</h3>
+            <p data-es="Motion 3D" data-en="3D Motion">Motion 3D</p>
+            <div class="project-tags"><span>BLENDER</span><span>SIM</span></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="capabilities-section">
+        <h3 class="section-title" data-es="CAPACIDADES" data-en="CAPABILITIES">
+          CAPACIDADES
+        </h3>
+        <h2
+          class="capabilities-headline"
+          data-es="Creando experiencias digitales extraordinarias que dejan huella."
+          data-en="Creating extraordinary digital experiences that leave a mark."
+        >
+          Creando experiencias digitales extraordinarias que dejan huella.
+        </h2>
+
+        <div class="capabilities-grid">
+          <div class="capability-item">
+            <h4 data-es="Diseño Web & WebGL" data-en="Web Design & WebGL">
+              Diseño Web & WebGL
+            </h4>
+            <p
+              data-es="Desde landing pages inmersivas hasta experiencias interactivas completas. Desarrollo sitios web modernos y performantes que capturan la atención."
+              data-en="From immersive landing pages to full interactive experiences. I develop modern, high-performance websites that capture attention."
+            >
+              Desde landing pages inmersivas hasta experiencias interactivas
+              completas. Desarrollo sitios web modernos y performantes que
+              capturan la atención.
+            </p>
+          </div>
+          <div class="capability-item">
+            <h4
+              data-es="Modelado & Animación 3D"
+              data-en="3D Modeling & Animation"
+            >
+              Modelado & Animación 3D
+            </h4>
+            <p
+              data-es="Creación de activos 3D, entornos y motion graphics para potenciar la narrativa visual de cualquier proyecto."
+              data-en="Creation of 3D assets, environments, and motion graphics to enhance the visual narrative of any project."
+            >
+              Creación de activos 3D, entornos y motion graphics para potenciar
+              la narrativa visual de cualquier proyecto.
+            </p>
+          </div>
+          <div class="capability-item">
+            <h4
+              data-es="Edición de Video & Post"
+              data-en="Video Editing & Post"
+            >
+              Edición de Video & Post
+            </h4>
+            <p
+              data-es="Edición, corrección de color y post-producción para contenido audiovisual de alto impacto."
+              data-en="Editing, color grading, and post-production for high-impact audiovisual content."
+            >
+              Edición, corrección de color y post-producción para contenido
+              audiovisual de alto impacto.
+            </p>
+          </div>
+          <div class="capability-item">
+            <h4 data-es="Docencia & Mentoría" data-en="Teaching & Mentorship">
+              Docencia & Mentoría
+            </h4>
+            <p
+              data-es="Experiencia docente universitaria, compartiendo conocimientos sobre diseño multimedia y herramientas digitales."
+              data-en="University teaching experience, sharing knowledge on multimedia design and digital tools."
+            >
+              Experiencia docente universitaria, compartiendo conocimientos
+              sobre diseño multimedia y herramientas digitales.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="cv-section">
+        <div class="cv-header">
+          <h2 data-es="// PERFIL_DATA" data-en="// PROFILE_DATA">
+            // PERFIL_DATA
+          </h2>
+          <span class="cv-id">ID: 2025-V2.1</span>
+        </div>
+        <div class="cv-grid">
+          <div class="cv-col">
+            <h4 class="cv-label" data-es="STACK" data-en="STACK">STACK</h4>
+            <ul class="tech-list">
+              <li><span>BLENDER</span> <span class="level">/// EXP</span></li>
+              <li>
+                <span>THREE.JS / WEBGL</span> <span class="level">// INT</span>
+              </li>
+              <li>
+                <span>ADOBE SUITE</span> <span class="level">//// ADV</span>
+              </li>
+              <li><span>FIGMA</span> <span class="level">/// ADV</span></li>
+              <li>
+                <span>HTML/CSS/JS</span> <span class="level">/// ADV</span>
+              </li>
+            </ul>
+          </div>
+<div class="cv-col">
+            <h4 class="cv-label" data-es="HISTORIAL_LOG" data-en="BACKGROUND_LOG">HISTORIAL_LOG</h4>
+            <div class="cv-entry">
+              <span class="year">2023 - PRES.</span>
+              <p data-es="Artista 3D Freelance" data-en="Freelance 3D Artist">Artista 3D Freelance</p>
+              <small>Global Remote</small>
+            </div>
+            <div class="cv-entry">
+              <span class="year">2019 - 2022</span>
+              <p data-es="Licenciatura Diseño" data-en="Multimedia Design Degree">Licenciatura Diseño</p>
+              <small>Universidad Nacional de La Plata</small>
+            </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="project-detail-view" class="detail-view">
+      <div class="detail-nav">
+        <button
+          id="back-btn"
+          class="back-btn interactive-btn"
+          data-es="← VOLVER"
+          data-en="← BACK"
+        >
+          ← VOLVER
+        </button>
+      </div>
+
+      <div class="detail-hero">
+        <h1 id="detail-title">PROJECT TITLE</h1>
+        <p id="detail-tags">WEBGL / REACT</p>
+      </div>
+
+      <div class="detail-grid"></div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+  </body>
+</html>
