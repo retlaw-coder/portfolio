@@ -6,6 +6,7 @@
   --border-dim: rgba(255, 255, 255, 0.1);
   --border-thin: rgba(255, 255, 255, 0.05);
   --corner-bright: rgba(255, 255, 255, 0.8);
+  --ease-fluid: cubic-bezier(0.65, 0, 0.35, 1);
 
   --font-display: "Space Grotesk", sans-serif;
   --font-mono: "Space Mono", monospace;
@@ -21,11 +22,9 @@ body {
   background-color: var(--bg-color);
   color: var(--text-color);
   font-family: var(--font-display);
-  overflow-x: hidden; /* Evitar scroll horizontal */
+  overflow-x: hidden;
   width: 100%;
 }
-
-/* CLASE AUXILIAR PARA BLOQUEAR SCROLL CUANDO EL DETALLE ESTÁ ABIERTO */
 body.no-scroll {
   overflow: hidden;
 }
@@ -43,8 +42,6 @@ body.no-scroll {
 .blink-active {
   animation: blink-soft 0.2s ease-in-out 2;
 }
-
-/* CURSORES */
 .interactive-btn,
 .project-trigger,
 .interactive-card {
@@ -67,22 +64,51 @@ body.no-scroll {
   padding: 0 30px;
   z-index: 1000;
   transform: translateY(-100%);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.6s var(--ease-fluid);
 }
 .sticky-nav.visible {
   transform: translateY(0);
 }
 
+/* LOGO EFFECT (@RETLAW) */
 .nav-logo {
+  text-decoration: none;
+  color: #fff;
+  display: block;
+  overflow: hidden;
+  height: 35px; /* Altura fija para el efecto */
+}
+.logo-wrapper {
+  position: relative;
+  transition: transform 0.4s var(--ease-fluid);
+}
+.logo-original,
+.logo-hover {
   display: flex;
   flex-direction: column;
   line-height: 0.9;
   font-weight: 700;
   font-size: 0.9rem;
   letter-spacing: -0.5px;
-  color: #fff;
-  text-decoration: none;
   text-transform: uppercase;
+  height: 35px;
+  justify-content: center;
+}
+.logo-hover {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  color: var(--accent-color); /* ROJO */
+  align-items: flex-start; /* Alinear a la izq */
+}
+.logo-hover span {
+  font-size: 1.1rem;
+} /* @Retlaw un poco mas grande */
+
+/* Al hacer hover en el link, subimos el wrapper */
+.nav-logo:hover .logo-wrapper {
+  transform: translateY(-100%);
 }
 
 .nav-right {
@@ -137,25 +163,22 @@ body.no-scroll {
   pointer-events: none;
 }
 
-/* --- HERO (CORREGIDO) --- */
+/* --- HERO --- */
 .hero {
-  /* Asegura que ocupe toda la pantalla y el contenido se centre */
   height: 100vh;
   width: 100%;
   display: flex;
-  align-items: center; /* Centrado Vertical */
+  align-items: center;
   padding: 0 5vw;
   position: relative;
-  z-index: 2; /* Sobre el canvas */
+  z-index: 2;
 }
-
 .hero-grid {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
   width: 100%;
   align-items: center;
 }
-
 .hero-title {
   font-size: clamp(3.5rem, 8vw, 7rem);
   font-weight: 700;
@@ -163,15 +186,12 @@ body.no-scroll {
   line-height: 0.9;
   margin-bottom: 20px;
 }
-
-/* BLEND MODE FIX */
 .blend-mode-text {
   mix-blend-mode: difference;
   color: #fff;
   position: relative;
   z-index: 10;
 }
-
 .hero-subtitle {
   font-family: var(--font-mono);
   font-size: clamp(1rem, 2vw, 1.5rem);
@@ -190,10 +210,9 @@ body.no-scroll {
   display: inline-block;
 }
 
-/* SCROLL INDICATOR FIX */
 .scroll-indicator {
   position: absolute;
-  bottom: 30px; /* Pegado abajo */
+  bottom: 30px;
   left: 5vw;
   font-family: var(--font-mono);
   font-size: 0.7rem;
@@ -201,12 +220,31 @@ body.no-scroll {
   animation: bounce 2s infinite;
 }
 
-/* --- PROYECTOS --- */
+/* --- PROYECTOS (LAYOUT GRID PARA STICKY) --- */
 .projects-container {
   background-color: var(--bg-color);
   position: relative;
   z-index: 10;
   padding: 100px 5vw 50px;
+}
+
+/* Nuevo layout: Izquierda (Titulo) | Derecha (Proyectos) */
+.projects-layout {
+  display: grid;
+  grid-template-columns: 30% 1fr; /* 30% Titulo, 70% Lista */
+  gap: 40px;
+  position: relative;
+}
+
+.projects-sidebar {
+  /* Esto hace que el contenedor ocupe todo el alto disponible para hacer tracking del sticky */
+  height: 100%;
+}
+
+.sticky-title {
+  position: sticky;
+  top: 120px; /* Se queda pegado a 120px del top */
+  text-align: left;
 }
 
 .section-title {
@@ -222,7 +260,7 @@ body.no-scroll {
   font-size: 2rem;
   color: #fff;
   letter-spacing: -1px;
-  margin-bottom: 60px;
+  line-height: 1;
 }
 
 .project-item {
@@ -230,27 +268,28 @@ body.no-scroll {
   justify-content: space-between;
   align-items: center;
   border: 1px solid var(--border-thin);
-  margin-bottom: 20px;
+  margin-bottom: 40px; /* Más espacio entre proyectos */
   padding: 40px 3vw;
   position: relative;
   overflow: hidden;
-  transition: all 0.4s ease;
   background: rgba(255, 255, 255, 0.01);
+  transition: background 0.6s var(--ease-fluid),
+    border-color 0.6s var(--ease-fluid), padding 0.6s var(--ease-fluid);
 }
 
 .project-item:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.04);
   border-color: var(--border-dim);
+  padding: 60px 3vw;
 }
 
-/* Esquinas */
 .corner-accent {
   position: absolute;
   width: 6px;
   height: 6px;
   border: 1px solid var(--corner-bright);
-  opacity: 0.3;
-  transition: opacity 0.3s;
+  opacity: 0.1;
+  transition: opacity 0.4s;
 }
 .project-item:hover .corner-accent {
   opacity: 1;
@@ -306,24 +345,23 @@ body.no-scroll {
   text-transform: uppercase;
 }
 
-/* MEDIA - FIX ASPECT RATIO */
 .project-media {
   width: 45%;
-  /* Estado normal: Altura fija tipo 'strip' */
   height: 160px;
   overflow: hidden;
   position: relative;
   background: #111;
   border: 1px solid var(--border-thin);
-  filter: grayscale(100%);
-  transition: all 0.4s;
+  filter: brightness(0.8);
+  transition: height 0.7s var(--ease-fluid), width 0.7s var(--ease-fluid),
+    filter 0.5s ease;
   pointer-events: none;
 }
 .project-media img,
 .project-media video {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Cover para rellenar */
+  object-fit: cover;
   object-position: center;
   position: absolute;
   top: 0;
@@ -331,19 +369,16 @@ body.no-scroll {
 }
 .project-media video {
   opacity: 0;
-  transition: opacity 0.4s;
+  transition: opacity 0.5s ease;
 }
 
-/* HOVER STATE (EXPANDIDO) */
 .project-item:hover .project-media {
-  filter: grayscale(0%);
-  border-color: rgba(255, 255, 255, 0.3);
-  /* AQUÍ ESTÁ EL CAMBIO PARA 16:9 COMPLETO */
-  height: auto; /* Dejar que el aspect-ratio mande */
-  aspect-ratio: 16/9; /* Forzar proporción de video HD */
-  width: 50%; /* Crecer un poco más a lo ancho */
+  filter: brightness(1);
+  border-color: rgba(255, 255, 255, 0.4);
+  height: auto;
+  aspect-ratio: 16/9;
+  width: 50%;
 }
-
 .project-item:hover .project-media video {
   opacity: 1;
 }
@@ -356,7 +391,6 @@ body.no-scroll {
   padding: 100px 5vw;
   border-top: 1px solid var(--border-thin);
 }
-
 .capabilities-headline {
   font-size: clamp(2rem, 5vw, 3.5rem);
   font-weight: 500;
@@ -364,13 +398,11 @@ body.no-scroll {
   margin-bottom: 80px;
   max-width: 1200px;
 }
-
 .capabilities-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 60px 40px;
 }
-
 .capability-item h4 {
   font-family: var(--font-mono);
   font-size: 1rem;
@@ -378,7 +410,6 @@ body.no-scroll {
   margin-bottom: 20px;
   text-transform: uppercase;
 }
-
 .capability-item p {
   font-family: var(--font-display);
   font-size: 1.1rem;
@@ -426,12 +457,20 @@ body.no-scroll {
 }
 .contact-btn {
   display: inline-block;
-  background: #fff;
-  color: #000;
+  background: transparent;
+  color: #fff;
   padding: 15px 30px;
   font-weight: 700;
   text-decoration: none;
   margin-top: 20px;
+  border: 1px solid #fff;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  transition: 0.3s;
+}
+.contact-btn:hover {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
 }
 
 /* --- DETAIL VIEW --- */
@@ -443,7 +482,7 @@ body.no-scroll {
   height: 100vh;
   background: var(--bg-color);
   z-index: 2000;
-  overflow-y: auto; /* Scroll interno */
+  overflow-y: auto;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.5s ease;
@@ -453,7 +492,6 @@ body.no-scroll {
   opacity: 1;
   pointer-events: all;
 }
-
 .detail-nav {
   position: fixed;
   top: 30px;
@@ -472,7 +510,6 @@ body.no-scroll {
   background: #fff;
   color: #000;
 }
-
 .detail-hero {
   margin-bottom: 60px;
   padding-top: 60px;
@@ -488,7 +525,6 @@ body.no-scroll {
   font-family: var(--font-mono);
   color: var(--accent-color);
 }
-
 .detail-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -510,7 +546,101 @@ body.no-scroll {
   grid-column: span 2;
 }
 
-/* --- CANVAS Y LOADER --- */
+/* --- CONTACT MODAL --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  z-index: 5000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal-content {
+  background: #0a0a0a;
+  border: 1px solid var(--border-dim);
+  padding: 60px;
+  width: 100%;
+  max-width: 600px;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+.close-modal {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+}
+.modal-content h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+.modal-desc {
+  font-family: var(--font-mono);
+  color: #888;
+  margin-bottom: 40px;
+}
+
+.contact-form .form-group {
+  margin-bottom: 25px;
+}
+.contact-form label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  margin-bottom: 10px;
+  color: #aaa;
+}
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  background: #111;
+  border: 1px solid #333;
+  color: #fff;
+  padding: 15px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  transition: 0.3s;
+}
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: var(--accent-color);
+  outline: none;
+}
+.submit-btn {
+  width: 100%;
+  background: #fff;
+  color: #000;
+  border: none;
+  padding: 15px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.submit-btn:hover {
+  background: var(--accent-color);
+  color: #fff;
+}
+
+/* CANVAS Y LOADER */
 .canvas-container {
   position: fixed;
   top: 0;
@@ -575,7 +705,6 @@ body.no-scroll {
   visibility: hidden;
 }
 
-/* PARTICULAS */
 #particle-overlay {
   position: fixed;
   top: 0;
@@ -624,6 +753,14 @@ body.no-scroll {
   .hero-title {
     font-size: 4rem;
   }
+  .projects-layout {
+    grid-template-columns: 1fr;
+  } /* Colapsar grid en móvil */
+  .sticky-title {
+    position: static;
+    margin-bottom: 20px;
+  } /* Quitar sticky en móvil */
+
   .project-item {
     flex-direction: column-reverse;
     align-items: flex-start;
@@ -633,18 +770,15 @@ body.no-scroll {
     height: 200px;
     margin-bottom: 20px;
   }
-
-  /* En mobile tambien queremos que crezca al tocarlo */
   .project-item:active .project-media,
   .project-item:hover .project-media {
     width: 100%;
-    height: auto;
     aspect-ratio: 16/9;
   }
-
   .project-info {
     width: 100%;
   }
+
   .detail-grid {
     grid-template-columns: 1fr;
   }
@@ -654,5 +788,9 @@ body.no-scroll {
   .capabilities-grid,
   .cv-grid {
     grid-template-columns: 1fr;
+  }
+
+  .modal-content {
+    padding: 30px;
   }
 }

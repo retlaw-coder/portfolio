@@ -3,7 +3,7 @@ import { GLTFLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/l
 import { DRACOLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/DRACOLoader.js";
 import Lenis from "https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/+esm";
 
-// --- LOADER LOGIC ---
+// --- 1. LOADER & REVEAL ---
 const loaderElement = document.getElementById("loader");
 const progressText = document.querySelector(".loader-progress");
 const heroSection = document.querySelector(".hero");
@@ -17,17 +17,11 @@ const fakeLoad = setInterval(() => {
 
   if (progress === 100) {
     clearInterval(fakeLoad);
-    // Usamos la misma función de partículas para revelar el sitio
     runParticleTransition(true);
   }
-}, 80);
+}, 50);
 
-function revealSite() {
-  loaderElement.classList.add("loader-hidden");
-  heroSection.classList.add("hero-loaded");
-}
-
-// --- LENIS SCROLL ---
+// --- 2. LENIS SCROLL ---
 const lenis = new Lenis({ duration: 1.2, smooth: true });
 function raf(time) {
   lenis.raf(time);
@@ -35,7 +29,7 @@ function raf(time) {
 }
 requestAnimationFrame(raf);
 
-// --- STICKY NAV ---
+// --- 3. STICKY NAV ---
 const stickyNav = document.querySelector(".sticky-nav");
 const floatingSwitch = document.querySelector(".lang-switch-floating");
 const backToTopBtn = document.querySelector(".back-to-top-btn");
@@ -55,17 +49,53 @@ backToTopBtn.addEventListener("click", (e) => {
   lenis.scrollTo("#hero");
 });
 
-// --- INTERACCIÓN BLINK ---
-document
-  .querySelectorAll(".interactive-btn, .project-trigger")
-  .forEach((el) => {
-    el.addEventListener("click", () => {
-      el.classList.add("blink-active");
-      setTimeout(() => el.classList.remove("blink-active"), 600);
-    });
-  });
+// --- 4. MODAL DE CONTACTO ---
+const modal = document.getElementById("contact-modal");
+const openBtns = document.querySelectorAll(
+  "#open-contact-btn, .open-contact-trigger, .contact-nav-btn"
+);
+const closeBtn = document.getElementById("close-modal-btn");
 
-// --- SPA PROYECTOS ---
+openBtns.forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    if (btn.tagName === "A") e.preventDefault();
+    modal.classList.add("active");
+    lenis.stop();
+  });
+});
+
+closeBtn.addEventListener("click", () => {
+  modal.classList.remove("active");
+  lenis.start();
+});
+
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) {
+    modal.classList.remove("active");
+    lenis.start();
+  }
+});
+
+// --- 5. VIDEO HOVER LOGIC ---
+document.querySelectorAll(".project-item").forEach((item) => {
+  const video = item.querySelector("video");
+  item.addEventListener("mouseenter", () => {
+    if (video) {
+      video.currentTime = 0;
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((error) => {
+          /* Auto-play prevented */
+        });
+      }
+    }
+  });
+  item.addEventListener("mouseleave", () => {
+    if (video) video.pause();
+  });
+});
+
+// --- 6. SPA PROYECTOS ---
 const projectTriggers = document.querySelectorAll(".project-trigger");
 const homeView = document.getElementById("home-view");
 const detailView = document.getElementById("project-detail-view");
@@ -73,15 +103,10 @@ const backBtn = document.getElementById("back-btn");
 const detailContainer = document.querySelector(".detail-grid");
 const detailTitle = document.getElementById("detail-title");
 
-// Datos Dummy
 const projectData = {
   1: {
     title: "Daylight",
-    imgs: [
-      "assets/proyecto1.png",
-      "assets/proyecto2.png",
-      "assets/proyecto1.png",
-    ],
+    imgs: ["assets/proyecto1.png", "assets/proyecto2.png"],
     vids: ["assets/proyecto1.mp4"],
   },
   2: {
@@ -101,17 +126,13 @@ projectTriggers.forEach((card) => {
     const id = card.getAttribute("data-id");
     loadProject(id);
 
-    // 1. Bloquear Scroll Principal
     lenis.stop();
     document.body.classList.add("no-scroll");
 
-    // 2. Transición
-    homeView.classList.add("hidden"); // Opcional, ocultar home
-
     setTimeout(() => {
       detailView.classList.add("active");
-      detailView.scrollTop = 0; // Reset scroll interno
-    }, 300);
+      detailView.scrollTop = 0;
+    }, 100);
   });
 });
 
@@ -120,15 +141,12 @@ function loadProject(id) {
   detailTitle.innerText = data.title;
   detailContainer.innerHTML = "";
 
-  // Video Principal
   if (data.vids.length > 0) {
     const v1 = document.createElement("div");
     v1.className = "detail-item full-width";
     v1.innerHTML = `<video src="${data.vids[0]}" autoplay loop muted playsinline></video>`;
     detailContainer.appendChild(v1);
   }
-
-  // Imágenes
   data.imgs.forEach((src) => {
     const d = document.createElement("div");
     d.className = "detail-item";
@@ -138,28 +156,20 @@ function loadProject(id) {
 }
 
 backBtn.addEventListener("click", () => {
-  // Cerrar detalle
   detailView.classList.remove("active");
-
-  // Efecto partículas al volver
   runParticleTransition(false);
-
-  // Reactivar Scroll después de la transición
   setTimeout(() => {
     document.body.classList.remove("no-scroll");
     lenis.start();
-    homeView.classList.remove("hidden"); // Mostrar home si se ocultó
   }, 800);
 });
 
-// --- EFECTO DE PARTÍCULAS ---
+// --- 7. PARTÍCULAS ---
 function runParticleTransition(isInitialLoad) {
   const overlay = document.getElementById("particle-overlay");
   overlay.innerHTML = "";
-
-  // Crear Grilla (10x10)
-  const cols = 10;
-  const rows = 10;
+  const cols = 10,
+    rows = 10;
   const width = window.innerWidth / cols;
   const height = window.innerHeight / rows;
 
@@ -171,35 +181,28 @@ function runParticleTransition(isInitialLoad) {
     cell.style.position = "absolute";
     cell.style.left = (i % cols) * width + "px";
     cell.style.top = Math.floor(i / cols) * height + "px";
-    // Empiezan opacos (negro)
     cell.style.opacity = "1";
     cell.style.transform = "scale(1)";
     overlay.appendChild(cell);
   }
 
-  if (isInitialLoad) {
-    // Si es carga inicial, escondemos el loader HTML
-    loaderElement.classList.add("loader-hidden");
-  }
+  if (isInitialLoad) loaderElement.classList.add("loader-hidden");
 
-  // Animación de desaparición
   const cells = document.querySelectorAll(".particle-cell");
   cells.forEach((cell) => {
-    // Delay aleatorio para efecto "glitch/disolver"
     setTimeout(() => {
       cell.style.transform = "scale(0)";
       cell.style.opacity = "0";
     }, Math.random() * 600);
   });
 
-  // Limpieza
   setTimeout(() => {
     overlay.innerHTML = "";
     if (isInitialLoad) heroSection.classList.add("hero-loaded");
   }, 800);
 }
 
-// --- THREE.JS ---
+// --- 8. THREE.JS (LOCAL ASSETS) ---
 const canvas = document.querySelector("#hero-canvas");
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -227,18 +230,26 @@ scene.add(directionalLight);
 let model;
 const loader = new GLTFLoader();
 const dracoLoader = new DRACOLoader();
+// Mantenemos Draco por si usaste compresión en gltf.report (muy recomendado)
 dracoLoader.setDecoderPath(
   "https://www.gstatic.com/draco/versioned/decoders/1.5.6/"
 );
 loader.setDRACOLoader(dracoLoader);
 
-loader.load("assets/mis-edificios.glb", (gltf) => {
-  model = gltf.scene;
-  // Posición ajustada para estar a la derecha del texto
-  model.position.set(5, -2, 0);
-  model.scale.set(0.07, 0.07, 0.07);
-  scene.add(model);
-});
+// CARGA LOCAL
+loader.load(
+  "assets/mis-edificios.glb",
+  (gltf) => {
+    model = gltf.scene;
+    model.position.set(5, -2, 0);
+    model.scale.set(0.07, 0.07, 0.07);
+    scene.add(model);
+  },
+  undefined,
+  (error) => {
+    console.error("Error cargando modelo:", error);
+  }
+);
 
 let mouseX = 0,
   mouseY = 0;
@@ -265,7 +276,7 @@ window.addEventListener("resize", () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// Idioma
+// --- 9. IDIOMA ---
 let currentLang = "es";
 function toggleLanguage() {
   currentLang = currentLang === "es" ? "en" : "es";
