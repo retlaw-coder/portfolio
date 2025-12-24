@@ -48,19 +48,41 @@ backToTopBtn.addEventListener("click", (e) => {
   lenis.scrollTo("#hero");
 });
 
-// Scroll al contacto
-document.querySelector("#nav-contact-btn").addEventListener("click", () => {
-    lenis.scrollTo("#contact");
+// --- 4. MODAL DE CONTACTO ---
+const modal = document.getElementById("contact-modal");
+const openBtns = document.querySelectorAll("#open-contact-btn, .open-contact-trigger, .contact-nav-btn");
+const closeBtn = document.getElementById("close-modal-btn");
+
+openBtns.forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    if (btn.tagName === "A") e.preventDefault();
+    modal.classList.add("active");
+    lenis.stop();
+  });
 });
 
-// --- 4. VIDEO HOVER ---
+closeBtn.addEventListener("click", () => {
+  modal.classList.remove("active");
+  lenis.start();
+});
+
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) {
+    modal.classList.remove("active");
+    lenis.start();
+  }
+});
+
+// --- 5. VIDEO HOVER LOGIC ---
 document.querySelectorAll(".project-item").forEach((item) => {
   const video = item.querySelector("video");
   item.addEventListener("mouseenter", () => {
     if (video) {
       video.currentTime = 0;
       const playPromise = video.play();
-      if (playPromise !== undefined) playPromise.catch((error) => {});
+      if (playPromise !== undefined) {
+        playPromise.catch((error) => {});
+      }
     }
   });
   item.addEventListener("mouseleave", () => {
@@ -68,7 +90,7 @@ document.querySelectorAll(".project-item").forEach((item) => {
   });
 });
 
-// --- 5. SPA PROYECTOS (DETALLE CON GRILLA) ---
+// --- 6. SPA PROYECTOS (DETALLE CON GRILLA) ---
 const projectTriggers = document.querySelectorAll(".project-trigger");
 const detailView = document.getElementById("project-detail-view");
 const backBtn = document.getElementById("back-btn");
