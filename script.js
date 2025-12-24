@@ -3,12 +3,11 @@ import { GLTFLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/l
 import { DRACOLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/DRACOLoader.js";
 import Lenis from "https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/+esm";
 
-// --- 1. LOADER & REVEAL ---
+// --- 1. LOADER ---
 const loaderElement = document.getElementById("loader");
 const progressText = document.querySelector(".loader-progress");
 const heroSection = document.querySelector(".hero");
 
-// Simulación de carga
 let progress = 0;
 const fakeLoad = setInterval(() => {
   progress += Math.floor(Math.random() * 10) + 5;
@@ -49,45 +48,19 @@ backToTopBtn.addEventListener("click", (e) => {
   lenis.scrollTo("#hero");
 });
 
-// --- 4. MODAL DE CONTACTO ---
-const modal = document.getElementById("contact-modal");
-const openBtns = document.querySelectorAll(
-  "#open-contact-btn, .open-contact-trigger, .contact-nav-btn"
-);
-const closeBtn = document.getElementById("close-modal-btn");
-
-openBtns.forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    if (btn.tagName === "A") e.preventDefault();
-    modal.classList.add("active");
-    lenis.stop();
-  });
+// Scroll al contacto
+document.querySelector("#nav-contact-btn").addEventListener("click", () => {
+    lenis.scrollTo("#contact");
 });
 
-closeBtn.addEventListener("click", () => {
-  modal.classList.remove("active");
-  lenis.start();
-});
-
-modal.addEventListener("click", (e) => {
-  if (e.target === modal) {
-    modal.classList.remove("active");
-    lenis.start();
-  }
-});
-
-// --- 5. VIDEO HOVER LOGIC ---
+// --- 4. VIDEO HOVER ---
 document.querySelectorAll(".project-item").forEach((item) => {
   const video = item.querySelector("video");
   item.addEventListener("mouseenter", () => {
     if (video) {
       video.currentTime = 0;
       const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise.catch((error) => {
-          /* Auto-play prevented */
-        });
-      }
+      if (playPromise !== undefined) playPromise.catch((error) => {});
     }
   });
   item.addEventListener("mouseleave", () => {
@@ -95,28 +68,36 @@ document.querySelectorAll(".project-item").forEach((item) => {
   });
 });
 
-// --- 6. SPA PROYECTOS ---
+// --- 5. SPA PROYECTOS (DETALLE CON GRILLA) ---
 const projectTriggers = document.querySelectorAll(".project-trigger");
-const homeView = document.getElementById("home-view");
 const detailView = document.getElementById("project-detail-view");
 const backBtn = document.getElementById("back-btn");
-const detailContainer = document.querySelector(".detail-grid");
+// Selector corregido para coincidir con HTML
+const detailMediaGrid = document.querySelector(".detail-media-grid"); 
 const detailTitle = document.getElementById("detail-title");
+const detailDesc = document.getElementById("detail-desc");
+const detailStack = document.getElementById("detail-stack-list");
 
 const projectData = {
   1: {
     title: "Daylight",
-    imgs: ["assets/proyecto1.png", "assets/proyecto2.png"],
+    desc: "Un sitio web de alto rendimiento diseñado para conectar con la audiencia. Utilizamos WebGL para transiciones fluidas y una experiencia inmersiva.",
+    stack: ["WebGL", "React", "Three.js", "GSAP"],
+    imgs: ["assets/proyecto1.png", "assets/proyecto1.png", "assets/proyecto1.png", "assets/proyecto1.png"],
     vids: ["assets/proyecto1.mp4"],
   },
   2: {
     title: "KidSuper",
-    imgs: ["assets/proyecto2.png", "assets/proyecto1.png"],
-    vids: ["assets/proyecto2.mp4", "assets/proyecto1.mp4"],
+    desc: "Dirección creativa digital para KidSuper. Una fusión de arte y moda en un entorno digital interactivo.",
+    stack: ["Art Direction", "Blender", "Motion", "Vue"],
+    imgs: ["assets/proyecto2.png", "assets/proyecto2.png", "assets/proyecto2.png", "assets/proyecto2.png"],
+    vids: ["assets/proyecto2.mp4"],
   },
   3: {
     title: "Nike Lab",
-    imgs: ["assets/proyecto1.png", "assets/proyecto2.png"],
+    desc: "Exploración de movimiento y simulación de telas para Nike Lab. Renderizado en Cycles para máximo realismo.",
+    stack: ["Blender", "Cycles", "Simulation", "After Effects"],
+    imgs: ["assets/proyecto1.png", "assets/proyecto1.png", "assets/proyecto1.png", "assets/proyecto1.png"],
     vids: ["assets/proyecto1.mp4"],
   },
 };
@@ -126,12 +107,12 @@ projectTriggers.forEach((card) => {
     const id = card.getAttribute("data-id");
     loadProject(id);
 
-    lenis.stop();
-    document.body.classList.add("no-scroll");
+    lenis.stop(); // Paramos scroll de Lenis (body)
+    document.body.classList.add("no-scroll"); // Bloqueamos scroll CSS
 
     setTimeout(() => {
       detailView.classList.add("active");
-      detailView.scrollTop = 0;
+      detailView.scrollTop = 0; // Reset scroll interno
     }, 100);
   });
 });
@@ -139,19 +120,28 @@ projectTriggers.forEach((card) => {
 function loadProject(id) {
   const data = projectData[id] || projectData[1];
   detailTitle.innerText = data.title;
-  detailContainer.innerHTML = "";
+  if(detailDesc) detailDesc.innerText = data.desc;
+  
+  if(detailStack) {
+      detailStack.innerHTML = data.stack.map(tech => `<li>${tech}</li>`).join('');
+  }
 
+  detailMediaGrid.innerHTML = "";
+
+  // 1. Video Principal (Full Width)
   if (data.vids.length > 0) {
     const v1 = document.createElement("div");
     v1.className = "detail-item full-width";
     v1.innerHTML = `<video src="${data.vids[0]}" autoplay loop muted playsinline></video>`;
-    detailContainer.appendChild(v1);
+    detailMediaGrid.appendChild(v1);
   }
+  
+  // 2. Imágenes (Grilla 2x2)
   data.imgs.forEach((src) => {
     const d = document.createElement("div");
     d.className = "detail-item";
     d.innerHTML = `<img src="${src}">`;
-    detailContainer.appendChild(d);
+    detailMediaGrid.appendChild(d);
   });
 }
 
@@ -160,16 +150,15 @@ backBtn.addEventListener("click", () => {
   runParticleTransition(false);
   setTimeout(() => {
     document.body.classList.remove("no-scroll");
-    lenis.start();
+    lenis.start(); // Reactivamos scroll
   }, 800);
 });
 
-// --- 7. PARTÍCULAS ---
+// --- 6. PARTÍCULAS ---
 function runParticleTransition(isInitialLoad) {
   const overlay = document.getElementById("particle-overlay");
   overlay.innerHTML = "";
-  const cols = 10,
-    rows = 10;
+  const cols = 10, rows = 10;
   const width = window.innerWidth / cols;
   const height = window.innerHeight / rows;
 
@@ -202,22 +191,13 @@ function runParticleTransition(isInitialLoad) {
   }, 800);
 }
 
-// --- 8. THREE.JS (LOCAL ASSETS) ---
+// --- 7. THREE.JS (LOCAL) ---
 const canvas = document.querySelector("#hero-canvas");
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(0, 1, 5);
 
-const renderer = new THREE.WebGLRenderer({
-  canvas: canvas,
-  alpha: true,
-  antialias: true,
-});
+const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
@@ -230,29 +210,18 @@ scene.add(directionalLight);
 let model;
 const loader = new GLTFLoader();
 const dracoLoader = new DRACOLoader();
-// Mantenemos Draco por si usaste compresión en gltf.report (muy recomendado)
-dracoLoader.setDecoderPath(
-  "https://www.gstatic.com/draco/versioned/decoders/1.5.6/"
-);
+dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
 loader.setDRACOLoader(dracoLoader);
 
-// CARGA LOCAL
-loader.load(
-  "assets/mis-edificios.glb",
-  (gltf) => {
+loader.load("assets/mis-edificios.glb", (gltf) => {
     model = gltf.scene;
     model.position.set(5, -2, 0);
     model.scale.set(0.07, 0.07, 0.07);
     scene.add(model);
-  },
-  undefined,
-  (error) => {
-    console.error("Error cargando modelo:", error);
-  }
+  }, undefined, (error) => { console.error("Error cargando modelo:", error); }
 );
 
-let mouseX = 0,
-  mouseY = 0;
+let mouseX = 0, mouseY = 0;
 const windowHalfX = window.innerWidth / 2;
 const windowHalfY = window.innerHeight / 2;
 document.addEventListener("mousemove", (event) => {
@@ -276,7 +245,7 @@ window.addEventListener("resize", () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// --- 9. IDIOMA ---
+// --- 8. IDIOMA ---
 let currentLang = "es";
 function toggleLanguage() {
   currentLang = currentLang === "es" ? "en" : "es";
@@ -285,21 +254,13 @@ function toggleLanguage() {
   const floatFlag = document.querySelector(".lang-switch-floating .flag");
 
   if (currentLang === "en") {
-    navBtn.innerText = "EN";
-    floatText.innerText = "EN";
-    floatFlag.innerText = "🇺🇸";
+    navBtn.innerText = "EN"; floatText.innerText = "EN"; floatFlag.innerText = "🇺🇸";
   } else {
-    navBtn.innerText = "ES";
-    floatText.innerText = "ES";
-    floatFlag.innerText = "🇦🇷";
+    navBtn.innerText = "ES"; floatText.innerText = "ES"; floatFlag.innerText = "🇦🇷";
   }
   document.querySelectorAll("[data-es]").forEach((el) => {
     el.innerText = el.getAttribute(`data-${currentLang}`);
   });
 }
-document
-  .getElementById("lang-switch-nav")
-  .addEventListener("click", toggleLanguage);
-document
-  .getElementById("lang-switch-hero")
-  .addEventListener("click", toggleLanguage);
+document.getElementById("lang-switch-nav").addEventListener("click", toggleLanguage);
+document.getElementById("lang-switch-hero").addEventListener("click", toggleLanguage);
