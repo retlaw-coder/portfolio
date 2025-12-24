@@ -94,7 +94,6 @@ document.querySelectorAll(".project-item").forEach((item) => {
 const projectTriggers = document.querySelectorAll(".project-trigger");
 const detailView = document.getElementById("project-detail-view");
 const backBtn = document.getElementById("back-btn");
-// Selector corregido para coincidir con HTML
 const detailMediaGrid = document.querySelector(".detail-media-grid"); 
 const detailTitle = document.getElementById("detail-title");
 const detailDesc = document.getElementById("detail-desc");
@@ -129,12 +128,13 @@ projectTriggers.forEach((card) => {
     const id = card.getAttribute("data-id");
     loadProject(id);
 
-    lenis.stop(); // Paramos scroll de Lenis (body)
-    document.body.classList.add("no-scroll"); // Bloqueamos scroll CSS
+    lenis.stop(); // Paramos scroll de Lenis
+    document.body.classList.add("no-scroll"); // Bloqueamos body
 
     setTimeout(() => {
       detailView.classList.add("active");
-      detailView.scrollTop = 0; // Reset scroll interno
+      // Importante: aseguramos que el scroll esté arriba
+      detailView.scrollTop = 0; 
     }, 100);
   });
 });
@@ -176,7 +176,7 @@ backBtn.addEventListener("click", () => {
   }, 800);
 });
 
-// --- 6. PARTÍCULAS ---
+// --- 7. PARTÍCULAS ---
 function runParticleTransition(isInitialLoad) {
   const overlay = document.getElementById("particle-overlay");
   overlay.innerHTML = "";
@@ -213,7 +213,7 @@ function runParticleTransition(isInitialLoad) {
   }, 800);
 }
 
-// --- 7. THREE.JS (LOCAL) ---
+// --- 8. THREE.JS ---
 const canvas = document.querySelector("#hero-canvas");
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -254,8 +254,14 @@ document.addEventListener("mousemove", (event) => {
 const animate = () => {
   requestAnimationFrame(animate);
   if (model) {
-    model.rotation.y += 0.05 * (mouseX * 0.0005 - (model.rotation.y + 0.5));
-    model.rotation.x += 0.05 * (mouseY * 0.0005 - model.rotation.x);
+    // Si es mobile (menos de 768px), rota solo
+    if(window.innerWidth < 768) {
+        model.rotation.y += 0.002;
+    } else {
+        // Desktop: interactivo con mouse
+        model.rotation.y += 0.05 * (mouseX * 0.0005 - (model.rotation.y + 0.5));
+        model.rotation.x += 0.05 * (mouseY * 0.0005 - model.rotation.x);
+    }
   }
   renderer.render(scene, camera);
 };
@@ -267,7 +273,7 @@ window.addEventListener("resize", () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// --- 8. IDIOMA ---
+// --- 9. IDIOMA ---
 let currentLang = "es";
 function toggleLanguage() {
   currentLang = currentLang === "es" ? "en" : "es";
