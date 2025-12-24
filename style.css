@@ -23,6 +23,7 @@ body {
   overflow-x: hidden;
   width: 100%;
 }
+/* Evitamos pointer events cuando no-scroll está activo para dar prioridad al modal/detalle */
 body.no-scroll { overflow: hidden; }
 
 /* ANIMACIONES */
@@ -124,20 +125,26 @@ body.no-scroll { overflow: hidden; }
 .project-item:hover .project-media { filter: brightness(1); border-color: rgba(255, 255, 255, 0.4); height: auto; aspect-ratio: 16/9; width: 50%; }
 .project-item:hover .project-media video { opacity: 1; }
 
-/* --- DETAIL VIEW --- */
+/* --- DETAIL VIEW (SCROLL FIX) --- */
 .detail-view {
   position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-  background: var(--bg-color); z-index: 2000;
-  overflow-y: auto; opacity: 0; pointer-events: none;
+  background: var(--bg-color); z-index: 9999;
+  
+  /* PROPIEDADES CRÍTICAS PARA SCROLL */
+  overflow-y: scroll; /* Forzar barra scroll */
+  -webkit-overflow-scrolling: touch; /* Suavidad en iOS */
+  overscroll-behavior: contain; /* Evita que scrollee el body */
+  
+  opacity: 0; pointer-events: none;
   transition: opacity 0.5s ease; padding: 100px 5vw;
 }
-.detail-view.active { opacity: 1; pointer-events: all; }
+.detail-view.active { opacity: 1; pointer-events: auto; }
 
-.detail-nav { position: fixed; top: 30px; left: 5vw; z-index: 2001; }
-.back-btn { background: none; border: 1px solid #fff; color: #fff; padding: 10px 20px; font-family: var(--font-mono); text-transform: uppercase; }
+.detail-nav { position: fixed; top: 30px; left: 5vw; z-index: 10000; }
+.back-btn { background: var(--bg-color); border: 1px solid #fff; color: #fff; padding: 10px 20px; font-family: var(--font-mono); text-transform: uppercase; }
 .back-btn:hover { background: #fff; color: #000; }
 
-.detail-container-grid { display: grid; grid-template-columns: 350px 1fr; gap: 60px; margin-top: 60px; }
+.detail-container-grid { display: grid; grid-template-columns: 350px 1fr; gap: 60px; margin-top: 60px; padding-bottom: 100px; }
 .detail-sidebar { position: sticky; top: 100px; height: fit-content; }
 .detail-sidebar h1 { font-size: 3.5rem; line-height: 0.9; margin-bottom: 20px; text-transform: uppercase; }
 .detail-meta p { font-family: var(--font-display); color: #ccc; line-height: 1.5; margin-bottom: 40px; font-size: 1.1rem; }
@@ -146,8 +153,8 @@ body.no-scroll { overflow: hidden; }
 .detail-tech-stack li { border-bottom: 1px solid #333; padding: 10px 0; font-family: var(--font-mono); text-transform: uppercase; }
 
 .detail-media-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.detail-item { width: 100%; background: #111; border: 1px solid var(--border-thin); aspect-ratio: 16/9; }
-.detail-item img, .detail-item video { width: 100%; height: 100%; object-fit: cover; }
+.detail-item { width: 100%; background: #111; border: 1px solid var(--border-thin); aspect-ratio: 16/9; position: relative; z-index: 1; }
+.detail-item img, .detail-item video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .detail-item.full-width { grid-column: span 2; }
 
 /* --- CAPABILITIES & CV --- */
@@ -156,6 +163,7 @@ body.no-scroll { overflow: hidden; }
 .capabilities-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 60px 40px; }
 .capability-item h4 { font-family: var(--font-mono); font-size: 1rem; color: #fff; margin-bottom: 20px; text-transform: uppercase; }
 .capability-item p { font-family: var(--font-display); font-size: 1.1rem; color: #aaa; line-height: 1.5; }
+.highlight-item h4 { color: var(--accent-color); }
 
 .cv-section { padding: 80px 5vw; border-top: 1px solid var(--border-thin); position: relative; z-index: 10; background: var(--bg-color); }
 .cv-header { display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-dim); padding-bottom: 15px; margin-bottom: 40px; font-family: var(--font-mono); }
@@ -170,7 +178,7 @@ body.no-scroll { overflow: hidden; }
 .modal-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
   background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);
-  z-index: 5000; display: flex; justify-content: center; align-items: center;
+  z-index: 10001; display: flex; justify-content: center; align-items: center;
   opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
 }
 .modal-overlay.active { opacity: 1; pointer-events: all; }
