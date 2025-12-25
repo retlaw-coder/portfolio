@@ -58,18 +58,21 @@ openBtns.forEach((btn) => {
     if (btn.tagName === "A") e.preventDefault();
     modal.classList.add("active");
     lenis.stop();
+    document.body.classList.add("no-scroll");
   });
 });
 
 closeBtn.addEventListener("click", () => {
   modal.classList.remove("active");
   lenis.start();
+  document.body.classList.remove("no-scroll");
 });
 
 modal.addEventListener("click", (e) => {
   if (e.target === modal) {
     modal.classList.remove("active");
     lenis.start();
+    document.body.classList.remove("no-scroll");
   }
 });
 
@@ -128,13 +131,12 @@ projectTriggers.forEach((card) => {
     const id = card.getAttribute("data-id");
     loadProject(id);
 
-    lenis.stop(); // Paramos scroll de Lenis
-    document.body.classList.add("no-scroll"); // Bloqueamos body
+    lenis.stop(); // Paramos scroll de Lenis (body)
+    document.body.classList.add("no-scroll"); // Bloqueamos scroll CSS
 
     setTimeout(() => {
       detailView.classList.add("active");
-      // Importante: aseguramos que el scroll esté arriba
-      detailView.scrollTop = 0; 
+      detailView.scrollTop = 0; // Reset scroll interno
     }, 100);
   });
 });
@@ -213,7 +215,7 @@ function runParticleTransition(isInitialLoad) {
   }, 800);
 }
 
-// --- 8. THREE.JS ---
+// --- 8. THREE.JS (LOCAL) ---
 const canvas = document.querySelector("#hero-canvas");
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -237,8 +239,10 @@ loader.setDRACOLoader(dracoLoader);
 
 loader.load("assets/mis-edificios.glb", (gltf) => {
     model = gltf.scene;
+    // POSICIÓN Y ROTACIÓN INICIAL FIJA
     model.position.set(5, -2, 0);
     model.scale.set(0.07, 0.07, 0.07);
+    model.rotation.y = -0.5; // Ángulo inicial forzado
     scene.add(model);
   }, undefined, (error) => { console.error("Error cargando modelo:", error); }
 );
@@ -254,12 +258,13 @@ document.addEventListener("mousemove", (event) => {
 const animate = () => {
   requestAnimationFrame(animate);
   if (model) {
-    // Si es mobile (menos de 768px), rota solo
     if(window.innerWidth < 768) {
+        // Mobile: rotación automática suave
         model.rotation.y += 0.002;
     } else {
-        // Desktop: interactivo con mouse
-        model.rotation.y += 0.05 * (mouseX * 0.0005 - (model.rotation.y + 0.5));
+        // Desktop: interactivo, pero partiendo de la base -0.5
+        // Lerp hacia la posición del mouse
+        model.rotation.y += 0.05 * ((mouseX * 0.0005 - 0.5) - model.rotation.y);
         model.rotation.x += 0.05 * (mouseY * 0.0005 - model.rotation.x);
     }
   }
