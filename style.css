@@ -23,8 +23,8 @@ body {
   overflow-x: hidden;
   width: 100%;
 }
-/* Evitamos pointer events cuando no-scroll está activo para dar prioridad al modal/detalle */
-body.no-scroll { overflow: hidden; }
+/* Al abrir modal o detalle, bloqueamos el body PERO permitimos scroll interno en los hijos */
+body.no-scroll { overflow: hidden; height: 100vh; position: fixed; width: 100%; }
 
 /* ANIMACIONES */
 @keyframes blink-soft { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
@@ -86,7 +86,7 @@ body.no-scroll { overflow: hidden; }
 .location { margin-top: 2rem; font-family: var(--font-mono); font-size: 0.7rem; padding: 5px 10px; border: 1px solid #333; display: inline-block; }
 .scroll-indicator { position: absolute; bottom: 30px; left: 5vw; font-family: var(--font-mono); font-size: 0.7rem; color: #666; animation: bounce 2s infinite; }
 
-/* --- PROYECTOS (LAYOUT GRID) --- */
+/* --- PROYECTOS --- */
 .projects-container { background-color: var(--bg-color); position: relative; z-index: 10; padding: 100px 5vw 50px; }
 .projects-layout { display: grid; grid-template-columns: 30% 1fr; gap: 40px; position: relative; }
 .projects-sidebar { height: 100%; }
@@ -125,22 +125,24 @@ body.no-scroll { overflow: hidden; }
 .project-item:hover .project-media { filter: brightness(1); border-color: rgba(255, 255, 255, 0.4); height: auto; aspect-ratio: 16/9; width: 50%; }
 .project-item:hover .project-media video { opacity: 1; }
 
-/* --- DETAIL VIEW (SCROLL FIX) --- */
+/* --- DETAIL VIEW (SCROLL FIX FINAL) --- */
 .detail-view {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-  background: var(--bg-color); z-index: 9999;
+  position: fixed; top: 0; left: 0; width: 100%; 
+  /* Usar dvh para móviles asegura que ocupe la pantalla real */
+  height: 100dvh; 
+  background: var(--bg-color); z-index: 20000;
   
-  /* PROPIEDADES CRÍTICAS PARA SCROLL */
-  overflow-y: scroll; /* Forzar barra scroll */
-  -webkit-overflow-scrolling: touch; /* Suavidad en iOS */
-  overscroll-behavior: contain; /* Evita que scrollee el body */
+  /* CRÍTICO PARA SCROLL */
+  overflow-y: auto; 
+  -webkit-overflow-scrolling: touch; 
+  overscroll-behavior: contain;
   
   opacity: 0; pointer-events: none;
   transition: opacity 0.5s ease; padding: 100px 5vw;
 }
 .detail-view.active { opacity: 1; pointer-events: auto; }
 
-.detail-nav { position: fixed; top: 30px; left: 5vw; z-index: 10000; }
+.detail-nav { position: fixed; top: 30px; left: 5vw; z-index: 20001; }
 .back-btn { background: var(--bg-color); border: 1px solid #fff; color: #fff; padding: 10px 20px; font-family: var(--font-mono); text-transform: uppercase; }
 .back-btn:hover { background: #fff; color: #000; }
 
@@ -178,10 +180,10 @@ body.no-scroll { overflow: hidden; }
 .modal-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
   background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);
-  z-index: 10001; display: flex; justify-content: center; align-items: center;
+  z-index: 30000; display: flex; justify-content: center; align-items: center;
   opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
 }
-.modal-overlay.active { opacity: 1; pointer-events: all; }
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
 .modal-content { background: #0a0a0a; border: 1px solid var(--border-dim); padding: 60px; width: 100%; max-width: 600px; position: relative; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); }
 .close-modal { position: absolute; top: 20px; right: 20px; background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer; }
 .modal-content h2 { font-size: 2rem; margin-bottom: 10px; font-weight: 700; }
