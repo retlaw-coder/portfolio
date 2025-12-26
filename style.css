@@ -7,7 +7,6 @@
   --border-thin: rgba(255, 255, 255, 0.05);
   --corner-bright: rgba(255, 255, 255, 0.9);
   --ease-fluid: cubic-bezier(0.65, 0, 0.35, 1);
-  
   --font-display: "Space Grotesk", sans-serif;
   --font-mono: "Space Mono", monospace;
 }
@@ -23,15 +22,14 @@ body {
   overflow-x: hidden;
   width: 100%;
 }
-/* Al abrir modal o detalle, bloqueamos el body PERO permitimos scroll interno en los hijos */
-body.no-scroll { overflow: hidden; height: 100vh; position: fixed; width: 100%; }
+body.no-scroll { overflow: hidden; }
 
-/* ANIMACIONES */
+/* ANIMACIONES & INTERACCIÓN */
 @keyframes blink-soft { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 .blink-active { animation: blink-soft 0.2s ease-in-out 2; }
 .interactive-btn, .project-trigger, .interactive-card { cursor: pointer; }
 
-/* --- STICKY NAV --- */
+/* STICKY NAV */
 .sticky-nav {
   position: fixed; top: 0; left: 0; width: 100%; height: 70px;
   background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(15px);
@@ -61,7 +59,7 @@ body.no-scroll { overflow: hidden; height: 100vh; position: fixed; width: 100%; 
 .contact-nav-btn { background: var(--accent-color); color: #fff; font-weight: 700; border-radius: 2px; }
 .contact-nav-btn:hover { background: #fff; color: var(--accent-color); }
 
-/* Switch flotante */
+/* SWITCH FLOTANTE */
 .lang-switch-floating {
   position: fixed; top: 30px; right: 40px; z-index: 500;
   background: transparent; border: 1px solid rgba(255, 255, 255, 0.2);
@@ -71,22 +69,20 @@ body.no-scroll { overflow: hidden; height: 100vh; position: fixed; width: 100%; 
 .lang-switch-floating:hover { background: rgba(255, 255, 255, 0.1); border-color: #fff; }
 .lang-switch-floating.hidden { opacity: 0; pointer-events: none; }
 
-/* --- HERO --- */
+/* HERO */
 .hero { height: 100vh; width: 100%; display: flex; align-items: center; padding: 0 5vw; position: relative; z-index: 2; }
 .hero-grid { display: grid; grid-template-columns: 1.2fr 1fr; width: 100%; align-items: center; }
-
 .hero-title {
   font-size: clamp(3.5rem, 8vw, 7rem); font-weight: 700; letter-spacing: -3px; line-height: 0.9;
   color: #fff; margin: 0; margin-bottom: 20px;
 }
 .blend-mode-text { mix-blend-mode: difference; color: #fff; position: relative; z-index: 10; }
-
 .hero-subtitle { font-family: var(--font-mono); font-size: clamp(1rem, 2vw, 1.5rem); color: #888; }
 .glitch { color: var(--accent-color); font-weight: 700; }
 .location { margin-top: 2rem; font-family: var(--font-mono); font-size: 0.7rem; padding: 5px 10px; border: 1px solid #333; display: inline-block; }
 .scroll-indicator { position: absolute; bottom: 30px; left: 5vw; font-family: var(--font-mono); font-size: 0.7rem; color: #666; animation: bounce 2s infinite; }
 
-/* --- PROYECTOS --- */
+/* PROYECTOS */
 .projects-container { background-color: var(--bg-color); position: relative; z-index: 10; padding: 100px 5vw 50px; }
 .projects-layout { display: grid; grid-template-columns: 30% 1fr; gap: 40px; position: relative; }
 .projects-sidebar { height: 100%; }
@@ -125,22 +121,16 @@ body.no-scroll { overflow: hidden; height: 100vh; position: fixed; width: 100%; 
 .project-item:hover .project-media { filter: brightness(1); border-color: rgba(255, 255, 255, 0.4); height: auto; aspect-ratio: 16/9; width: 50%; }
 .project-item:hover .project-media video { opacity: 1; }
 
-/* --- DETAIL VIEW (SCROLL FIX FINAL) --- */
+/* --- DETAIL VIEW (SCROLL FIX DEFINITIVO) --- */
 .detail-view {
-  position: fixed; top: 0; left: 0; width: 100%; 
-  /* Usar dvh para móviles asegura que ocupe la pantalla real */
-  height: 100dvh; 
-  background: var(--bg-color); z-index: 20000;
-  
-  /* CRÍTICO PARA SCROLL */
-  overflow-y: auto; 
-  -webkit-overflow-scrolling: touch; 
-  overscroll-behavior: contain;
-  
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.5s ease; padding: 100px 5vw;
+  /* No usamos position: fixed aquí, usamos display block/none en el flujo */
+  width: 100%; 
+  min-height: 100vh;
+  background: var(--bg-color); 
+  z-index: 20; /* Encima de todo */
+  padding: 100px 5vw;
+  position: relative; /* Clave para el scroll */
 }
-.detail-view.active { opacity: 1; pointer-events: auto; }
 
 .detail-nav { position: fixed; top: 30px; left: 5vw; z-index: 20001; }
 .back-btn { background: var(--bg-color); border: 1px solid #fff; color: #fff; padding: 10px 20px; font-family: var(--font-mono); text-transform: uppercase; }
@@ -159,7 +149,7 @@ body.no-scroll { overflow: hidden; height: 100vh; position: fixed; width: 100%; 
 .detail-item img, .detail-item video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .detail-item.full-width { grid-column: span 2; }
 
-/* --- CAPABILITIES & CV --- */
+/* CAPABILITIES & CV */
 .capabilities-section { background-color: var(--bg-color); position: relative; z-index: 10; padding: 100px 5vw; border-top: 1px solid var(--border-thin); }
 .capabilities-headline { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 500; line-height: 1.1; margin-bottom: 80px; max-width: 1200px; }
 .capabilities-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 60px 40px; }
@@ -176,7 +166,7 @@ body.no-scroll { overflow: hidden; height: 100vh; position: fixed; width: 100%; 
 .contact-btn { display: inline-block; background: transparent; color: #fff; padding: 15px 30px; font-weight: 700; text-decoration: none; margin-top: 20px; border: 1px solid #fff; font-family: var(--font-mono); font-size: 0.9rem; transition: 0.3s; }
 .contact-btn:hover { background: var(--accent-color); border-color: var(--accent-color); }
 
-/* --- MODAL CONTACTO --- */
+/* MODAL CONTACTO */
 .modal-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
   background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);
@@ -195,7 +185,7 @@ body.no-scroll { overflow: hidden; height: 100vh; position: fixed; width: 100%; 
 .submit-btn { width: 100%; background: #fff; color: #000; border: none; padding: 15px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s; }
 .submit-btn:hover { background: var(--accent-color); color: #fff; }
 
-/* UTILS */
+/* UTILS & LOADER */
 .canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; pointer-events: none; }
 .loader-container { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #000; z-index: 10000; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s; }
 .loader-content { text-align: center; }
