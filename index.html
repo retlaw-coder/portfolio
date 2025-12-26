@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Portfolio 3D | Walter Custodio</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
@@ -22,12 +23,7 @@
 
     <header class="sticky-nav">
       <div class="nav-left">
-        <a href="index.html" class="nav-logo interactive-btn">
-          <div class="logo-wrapper">
-            <div class="logo-original"><span>WALTER</span><span>CUSTODIO</span></div>
-            <div class="logo-hover"><span>WALTER</span><span>CUSTODIO</span></div>
-          </div>
-        </a>
+        <a href="index.html" class="nav-logo interactive-btn">WALTER CUSTODIO</a>
       </div>
       <div class="nav-right">
         <button id="lang-switch-nav" class="nav-btn lang-btn interactive-btn">ES</button>
@@ -48,16 +44,21 @@
               <span data-es="DISEÑADOR" data-en="MULTIMEDIA">DISEÑADOR</span>
               <span class="glitch" data-es="MULTIMEDIA" data-en="DESIGNER">MULTIMEDIAL</span>
             </h2>
+            
             <p class="location reveal-text" style="animation-delay: 0.2s">BASED IN ARGENTINA</p>
+            
+            <div class="hero-actions reveal-text" style="animation-delay: 0.3s">
+                <button class="contact-btn interactive-btn open-contact-trigger">INICIAR PROYECTO -></button>
+            </div>
           </div>
         </div>
-        <div class="scroll-indicator reveal-text" style="animation-delay: 0.3s">SCROLL</div>
+        <div class="scroll-indicator reveal-text" style="animation-delay: 0.4s">SCROLL</div>
       </section>
 
       <section class="projects-container" id="projects-start">
         <div class="projects-layout">
           <div class="projects-sidebar">
-            <h3 class="section-title heavy-title sticky-title">TRABAJOS SELECCIONADOS</h3>
+            <h3 class="section-title heavy-title sticky-title" data-es="TRABAJOS SELECCIONADOS" data-en="SELECTED WORK">TRABAJOS SELECCIONADOS</h3>
           </div>
 
           <div class="projects-list">
@@ -70,7 +71,7 @@
                 <video src="assets/proyecto1.mp4" loop muted playsinline></video>
               </div>
               <div class="project-info">
-                <h3>Departamento</h3>
+                <h3 data-es="Departamento" data-en="Apartment">Departamento</h3>
                 <p>3D / Blender</p>
               </div>
             </a>
@@ -84,7 +85,7 @@
                 <video src="assets/proyecto2.mp4" loop muted playsinline></video>
               </div>
               <div class="project-info">
-                <h3>Tren Montañas</h3>
+                <h3 data-es="Tren Montañas" data-en="Mountain Train">Tren Montañas</h3>
                 <p>Animation / Cycles</p>
               </div>
             </a>
@@ -94,8 +95,8 @@
               <div class="corner-accent bottom-left"></div><div class="corner-accent bottom-right"></div>
               <span class="project-number">03</span>
               <div class="project-media">
-                <img src="assets/proyecto3.png" alt="P3" />
-                <video src="assets/proyecto3.mp4" loop muted playsinline></video>
+                <img src="assets/proyecto1.png" alt="P3" />
+                <video src="assets/proyecto1.mp4" loop muted playsinline></video>
               </div>
               <div class="project-info">
                 <h3>Nike Lab</h3>
@@ -149,15 +150,21 @@
       </section>
 
       <section class="capabilities-section">
-        <h3 class="section-title">CAPACIDADES</h3>
-        <h2 class="capabilities-headline">Creando experiencias digitales extraordinarias.</h2>
+        <h3 class="section-title" data-es="CAPACIDADES" data-en="CAPABILITIES">CAPACIDADES</h3>
+        <h2 class="capabilities-headline" data-es="Creando experiencias digitales extraordinarias." data-en="Creating extraordinary digital experiences.">Creando experiencias digitales extraordinarias.</h2>
         <div class="capabilities-grid">
           <div class="capability-item highlight-item">
-            <h4>IDIOMAS</h4> <p>Español [Nativo]<br>Inglés [B2 - Advanced]</p>
+            <h4 data-es="IDIOMAS" data-en="LANGUAGES">IDIOMAS</h4> <p>Español [Nativo]<br>Inglés [B2 - Advanced]</p>
           </div>
-          <div class="capability-item"><h4>Web Design</h4><p>Landing pages inmersivas...</p></div>
-          <div class="capability-item"><h4>3D Modeling</h4><p>Activos 3D y entornos...</p></div>
-          <div class="capability-item"><h4>Video Editing</h4><p>Edición y color grading...</p></div>
+          <div class="capability-item">
+            <h4 data-es="Diseño Web & WebGL" data-en="Web Design & WebGL">Diseño Web & WebGL</h4><p>Landing pages inmersivas...</p>
+          </div>
+          <div class="capability-item">
+            <h4 data-es="Modelado 3D" data-en="3D Modeling">Modelado 3D</h4><p>Activos 3D y entornos...</p>
+          </div>
+          <div class="capability-item">
+            <h4 data-es="Edición de Video" data-en="Video Editing">Edición de Video</h4><p>Edición y color grading...</p>
+          </div>
         </div>
       </section>
 
@@ -173,20 +180,11 @@
             </ul>
           </div>
           <div class="cv-col">
-            <h4 class="cv-label">CONTACTO</h4>
-            <div class="footer-form-wrapper">
-                <h3 class="heavy-title" style="margin-bottom: 30px; font-size: 2rem;">MANDAR MENSAJE</h3>
-                <form action="https://formspree.io/f/xojarndw" method="POST" class="brutalist-form">
-                    <div class="form-group">
-                        <label>E-MAIL</label>
-                        <input type="email" name="email" required placeholder="tu@email.com">
-                    </div>
-                    <div class="form-group">
-                        <label>MENSAJE</label>
-                        <textarea name="message" rows="4" required placeholder="Hola Walter..."></textarea>
-                    </div>
-                    <button type="submit" class="submit-btn-big interactive-btn">ENVIAR -></button>
-                </form>
+            <h4 class="cv-label">HISTORIAL</h4>
+            <div class="cv-entry"><span class="year">2023 - PRES.</span><p>Freelance 3D Artist</p></div>
+            <div class="cv-footer-text">
+                <p>¿Tienes un proyecto en mente?</p>
+                <button class="contact-btn interactive-btn open-contact-trigger">CONTACTAR -></button>
             </div>
           </div>
         </div>
@@ -197,9 +195,10 @@
       <div class="modal-content">
         <button id="close-modal-btn" class="close-modal">×</button>
         <h2>INICIAR PROYECTO</h2>
+        <p class="modal-desc">Cuéntame sobre tu idea.</p>
         <form action="https://formspree.io/f/xojarndw" method="POST" class="contact-form">
-          <div class="form-group"><label>E-MAIL</label><input type="email" name="email" required></div>
-          <div class="form-group"><label>MENSAJE</label><textarea name="message" rows="4" required></textarea></div>
+          <div class="form-group"><label>E-MAIL</label><input type="email" name="email" required placeholder="tu@email.com"></div>
+          <div class="form-group"><label>MENSAJE</label><textarea name="message" rows="4" required placeholder="Hola Walter..."></textarea></div>
           <button type="submit" class="submit-btn interactive-btn">ENVIAR</button>
         </form>
       </div>
