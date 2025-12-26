@@ -19,43 +19,27 @@ const fakeLoad = setInterval(() => {
   }
 }, 50);
 
-// --- TRANSICIÓN ENTRE PÁGINAS (FADE) ---
+// --- TRANSICIÓN FADE ---
 const overlay = document.querySelector('.page-transition-overlay');
+window.addEventListener('load', () => { if(overlay) overlay.classList.remove('active'); });
 
-// Al entrar a una página (project.html), quitar el overlay negro
-window.addEventListener('load', () => {
-    if(overlay) overlay.classList.remove('active');
-});
-
-// Al salir (clic en link con clase link-transition)
 document.querySelectorAll('.link-transition').forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
         const target = link.getAttribute('href');
-        
-        // 1. Mostrar overlay (Fade out)
         if(overlay) overlay.classList.add('active');
-        
-        // 2. Esperar y cambiar de página
-        setTimeout(() => {
-            window.location.href = target;
-        }, 600); // 600ms match css transition
+        setTimeout(() => { window.location.href = target; }, 600);
     });
 });
 
-
-// --- LENIS SCROLL ---
+// --- LENIS SCROLL (Solo si NO es mobile para evitar conflictos, o config simple) ---
 const lenis = new Lenis({ duration: 1.2, smooth: true });
-function raf(time) {
-  lenis.raf(time);
-  requestAnimationFrame(raf);
-}
+function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
 requestAnimationFrame(raf);
 
 // --- HOME LOGIC ---
 if (document.body.classList.contains('home-page')) {
     
-    // Sticky Nav
     const stickyNav = document.querySelector(".sticky-nav");
     lenis.on("scroll", (e) => {
         if (e.scroll > window.innerHeight * 0.5) stickyNav.classList.add("visible");
@@ -66,22 +50,73 @@ if (document.body.classList.contains('home-page')) {
     document.querySelectorAll(".project-item").forEach((item) => {
       const video = item.querySelector("video");
       item.addEventListener("mouseenter", () => {
-        if (video) {
-          video.currentTime = 0;
-          video.play().catch(() => {});
-        }
+        if (video) { video.currentTime = 0; video.play().catch(() => {}); }
       });
       item.addEventListener("mouseleave", () => {
         if (video) video.pause();
       });
-      // Mobile Touch Support
       item.addEventListener("touchstart", () => {
           if (video) video.play().catch(() => {});
       }, {passive: true});
     });
 
     // 3D Scene
-    initThreeJS();
+    const canvas = document.querySelector("#hero-canvas");
+    if(canvas) {
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 1, 5);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(5, 5, 5);
+        scene.add(directionalLight);
+
+        let model;
+        const loader = new GLTFLoader();
+        const dracoLoader = new DRACOLoader();
+        dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
+        loader.setDRACOLoader(dracoLoader);
+
+        loader.load("assets/mis-edificios.glb", (gltf) => {
+            model = gltf.scene;
+            model.position.set(5, -2, 0); 
+            model.scale.set(0.07, 0.07, 0.07);
+            model.rotation.y = -0.5;
+            scene.add(model);
+        });
+
+        let mouseX = 0, mouseY = 0;
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+        document.addEventListener("mousemove", (event) => {
+            mouseX = event.clientX - windowHalfX;
+            mouseY = event.clientY - windowHalfY;
+        });
+
+        const animate = () => {
+            requestAnimationFrame(animate);
+            if (model) {
+                if(window.innerWidth < 768) model.rotation.y += 0.002;
+                else {
+                    model.rotation.y += 0.05 * ((mouseX * 0.0005 - 0.5) - model.rotation.y);
+                    model.rotation.x += 0.05 * (mouseY * 0.0005 - model.rotation.x);
+                }
+            }
+            renderer.render(scene, camera);
+        };
+        animate();
+        
+        window.addEventListener("resize", () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    }
 }
 
 // --- PROJECT DETAIL LOGIC ---
@@ -175,63 +210,14 @@ if(modal) {
     modal.addEventListener("click", (e) => { if(e.target === modal) closeModal(); });
 }
 
-// --- THREE JS ---
-function initThreeJS() {
-    const canvas = document.querySelector("#hero-canvas");
-    if(!canvas) return;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 1, 5);
-
-    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(5, 5, 5);
-    scene.add(directionalLight);
-
-    let model;
-    const loader = new GLTFLoader();
-    const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
-    loader.setDRACOLoader(dracoLoader);
-
-    loader.load("assets/mis-edificios.glb", (gltf) => {
-        model = gltf.scene;
-        model.position.set(5, -2, 0); 
-        model.scale.set(0.07, 0.07, 0.07);
-        model.rotation.y = -0.5;
-        scene.add(model);
+// Language Toggle
+const langBtns = document.querySelectorAll('#lang-switch-nav, #lang-switch-hero');
+let currentLang = "es";
+langBtns.forEach(btn => btn.addEventListener("click", () => {
+    currentLang = currentLang === "es" ? "en" : "es";
+    document.querySelectorAll("[data-es]").forEach(el => {
+        el.innerText = el.getAttribute(`data-${currentLang}`);
     });
-
-    let mouseX = 0, mouseY = 0;
-    const windowHalfX = window.innerWidth / 2;
-    const windowHalfY = window.innerHeight / 2;
-    document.addEventListener("mousemove", (event) => {
-        mouseX = event.clientX - windowHalfX;
-        mouseY = event.clientY - windowHalfY;
-    });
-
-    const animate = () => {
-        requestAnimationFrame(animate);
-        if (model) {
-            if(window.innerWidth < 768) model.rotation.y += 0.002;
-            else {
-                model.rotation.y += 0.05 * ((mouseX * 0.0005 - 0.5) - model.rotation.y);
-                model.rotation.x += 0.05 * (mouseY * 0.0005 - model.rotation.x);
-            }
-        }
-        renderer.render(scene, camera);
-    };
-    animate();
-    
-    window.addEventListener("resize", () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-}
+    // Update button text
+    langBtns.forEach(b => b.querySelector('.lang-text') ? b.querySelector('.lang-text').innerText = currentLang.toUpperCase() : b.innerText = currentLang.toUpperCase());
+}));
