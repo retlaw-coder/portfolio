@@ -46,7 +46,7 @@ if (document.body.classList.contains('home-page')) {
         else stickyNav.classList.remove("visible");
     });
 
-    // Video Preview Logic
+    // Video Preview
     document.querySelectorAll(".project-item").forEach((item) => {
       const video = item.querySelector("video");
       item.addEventListener("mouseenter", () => {
@@ -61,7 +61,62 @@ if (document.body.classList.contains('home-page')) {
     });
 
     // 3D Scene
-    initThreeJS();
+    const canvas = document.querySelector("#hero-canvas");
+    if(canvas) {
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 1, 5);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(5, 5, 5);
+        scene.add(directionalLight);
+
+        let model;
+        const loader = new GLTFLoader();
+        const dracoLoader = new DRACOLoader();
+        dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
+        loader.setDRACOLoader(dracoLoader);
+
+        loader.load("assets/mis-edificios.glb", (gltf) => {
+            model = gltf.scene;
+            model.position.set(5, -2, 0); 
+            model.scale.set(0.07, 0.07, 0.07);
+            model.rotation.y = -0.5;
+            scene.add(model);
+        });
+
+        let mouseX = 0, mouseY = 0;
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+        document.addEventListener("mousemove", (event) => {
+            mouseX = event.clientX - windowHalfX;
+            mouseY = event.clientY - windowHalfY;
+        });
+
+        const animate = () => {
+            requestAnimationFrame(animate);
+            if (model) {
+                if(window.innerWidth < 768) model.rotation.y += 0.002;
+                else {
+                    model.rotation.y += 0.05 * ((mouseX * 0.0005 - 0.5) - model.rotation.y);
+                    model.rotation.x += 0.05 * (mouseY * 0.0005 - model.rotation.x);
+                }
+            }
+            renderer.render(scene, camera);
+        };
+        animate();
+        
+        window.addEventListener("resize", () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    }
 }
 
 // --- PROJECT DETAIL LOGIC ---
@@ -69,7 +124,7 @@ if (document.body.classList.contains('project-page')) {
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
     
-    // DATA REAL
+    // DATA
     const projectData = {
         1: { title: "Departamento", desc: "Renderizado realista de interiores.", stack: ["Blender", "Cycles"], imgs: ["assets/proyecto1.png"], vids: ["assets/proyecto1.mp4"] },
         2: { title: "Tren Montañas", desc: "Animación de entorno natural.", stack: ["Blender", "Animation"], imgs: ["assets/proyecto2.png"], vids: ["assets/proyecto2.mp4"] },
@@ -133,78 +188,12 @@ const langBtns = document.querySelectorAll('#lang-switch-nav, #lang-switch-hero'
 
 langBtns.forEach(btn => btn.addEventListener("click", () => {
     currentLang = currentLang === "es" ? "en" : "es";
-    
-    // Traducir contenido
     document.querySelectorAll("[data-es]").forEach(el => {
         el.innerText = el.getAttribute(`data-${currentLang}`);
     });
-
-    // Actualizar botones de idioma
     langBtns.forEach(b => {
-        // Si tiene span dentro (Mobile), actualizar el span
         const span = b.querySelector('.lang-text');
         if(span) span.innerText = currentLang.toUpperCase();
         else b.innerText = currentLang.toUpperCase();
     });
 }));
-
-// --- THREE JS ---
-function initThreeJS() {
-    const canvas = document.querySelector("#hero-canvas");
-    if(!canvas) return;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 1, 5);
-
-    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(5, 5, 5);
-    scene.add(directionalLight);
-
-    let model;
-    const loader = new GLTFLoader();
-    const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
-    loader.setDRACOLoader(dracoLoader);
-
-    loader.load("assets/mis-edificios.glb", (gltf) => {
-        model = gltf.scene;
-        model.position.set(5, -2, 0); 
-        model.scale.set(0.07, 0.07, 0.07);
-        model.rotation.y = -0.5;
-        scene.add(model);
-    });
-
-    let mouseX = 0, mouseY = 0;
-    const windowHalfX = window.innerWidth / 2;
-    const windowHalfY = window.innerHeight / 2;
-    document.addEventListener("mousemove", (event) => {
-        mouseX = event.clientX - windowHalfX;
-        mouseY = event.clientY - windowHalfY;
-    });
-
-    const animate = () => {
-        requestAnimationFrame(animate);
-        if (model) {
-            if(window.innerWidth < 768) model.rotation.y += 0.002;
-            else {
-                model.rotation.y += 0.05 * ((mouseX * 0.0005 - 0.5) - model.rotation.y);
-                model.rotation.x += 0.05 * (mouseY * 0.0005 - model.rotation.x);
-            }
-        }
-        renderer.render(scene, camera);
-    };
-    animate();
-    
-    window.addEventListener("resize", () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-}
