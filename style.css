@@ -52,38 +52,72 @@ body.project-page .sticky-nav { transform: translateY(0); }
 .location { margin-top: 30px; margin-bottom: 20px; font-family: var(--font-mono); font-size: 0.75rem; padding: 8px 16px; border: 1px solid #fff; border-radius: 4px; display: inline-block; letter-spacing: 1px; }
 .scroll-indicator { position: absolute; bottom: 30px; left: 5vw; font-family: var(--font-mono); font-size: 0.7rem; color: #666; animation: bounce 2s infinite; }
 
-/* PROYECTOS */
+/* --- PROYECTOS (CORREGIDO PARA DESKTOP) --- */
 .projects-container { background-color: var(--bg-color); position: relative; z-index: 10; padding: 100px 5vw; }
 .projects-layout { display: grid; grid-template-columns: 30% 1fr; gap: 40px; }
 .sticky-title { position: sticky; top: 120px; height: fit-content; }
 .heavy-title { font-family: var(--font-display); font-weight: 700; font-size: 2rem; color: #fff; letter-spacing: -1px; }
 
-.project-item {
-  display: flex; justify-content: space-between; align-items: center;
-  border: 1px solid var(--border-thin); margin-bottom: 40px; padding: 40px 3vw;
-  position: relative; overflow: hidden; background: rgba(255, 255, 255, 0.01);
-  transition: all 0.6s var(--ease-fluid); cursor: pointer;
-  gap: 30px; /* Separación extra para evitar pegotes */
+/* Grilla de 2 columnas para los proyectos en escritorio */
+.projects-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 60px 40px; /* Espaciado vertical y horizontal */
 }
-.project-item:hover { background: rgba(255, 255, 255, 0.04); border-color: var(--border-dim); padding: 60px 3vw; }
 
-.project-number { font-family: var(--font-mono); font-size: 0.8rem; color: #444; width: 40px; flex-shrink: 0; }
+.project-item {
+  display: flex;
+  flex-direction: column; /* Apila media y texto verticalmente */
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* Ocultamos los acentos de esquina y números en escritorio para un look más limpio */
+.project-item .corner-accent,
+.project-number {
+  display: none;
+}
 
 .project-media {
-  width: 45%; height: 160px; overflow: hidden; position: relative; background: #111;
-  border: 1px solid var(--border-thin); filter: brightness(0.8);
-  transition: all 0.7s var(--ease-fluid); pointer-events: none;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16/9; /* Relación de aspecto fija para todas las imágenes/videos */
+  overflow: hidden;
+  position: relative;
+  background: #111;
+  margin-bottom: 25px; /* Espacio entre media y título */
 }
 .project-media img, .project-media video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
 .project-media video { opacity: 0; transition: opacity 0.5s ease; }
 .video-placeholder { opacity: 0; transition: opacity 0.5s ease; position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; }
 
-.project-item:hover .project-media { filter: brightness(1); border-color: rgba(255, 255, 255, 0.4); height: auto; aspect-ratio: 16/9; width: 50%; }
-.project-item:hover .project-media video, .project-item:hover .project-media .video-placeholder { opacity: 1; }
+.project-item:hover .project-media video,
+.project-item:hover .project-media .video-placeholder { opacity: 1; }
 
-.project-info { width: 35%; text-align: right; z-index: 2; pointer-events: none; flex-shrink: 0; }
-.project-info h3 { font-size: 2.5rem; margin-bottom: 5px; text-transform: uppercase; }
-.project-info p { font-family: var(--font-mono); font-size: 0.75rem; color: #888; }
+.project-info {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.project-info h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0;
+  text-transform: uppercase;
+  font-weight: 700;
+  flex: 1;
+  padding-right: 20px;
+}
+.project-info p {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: #ccc;
+  flex: 1;
+  text-align: right;
+  line-height: 1.4;
+}
 
 /* PROJECT DETAIL */
 .detail-container-grid { display: grid; grid-template-columns: 350px 1fr; gap: 60px; padding: 120px 5vw 100px; max-width: 1600px; margin: 0 auto; }
@@ -147,12 +181,57 @@ body.project-page .sticky-nav { transform: translateY(0); }
   .projects-layout, .detail-container-grid, .detail-media-grid, .capabilities-grid { grid-template-columns: 1fr; }
   .sticky-title, .detail-sidebar { position: static; margin-bottom: 40px; }
   
-  .cv-grid { grid-template-columns: 1fr; gap: 50px; } /* CV 1 col en mobile */
+  .cv-grid { grid-template-columns: 1fr; gap: 50px; }
   
-  .project-item { flex-direction: column-reverse; align-items: flex-start; gap: 0; }
-  .project-media { width: 100%; height: 200px; margin-bottom: 20px; }
+  /* Restauramos el diseño de lista para móvil */
+  .projects-list { display: block; }
+  
+  .project-item {
+    flex-direction: column-reverse; /* Texto arriba, media abajo */
+    align-items: flex-start;
+    gap: 0;
+    border: 1px solid var(--border-thin);
+    padding: 40px 3vw;
+    background: rgba(255, 255, 255, 0.01);
+    margin-bottom: 40px;
+  }
+  
+  /* Mostramos de nuevo los acentos y números en móvil */
+  .project-item .corner-accent,
+  .project-number {
+    display: block;
+    flex-shrink: 0;
+    width: 40px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: #444;
+  }
+
+  .project-media {
+    width: 100%;
+    height: 200px; /* Altura fija para móvil */
+    aspect-ratio: auto;
+    margin-bottom: 20px;
+  }
   .project-item:active .project-media { width: 100%; aspect-ratio: 16/9; }
-  .project-info { width: 100%; }
+
+  .project-info {
+    width: 100%;
+    display: block;
+    text-align: left;
+  }
+  .project-info h3 {
+    font-size: 2.5rem;
+    padding-right: 0;
+    margin-bottom: 5px;
+  }
+  .project-info p {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: #888;
+    text-align: left;
+  }
+
   .detail-item.full-width { grid-column: span 1; }
   .detail-container-grid { padding-top: 100px; }
 }
