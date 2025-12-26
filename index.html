@@ -27,9 +27,13 @@
       </div>
       <div class="nav-right">
         <button id="lang-switch-nav" class="nav-btn lang-btn interactive-btn">ES</button>
-        <button class="nav-btn contact-nav-btn interactive-btn open-contact-trigger">CONTACTAR</button>
+        <button class="nav-btn contact-nav-btn interactive-btn open-contact-trigger" data-es="CONTACTAR" data-en="CONTACT">CONTACTAR</button>
       </div>
     </header>
+
+    <button id="lang-switch-hero" class="lang-switch-floating interactive-btn">
+      <span class="flag">🇦🇷</span> <span class="lang-text">ES</span>
+    </button>
 
     <div class="canvas-container">
       <canvas id="hero-canvas"></canvas>
@@ -44,15 +48,10 @@
               <span data-es="DISEÑADOR" data-en="MULTIMEDIA">DISEÑADOR</span>
               <span class="glitch" data-es="MULTIMEDIA" data-en="DESIGNER">MULTIMEDIAL</span>
             </h2>
-            
             <p class="location reveal-text" style="animation-delay: 0.2s">BASED IN ARGENTINA</p>
-            
-            <div class="hero-actions reveal-text" style="animation-delay: 0.3s">
-                <button class="contact-btn interactive-btn open-contact-trigger">INICIAR PROYECTO -></button>
             </div>
-          </div>
         </div>
-        <div class="scroll-indicator reveal-text" style="animation-delay: 0.4s">SCROLL</div>
+        <div class="scroll-indicator reveal-text" style="animation-delay: 0.3s">SCROLL</div>
       </section>
 
       <section class="projects-container" id="projects-start">
@@ -165,6 +164,10 @@
           <div class="capability-item">
             <h4 data-es="Edición de Video" data-en="Video Editing">Edición de Video</h4><p>Edición y color grading...</p>
           </div>
+          <div class="capability-item">
+            <h4 data-es="Animación 2D y 3D" data-en="2D & 3D Animation">Animación 2D y 3D</h4>
+            <p data-es="Motion graphics, animación de personajes y simulaciones para narrativa visual." data-en="Motion graphics, character animation and simulations for visual storytelling.">Motion graphics, animación de personajes y simulaciones para narrativa visual.</p>
+          </div>
         </div>
       </section>
 
@@ -183,8 +186,8 @@
             <h4 class="cv-label">HISTORIAL</h4>
             <div class="cv-entry"><span class="year">2023 - PRES.</span><p>Freelance 3D Artist</p></div>
             <div class="cv-footer-text">
-                <p>¿Tienes un proyecto en mente?</p>
-                <button class="contact-btn interactive-btn open-contact-trigger">CONTACTAR -></button>
+                <p data-es="¿Listo para comenzar?" data-en="Ready to start?">¿Listo para comenzar?</p>
+                <button class="contact-btn interactive-btn open-contact-trigger" data-es="INICIAR PROYECTO" data-en="START PROJECT">INICIAR PROYECTO</button>
             </div>
           </div>
         </div>
@@ -194,12 +197,12 @@
     <div id="contact-modal" class="modal-overlay">
       <div class="modal-content">
         <button id="close-modal-btn" class="close-modal">×</button>
-        <h2>INICIAR PROYECTO</h2>
-        <p class="modal-desc">Cuéntame sobre tu idea.</p>
+        <h2 data-es="INICIAR PROYECTO" data-en="START PROJECT">INICIAR PROYECTO</h2>
+        <p class="modal-desc" data-es="Cuéntame sobre tu idea." data-en="Tell me about your idea.">Cuéntame sobre tu idea.</p>
         <form action="https://formspree.io/f/xojarndw" method="POST" class="contact-form">
           <div class="form-group"><label>E-MAIL</label><input type="email" name="email" required placeholder="tu@email.com"></div>
           <div class="form-group"><label>MENSAJE</label><textarea name="message" rows="4" required placeholder="Hola Walter..."></textarea></div>
-          <button type="submit" class="submit-btn interactive-btn">ENVIAR</button>
+          <button type="submit" class="submit-btn interactive-btn" data-es="ENVIAR" data-en="SEND">ENVIAR</button>
         </form>
       </div>
     </div>
