@@ -4,72 +4,52 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Portfolio 3D | Walter Custodio</title>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
-      rel="stylesheet"
-    />
-    
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body>
+  <body class="home-page">
+    
     <div class="loader-container" id="loader">
       <div class="loader-content">
-        <div class="loader-circle">
-          <span class="loader-progress">0%</span>
-        </div>
+        <div class="loader-circle"><span class="loader-progress">0%</span></div>
         <p class="loader-text">LOADING SYSTEM</p>
       </div>
     </div>
 
-    <div id="particle-overlay"></div>
-
     <header class="sticky-nav">
       <div class="nav-left">
-        <a href="#" class="nav-logo interactive-btn">
+        <a href="index.html" class="nav-logo interactive-btn">
           <div class="logo-wrapper">
-            <div class="logo-original">
-              <span>WALTER</span>
-              <span>CUSTODIO</span>
-            </div>
-            <div class="logo-hover">
-              <span>@RETLAW</span>
-            </div>
+            <div class="logo-original"><span>WALTER</span><span>CUSTODIO</span></div>
+            <div class="logo-hover"><span>@RETLAW</span></div>
           </div>
         </a>
       </div>
       <div class="nav-right">
         <button id="lang-switch-nav" class="nav-btn lang-btn interactive-btn">ES</button>
-        <button class="nav-btn contact-nav-btn interactive-btn open-contact-trigger" data-es="CONTACTAR" data-en="CONTACT">CONTACTAR</button>
-        <a href="#hero" class="nav-btn back-to-top-btn interactive-btn" data-es="↑ ARRIBA" data-en="↑ TOP">↑ ARRIBA</a>
+        <button class="nav-btn contact-nav-btn interactive-btn open-contact-trigger">CONTACTAR</button>
       </div>
     </header>
-
-    <button id="lang-switch-hero" class="lang-switch-floating interactive-btn">
-      <span class="flag">🇦🇷</span> <span class="lang-text">ES</span>
-    </button>
 
     <div class="canvas-container">
       <canvas id="hero-canvas"></canvas>
     </div>
 
-    <main id="home-view">
-      
+    <main>
       <section class="hero" id="hero">
         <div class="hero-grid">
           <div class="hero-content">
             <h1 class="hero-title reveal-text blend-mode-text">WALTER <br> CUSTODIO</h1>
             <h2 class="hero-subtitle reveal-text" style="animation-delay: 0.1s">
               <span data-es="DISEÑADOR" data-en="MULTIMEDIA">DISEÑADOR</span>
-              <span class="glitch" data-es="MULTIMEDIA" data-en="DESIGNER">MULTIMEDIA</span>
+              <span class="glitch" data-es="MULTIMEDIA" data-en="DESIGNER">MULTIMEDIAL</span>
             </h2>
             <p class="location reveal-text" style="animation-delay: 0.2s" data-es="BASED IN ARGENTINA" data-en="BASED IN ARGENTINA">BASED IN ARGENTINA</p>
           </div>
-          <div class="hero-spacer"></div>
         </div>
-        <div class="scroll-indicator reveal-text" style="animation-delay: 0.3s" data-es="SCROLL PARA EXPLORAR" data-en="SCROLL TO EXPLORE">SCROLL PARA EXPLORAR</div>
+        <div class="scroll-indicator reveal-text" style="animation-delay: 0.3s">SCROLL</div>
       </section>
 
       <section class="projects-container" id="projects-start">
@@ -79,9 +59,9 @@
           </div>
 
           <div class="projects-list">
-            <article class="project-item project-trigger interactive-card" data-id="1">
-              <div class="corner-accent top-left"></div> <div class="corner-accent top-right"></div>
-              <div class="corner-accent bottom-left"></div> <div class="corner-accent bottom-right"></div>
+            <a href="project.html?id=1" class="project-item interactive-card">
+              <div class="corner-accent top-left"></div><div class="corner-accent top-right"></div>
+              <div class="corner-accent bottom-left"></div><div class="corner-accent bottom-right"></div>
               <span class="project-number">01</span>
               <div class="project-media">
                 <img src="assets/proyecto1.png" alt="P1" />
@@ -89,198 +69,91 @@
               </div>
               <div class="project-info">
                 <h3 data-es="Departamento" data-en="Apartment">Departamento</h3>
-                <p data-es="Hecho en Blender, renderizado con Cycles" data-en="Made in Blender, rendered in Cycles">3D</p>
-                <div class="project-tags"><span>3D</span><span>Blender</span></div>
+                <p>3D / Blender</p>
               </div>
-            </article>
+            </a>
 
-            <article class="project-item project-trigger interactive-card" data-id="2">
-              <div class="corner-accent top-left"></div> <div class="corner-accent top-right"></div>
-              <div class="corner-accent bottom-left"></div> <div class="corner-accent bottom-right"></div>
+            <a href="project.html?id=2" class="project-item interactive-card">
+              <div class="corner-accent top-left"></div><div class="corner-accent top-right"></div>
+              <div class="corner-accent bottom-left"></div><div class="corner-accent bottom-right"></div>
               <span class="project-number">02</span>
               <div class="project-media">
                 <img src="assets/proyecto2.png" alt="P2" />
                 <video src="assets/proyecto2.mp4" loop muted playsinline></video>
               </div>
               <div class="project-info">
-                <h3 data-es="Tren entre montañas" data-en="Train between mountains">Tren entre montañas</h3>
-                <p data-es="Modelado 3D" data-en="3D modeling">Hecho en blender</p>
-                <div class="project-tags"><span>Cycles</span><span>Animation</span></div>
+                <h3 data-es="Tren Montañas" data-en="Mountain Train">Tren Montañas</h3>
+                <p>Animation / Cycles</p>
               </div>
-            </article>
+            </a>
 
-            <article class="project-item project-trigger interactive-card" data-id="3">
-              <div class="corner-accent top-left"></div> <div class="corner-accent top-right"></div>
-              <div class="corner-accent bottom-left"></div> <div class="corner-accent bottom-right"></div>
+            <a href="project.html?id=3" class="project-item interactive-card">
+              <div class="corner-accent top-left"></div><div class="corner-accent top-right"></div>
+              <div class="corner-accent bottom-left"></div><div class="corner-accent bottom-right"></div>
               <span class="project-number">03</span>
               <div class="project-media">
-                <img src="assets/proyecto3.png" alt="P3" />
-                <video src="assets/proyecto3.mp4" loop muted playsinline></video>
+                <img src="assets/proyecto1.png" alt="P3" />
+                <video src="assets/proyecto1.mp4" loop muted playsinline></video>
               </div>
               <div class="project-info">
-                <h3 data-es="Nike Lab" data-en="Nike Lab">Nike Lab</h3>
-                <p data-es="Motion 3D" data-en="3D Motion">Motion 3D</p>
-                <div class="project-tags"><span>BLENDER</span><span>SIM</span></div>
+                <h3>Nike Lab</h3>
+                <p>Simulation / Motion</p>
               </div>
-            </article>
-
-            <article class="project-item project-trigger interactive-card" data-id="4">
-              <div class="corner-accent top-left"></div> <div class="corner-accent top-right"></div>
-              <div class="corner-accent bottom-left"></div> <div class="corner-accent bottom-right"></div>
-              <span class="project-number">04</span>
-              <div class="project-media">
-                <img src="assets/proyecto4.png" alt="P4" />
-                <video src="assets/proyecto4.mp4" loop muted playsinline></video>
-              </div>
-              <div class="project-info">
-                <h3 data-es="Proyecto 4" data-en="Project 4">Proyecto 4</h3>
-                <p data-es="Visuales" data-en="Visuals">Visuales</p>
-                <div class="project-tags"><span>BLENDER</span><span>SIM</span></div>
-              </div>
-            </article>
-
-            <article class="project-item project-trigger interactive-card" data-id="5">
-              <div class="corner-accent top-left"></div> <div class="corner-accent top-right"></div>
-              <div class="corner-accent bottom-left"></div> <div class="corner-accent bottom-right"></div>
-              <span class="project-number">05</span>
-              <div class="project-media">
-                <img src="assets/proyecto5_0.png" alt="P5" />
-                <video src="assets/proyecto5_1.mp4" loop muted playsinline></video>
-              </div>
-              <div class="project-info">
-                <h3 data-es="Proyecto 5" data-en="Project 5">Proyecto 5</h3>
-                <p data-es="Motion 3D" data-en="3D Motion">Motion 3D</p>
-                <div class="project-tags"><span>BLENDER</span><span>SIM</span></div>
-              </div>
-            </article>
-
-            <article class="project-item project-trigger interactive-card" data-id="6">
-              <div class="corner-accent top-left"></div> <div class="corner-accent top-right"></div>
-              <div class="corner-accent bottom-left"></div> <div class="corner-accent bottom-right"></div>
-              <span class="project-number">06</span>
-              <div class="project-media">
-                <img src="assets/proyecto7.png" alt="P6" />
-                <video src="assets/proyecto7.mp4" loop muted playsinline></video>
-              </div>
-              <div class="project-info">
-                <h3 data-es="Proyecto 6" data-en="Project 6">Proyecto 6</h3>
-                <p data-es="Motion 3D" data-en="3D Motion">Motion 3D</p>
-                <div class="project-tags"><span>BLENDER</span><span>SIM</span></div>
-              </div>
-            </article>
+            </a>
           </div>
         </div>
       </section>
 
       <section class="capabilities-section">
         <h3 class="section-title" data-es="CAPACIDADES" data-en="CAPABILITIES">CAPACIDADES</h3>
-        <h2 class="capabilities-headline" data-es="Creando experiencias digitales extraordinarias que dejan huella." data-en="Creating extraordinary digital experiences that leave a mark.">
-          Creando experiencias digitales extraordinarias que dejan huella.
-        </h2>
+        <h2 class="capabilities-headline" data-es="Creando experiencias digitales extraordinarias." data-en="Creating extraordinary digital experiences.">Creando experiencias digitales extraordinarias.</h2>
         <div class="capabilities-grid">
           <div class="capability-item highlight-item">
-            <h4 data-es="IDIOMAS" data-en="LANGUAGES">IDIOMAS</h4>
-            <p>
-              <span data-es="Español" data-en="Spanish">Español</span> [Nativo]<br>
-              <span data-es="Inglés" data-en="English">Inglés</span> [B2 - Advanced]
-            </p>
-          </div>
-
-          <div class="capability-item">
-            <h4 data-es="Diseño Web & WebGL" data-en="Web Design & WebGL">Diseño Web & WebGL</h4>
-            <p data-es="Desde landing pages inmersivas hasta experiencias interactivas completas..." data-en="From immersive landing pages to full interactive experiences...">Desde landing pages inmersivas hasta experiencias interactivas completas...</p>
+            <h4>IDIOMAS</h4> <p>Español [Nativo]<br>Inglés [B2 - Advanced]</p>
           </div>
           <div class="capability-item">
-            <h4 data-es="Modelado & Animación 3D" data-en="3D Modeling & Animation">Modelado & Animación 3D</h4>
-            <p data-es="Creación de activos 3D..." data-en="Creation of 3D assets...">Creación de activos 3D...</p>
+            <h4>Web Design</h4> <p>Landing pages inmersivas y experiencias interactivas.</p>
           </div>
           <div class="capability-item">
-            <h4 data-es="Edición de Video & Post" data-en="Video Editing & Post">Edición de Video & Post</h4>
-            <p data-es="Edición, corrección de color..." data-en="Editing, color grading...">Edición, corrección de color...</p>
+            <h4>3D Modeling</h4> <p>Activos 3D, entornos y motion graphics.</p>
           </div>
           <div class="capability-item">
-            <h4 data-es="Docencia & Mentoría" data-en="Teaching & Mentorship">Docencia & Mentoría</h4>
-            <p data-es="Experiencia docente universitaria..." data-en="University teaching experience...">Experiencia docente universitaria...</p>
+            <h4>Video Editing</h4> <p>Edición, color grading y post-producción.</p>
           </div>
         </div>
       </section>
 
       <section class="cv-section">
-        <div class="cv-header">
-          <h2 data-es="// PERFIL_DATA" data-en="// PROFILE_DATA">// PERFIL_DATA</h2>
-          <span class="cv-id">ID: 2025-V2.3</span>
-        </div>
+        <div class="cv-header"><h2>// PERFIL_DATA</h2> <span class="cv-id">ID: 2025</span></div>
         <div class="cv-grid">
           <div class="cv-col">
-            <h4 class="cv-label" data-es="STACK" data-en="STACK">STACK</h4>
+            <h4 class="cv-label">STACK</h4>
             <ul class="tech-list">
               <li><span>BLENDER</span> <span class="level">/// EXP</span></li>
               <li><span>THREE.JS</span> <span class="level">// INT</span></li>
-              <li><span>ADOBE SUITE</span> <span class="level">//// ADV</span></li>
+              <li><span>ADOBE</span> <span class="level">//// ADV</span></li>
             </ul>
           </div>
-          
           <div class="cv-col">
-            <h4 class="cv-label" data-es="HISTORIAL_LOG" data-en="BACKGROUND_LOG">HISTORIAL_LOG</h4>
-            <div class="cv-entry">
-               <span class="year">2023 - PRES.</span>
-               <p data-es="Artista 3D Freelance" data-en="Freelance 3D Artist">Artista 3D Freelance</p>
-               <small>Global Remote</small>
-            </div>
-            <div class="cv-entry">
-               <span class="year">2021 - 2025</span>
-               <p data-es="Licenciatura de Diseño Multimedia" data-en="Multimedia Design Bachelor">Licenciatura de Diseño Multimedia</p>
-               <small>Universidad Nacional de La Plata</small>
-            </div>
-            
+            <h4 class="cv-label">HISTORIAL</h4>
+            <div class="cv-entry"><span class="year">2023 - PRES.</span><p>Freelance 3D Artist</p></div>
             <div class="cv-footer-text">
-                <p data-es="Disponible para nuevos desafíos." data-en="Available for new challenges.">Disponible para nuevos desafíos.</p>
-                <button class="contact-btn interactive-btn open-contact-trigger" data-es="CONTACTAR ->" data-en="CONTACT ->">CONTACTAR -></button>
+                <button class="contact-btn interactive-btn open-contact-trigger">CONTACTAR -></button>
             </div>
           </div>
         </div>
       </section>
     </main>
 
-    <div id="project-detail-view" class="detail-view" style="display: none;">
-      <div class="detail-nav">
-        <button id="back-btn" class="back-btn interactive-btn" data-es="← VOLVER" data-en="← BACK">← VOLVER</button>
-      </div>
-
-      <div class="detail-container-grid">
-          <div class="detail-sidebar">
-              <h1 id="detail-title">PROJECT TITLE</h1>
-              <div class="detail-meta">
-                  <p id="detail-desc">Descripción...</p>
-                  <div class="detail-tech-stack">
-                      <h4>STACK</h4>
-                      <ul id="detail-stack-list"></ul>
-                  </div>
-              </div>
-          </div>
-
-          <div class="detail-media-grid">
-              </div>
-      </div>
-    </div>
-
     <div id="contact-modal" class="modal-overlay">
       <div class="modal-content">
         <button id="close-modal-btn" class="close-modal">×</button>
-        <h2 data-es="INICIAR PROYECTO" data-en="START PROJECT">INICIAR PROYECTO</h2>
-        <p class="modal-desc" data-es="Cuéntame sobre tu idea. Responderé a la brevedad." data-en="Tell me about your idea. I'll get back to you shortly.">Cuéntame sobre tu idea. Responderé a la brevedad.</p>
-
+        <h2>INICIAR PROYECTO</h2>
+        <p class="modal-desc">Cuéntame sobre tu idea.</p>
         <form action="https://formspree.io/f/xojarndw" method="POST" class="contact-form">
-          <div class="form-group">
-            <label for="email">E-MAIL</label>
-            <input type="email" name="email" id="email" required placeholder="tu@email.com">
-          </div>
-          <div class="form-group">
-            <label for="message" data-es="MENSAJE" data-en="MESSAGE">MENSAJE</label>
-            <textarea name="message" id="message" rows="4" required placeholder="Hola Walter..."></textarea>
-          </div>
-          <input type="hidden" name="_subject" value="Portfolio-input">
-          <button type="submit" class="submit-btn interactive-btn" data-es="ENVIAR MENSAJE" data-en="SEND MESSAGE">ENVIAR MENSAJE</button>
+          <div class="form-group"><label>E-MAIL</label><input type="email" name="email" required></div>
+          <div class="form-group"><label>MENSAJE</label><textarea name="message" rows="4" required></textarea></div>
+          <button type="submit" class="submit-btn interactive-btn">ENVIAR</button>
         </form>
       </div>
     </div>
