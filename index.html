@@ -4,29 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Portfolio 3D | Walter Custodio</title>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body class="home-page">
     
     <div class="loader-container" id="loader">
       <div class="loader-content">
-        <div class="loader-circle">
-            <span class="loader-progress">0%</span>
-        </div>
+        <div class="loader-circle"><span class="loader-progress">0%</span></div>
         <p class="loader-text">LOADING SYSTEM</p>
       </div>
     </div>
+
+    <div class="page-transition-overlay"></div>
 
     <header class="sticky-nav">
       <div class="nav-left">
         <a href="index.html" class="nav-logo interactive-btn">
           <div class="logo-wrapper">
             <div class="logo-original"><span>WALTER</span><span>CUSTODIO</span></div>
-            <div class="logo-hover"><span>@RETLAW</span></div>
+            <div class="logo-hover"><span>WALTER</span><span>CUSTODIO</span></div>
           </div>
         </a>
       </div>
@@ -47,9 +46,9 @@
             <h1 class="hero-title reveal-text blend-mode-text">WALTER <br> CUSTODIO</h1>
             <h2 class="hero-subtitle reveal-text" style="animation-delay: 0.1s">
               <span data-es="DISEÑADOR" data-en="MULTIMEDIA">DISEÑADOR</span>
-              <span class="glitch" data-es="MULTIMEDIA" data-en="DESIGNER">MULTIMEDIA</span>
+              <span class="glitch" data-es="MULTIMEDIA" data-en="DESIGNER">MULTIMEDIAL</span>
             </h2>
-            <p class="location reveal-text" style="animation-delay: 0.2s" data-es="BASED IN ARGENTINA" data-en="BASED IN ARGENTINA">BASED IN ARGENTINA</p>
+            <p class="location reveal-text" style="animation-delay: 0.2s">BASED IN ARGENTINA</p>
           </div>
         </div>
         <div class="scroll-indicator reveal-text" style="animation-delay: 0.3s">SCROLL</div>
@@ -58,11 +57,11 @@
       <section class="projects-container" id="projects-start">
         <div class="projects-layout">
           <div class="projects-sidebar">
-            <h3 class="section-title heavy-title sticky-title" data-es="TRABAJOS SELECCIONADOS" data-en="SELECTED WORK">TRABAJOS SELECCIONADOS</h3>
+            <h3 class="section-title heavy-title sticky-title">TRABAJOS SELECCIONADOS</h3>
           </div>
 
           <div class="projects-list">
-            <a href="project.html?id=1" class="project-item interactive-card">
+            <a href="project.html?id=1" class="project-item interactive-card link-transition">
               <div class="corner-accent top-left"></div><div class="corner-accent top-right"></div>
               <div class="corner-accent bottom-left"></div><div class="corner-accent bottom-right"></div>
               <span class="project-number">01</span>
@@ -71,12 +70,12 @@
                 <video src="assets/proyecto1.mp4" loop muted playsinline></video>
               </div>
               <div class="project-info">
-                <h3 data-es="Departamento" data-en="Apartment">Departamento</h3>
+                <h3>Departamento</h3>
                 <p>3D / Blender</p>
               </div>
             </a>
 
-            <a href="project.html?id=2" class="project-item interactive-card">
+            <a href="project.html?id=2" class="project-item interactive-card link-transition">
               <div class="corner-accent top-left"></div><div class="corner-accent top-right"></div>
               <div class="corner-accent bottom-left"></div><div class="corner-accent bottom-right"></div>
               <span class="project-number">02</span>
@@ -85,44 +84,80 @@
                 <video src="assets/proyecto2.mp4" loop muted playsinline></video>
               </div>
               <div class="project-info">
-                <h3 data-es="Tren Montañas" data-en="Mountain Train">Tren Montañas</h3>
+                <h3>Tren Montañas</h3>
                 <p>Animation / Cycles</p>
               </div>
             </a>
 
-            <a href="project.html?id=3" class="project-item interactive-card">
+            <a href="project.html?id=3" class="project-item interactive-card link-transition">
               <div class="corner-accent top-left"></div><div class="corner-accent top-right"></div>
               <div class="corner-accent bottom-left"></div><div class="corner-accent bottom-right"></div>
               <span class="project-number">03</span>
               <div class="project-media">
-                <img src="assets/proyecto1.png" alt="P3" />
-                <video src="assets/proyecto1.mp4" loop muted playsinline></video>
+                <img src="assets/proyecto3.png" alt="P3" />
+                <video src="assets/proyecto3.mp4" loop muted playsinline></video>
               </div>
               <div class="project-info">
                 <h3>Nike Lab</h3>
                 <p>Simulation / Motion</p>
               </div>
             </a>
+
+            <a href="project.html?id=4" class="project-item interactive-card link-transition">
+                <div class="corner-accent top-left"></div><div class="corner-accent top-right"></div>
+                <div class="corner-accent bottom-left"></div><div class="corner-accent bottom-right"></div>
+                <span class="project-number">04</span>
+                <div class="project-media">
+                  <img src="assets/proyecto4.png" alt="P4" />
+                  <video src="assets/proyecto4.mp4" loop muted playsinline></video>
+                </div>
+                <div class="project-info">
+                  <h3>Proyecto 4</h3>
+                  <p>Visuals</p>
+                </div>
+            </a>
+
+            <a href="project.html?id=5" class="project-item interactive-card link-transition">
+                <div class="corner-accent top-left"></div><div class="corner-accent top-right"></div>
+                <div class="corner-accent bottom-left"></div><div class="corner-accent bottom-right"></div>
+                <span class="project-number">05</span>
+                <div class="project-media">
+                  <img src="assets/proyecto5_0.png" alt="P5" />
+                  <img src="assets/proyecto5_1.png" class="video-placeholder" alt="P5 Hover"/>
+                </div>
+                <div class="project-info">
+                  <h3>Proyecto 5</h3>
+                  <p>Motion 3D</p>
+                </div>
+            </a>
+
+            <a href="project.html?id=6" class="project-item interactive-card link-transition">
+                <div class="corner-accent top-left"></div><div class="corner-accent top-right"></div>
+                <div class="corner-accent bottom-left"></div><div class="corner-accent bottom-right"></div>
+                <span class="project-number">06</span>
+                <div class="project-media">
+                  <img src="assets/proyecto7.png" alt="P6" />
+                  <video src="assets/proyecto7.mp4" loop muted playsinline></video>
+                </div>
+                <div class="project-info">
+                  <h3>Proyecto 6</h3>
+                  <p>Motion 3D</p>
+                </div>
+            </a>
           </div>
         </div>
       </section>
 
       <section class="capabilities-section">
-        <h3 class="section-title" data-es="CAPACIDADES" data-en="CAPABILITIES">CAPACIDADES</h3>
-        <h2 class="capabilities-headline" data-es="Creando experiencias digitales extraordinarias." data-en="Creating extraordinary digital experiences.">Creando experiencias digitales extraordinarias.</h2>
+        <h3 class="section-title">CAPACIDADES</h3>
+        <h2 class="capabilities-headline">Creando experiencias digitales extraordinarias.</h2>
         <div class="capabilities-grid">
           <div class="capability-item highlight-item">
             <h4>IDIOMAS</h4> <p>Español [Nativo]<br>Inglés [B2 - Advanced]</p>
           </div>
-          <div class="capability-item">
-            <h4>Web Design</h4> <p>Landing pages inmersivas y experiencias interactivas.</p>
-          </div>
-          <div class="capability-item">
-            <h4>3D Modeling</h4> <p>Activos 3D, entornos y motion graphics.</p>
-          </div>
-          <div class="capability-item">
-            <h4>Video Editing</h4> <p>Edición, color grading y post-producción.</p>
-          </div>
+          <div class="capability-item"><h4>Web Design</h4><p>Landing pages inmersivas...</p></div>
+          <div class="capability-item"><h4>3D Modeling</h4><p>Activos 3D y entornos...</p></div>
+          <div class="capability-item"><h4>Video Editing</h4><p>Edición y color grading...</p></div>
         </div>
       </section>
 
@@ -138,10 +173,20 @@
             </ul>
           </div>
           <div class="cv-col">
-            <h4 class="cv-label">HISTORIAL</h4>
-            <div class="cv-entry"><span class="year">2023 - PRES.</span><p>Freelance 3D Artist</p></div>
-            <div class="cv-footer-text">
-                <button class="contact-btn interactive-btn open-contact-trigger">CONTACTAR -></button>
+            <h4 class="cv-label">CONTACTO</h4>
+            <div class="footer-form-wrapper">
+                <h3 class="heavy-title" style="margin-bottom: 30px; font-size: 2rem;">MANDAR MENSAJE</h3>
+                <form action="https://formspree.io/f/xojarndw" method="POST" class="brutalist-form">
+                    <div class="form-group">
+                        <label>E-MAIL</label>
+                        <input type="email" name="email" required placeholder="tu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>MENSAJE</label>
+                        <textarea name="message" rows="4" required placeholder="Hola Walter..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn-big interactive-btn">ENVIAR -></button>
+                </form>
             </div>
           </div>
         </div>
@@ -152,7 +197,6 @@
       <div class="modal-content">
         <button id="close-modal-btn" class="close-modal">×</button>
         <h2>INICIAR PROYECTO</h2>
-        <p class="modal-desc">Cuéntame sobre tu idea.</p>
         <form action="https://formspree.io/f/xojarndw" method="POST" class="contact-form">
           <div class="form-group"><label>E-MAIL</label><input type="email" name="email" required></div>
           <div class="form-group"><label>MENSAJE</label><textarea name="message" rows="4" required></textarea></div>
