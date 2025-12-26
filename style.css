@@ -10,10 +10,8 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background-color: #050505; 
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  font-family: var(--font-display);
+  background-color: #050505; background-color: var(--bg-color);
+  color: var(--text-color); font-family: var(--font-display);
   overflow-x: hidden; width: 100%;
 }
 body.project-page { overflow-y: auto; height: auto; }
@@ -21,14 +19,6 @@ body.no-scroll { overflow: hidden; height: 100vh; position: fixed; width: 100%; 
 
 a { text-decoration: none; color: inherit; }
 .interactive-btn { cursor: pointer; }
-
-/* TRANSITION FADE */
-.page-transition-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-    background: #000; z-index: 50000; pointer-events: none;
-    opacity: 0; transition: opacity 0.6s ease;
-}
-.page-transition-overlay.active { opacity: 1; pointer-events: all; }
 
 /* STICKY NAV */
 .sticky-nav {
@@ -42,15 +32,29 @@ body.home-page .sticky-nav { transform: translateY(-100%); transition: transform
 body.home-page .sticky-nav.visible { transform: translateY(0); }
 body.project-page .sticky-nav { transform: translateY(0); }
 
-/* LOGO SIMPLE */
+/* LOGO NAV CENTRADO */
 .nav-logo { 
-    display: flex; align-items: center; height: 35px; min-width: 140px; 
+    /* Flex para centrar verticalmente el texto */
+    display: flex; align-items: center; 
+    height: 100%; min-width: 140px; 
     font-weight: 700; font-size: 0.9rem; text-transform: uppercase; color: #fff; letter-spacing: -0.5px;
 }
 
-.nav-right { display: flex; gap: 10px; }
-.nav-btn { background: transparent; border: none; color: #aaa; font-family: var(--font-mono); font-size: 0.7rem; padding: 8px 16px; cursor: pointer; }
+.nav-right { display: flex; gap: 10px; align-items: center; }
+.nav-btn { background: transparent; border: none; color: #aaa; font-family: var(--font-mono); font-size: 0.7rem; padding: 8px 16px; cursor: pointer; transition: 0.3s; }
+.nav-btn:hover { color: #fff; }
 .contact-nav-btn { background: var(--accent-color); color: #fff; font-weight: 700; border-radius: 2px; }
+.contact-nav-btn:hover { background: #fff; color: var(--accent-color); }
+
+/* SWITCH FLOTANTE */
+.lang-switch-floating {
+  position: fixed; top: 30px; right: 40px; z-index: 500;
+  background: transparent; border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff; padding: 10px 20px; border-radius: 30px; display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono); transition: all 0.3s ease;
+}
+.lang-switch-floating:hover { background: rgba(255, 255, 255, 0.1); border-color: #fff; }
+.lang-switch-floating.hidden { opacity: 0; pointer-events: none; }
 
 /* HERO */
 .canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; pointer-events: none; }
@@ -59,15 +63,11 @@ body.project-page .sticky-nav { transform: translateY(0); }
 .hero-subtitle { font-family: var(--font-mono); font-size: clamp(1rem, 2vw, 1.5rem); color: #888; }
 .glitch { color: var(--accent-color); font-weight: 700; font-style: italic; }
 
-/* LOCATION BADGE (RECUPERADO) */
 .location { 
-    margin-top: 30px; margin-bottom: 20px;
-    font-family: var(--font-mono); font-size: 0.75rem; 
+    margin-top: 20px; font-family: var(--font-mono); font-size: 0.75rem; 
     padding: 8px 16px; border: 1px solid #fff; border-radius: 4px;
     display: inline-block; letter-spacing: 1px;
 }
-
-.hero-actions { margin-top: 20px; }
 .scroll-indicator { position: absolute; bottom: 30px; left: 5vw; font-family: var(--font-mono); font-size: 0.7rem; color: #666; animation: bounce 2s infinite; }
 
 /* PROYECTOS */
@@ -123,11 +123,12 @@ body.project-page .sticky-nav { transform: translateY(0); }
 .capability-item h4, .cv-label { font-family: var(--font-mono); font-size: 1rem; color: #fff; margin-bottom: 20px; }
 .highlight-item h4 { color: var(--accent-color); }
 
-/* LISTA STACK LIMPIA (SIN PUNTITOS) */
-.tech-list { list-style: none; padding: 0; margin: 0; }
-.tech-list li { display: flex; justify-content: space-between; border-bottom: 1px dashed #333; padding: 10px 0; font-family: var(--font-mono); text-transform: uppercase; }
-
-.contact-btn { display: inline-block; background: transparent; color: #fff; padding: 15px 30px; font-weight: 700; text-decoration: none; margin-top: 20px; border: 1px solid #fff; font-family: var(--font-mono); font-size: 0.9rem; transition: 0.3s; }
+/* BOTÓN FOOTER ESTILIZADO */
+.contact-btn { 
+    display: inline-block; background: transparent; color: #fff; 
+    padding: 15px 30px; font-weight: 700; text-decoration: none; margin-top: 20px; 
+    border: 1px solid #fff; font-family: var(--font-mono); font-size: 0.9rem; transition: 0.3s; 
+}
 .contact-btn:hover { background: var(--accent-color); border-color: var(--accent-color); }
 
 /* MODAL */
@@ -146,6 +147,10 @@ body.project-page .sticky-nav { transform: translateY(0); }
 
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+
+/* TRANSITION */
+.page-transition-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #000; z-index: 50000; pointer-events: none; opacity: 0; transition: opacity 0.6s ease; }
+.page-transition-overlay.active { opacity: 1; pointer-events: all; }
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
