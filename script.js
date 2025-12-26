@@ -20,7 +20,7 @@ const fakeLoad = setInterval(() => {
   }
 }, 50);
 
-// --- 2. LENIS SCROLL ---
+// --- 2. LENIS SCROLL (Only for Home) ---
 const lenis = new Lenis({ duration: 1.2, smooth: true });
 function raf(time) {
   lenis.raf(time);
@@ -76,25 +76,9 @@ modal.addEventListener("click", (e) => {
   }
 });
 
-// --- 5. VIDEO HOVER LOGIC ---
-document.querySelectorAll(".project-item").forEach((item) => {
-  const video = item.querySelector("video");
-  item.addEventListener("mouseenter", () => {
-    if (video) {
-      video.currentTime = 0;
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise.catch((error) => {});
-      }
-    }
-  });
-  item.addEventListener("mouseleave", () => {
-    if (video) video.pause();
-  });
-});
-
-// --- 6. SPA PROYECTOS (DETALLE CON GRILLA) ---
+// --- 5. SPA PROYECTOS (View Swapping) ---
 const projectTriggers = document.querySelectorAll(".project-trigger");
+const homeView = document.getElementById("home-view");
 const detailView = document.getElementById("project-detail-view");
 const backBtn = document.getElementById("back-btn");
 const detailMediaGrid = document.querySelector(".detail-media-grid"); 
@@ -124,6 +108,9 @@ const projectData = {
     imgs: ["assets/proyecto1.png", "assets/proyecto1.png", "assets/proyecto1.png", "assets/proyecto1.png"],
     vids: ["assets/proyecto1.mp4"],
   },
+  4: { title: "Proyecto 4", desc: "Descripción Proyecto 4", stack: ["Blender", "Cycles"], imgs: ["assets/proyecto4.png", "assets/proyecto4.png"], vids: ["assets/proyecto4.mp4"] },
+  5: { title: "Proyecto 5", desc: "Descripción Proyecto 5", stack: ["Blender", "Cycles"], imgs: ["assets/proyecto5_0.png"], vids: ["assets/proyecto5_1.mp4"] },
+  6: { title: "Proyecto 6", desc: "Descripción Proyecto 6", stack: ["Blender", "Cycles"], imgs: ["assets/proyecto7.png"], vids: ["assets/proyecto7.mp4"] },
 };
 
 projectTriggers.forEach((card) => {
@@ -131,13 +118,14 @@ projectTriggers.forEach((card) => {
     const id = card.getAttribute("data-id");
     loadProject(id);
 
-    lenis.stop(); // Paramos scroll de Lenis (body)
-    document.body.classList.add("no-scroll"); // Bloqueamos scroll CSS
-
-    setTimeout(() => {
-      detailView.classList.add("active");
-      detailView.scrollTop = 0; // Reset scroll interno
-    }, 100);
+    // SWAP VIEW: Hide Home, Show Detail
+    homeView.style.display = 'none';
+    detailView.style.display = 'block';
+    
+    // Stop Lenis (Home scroll)
+    lenis.stop();
+    window.scrollTo(0, 0);
+    detailView.scrollTop = 0; 
   });
 });
 
@@ -152,15 +140,14 @@ function loadProject(id) {
 
   detailMediaGrid.innerHTML = "";
 
-  // 1. Video Principal (Full Width)
+  // 1. Video
   if (data.vids.length > 0) {
     const v1 = document.createElement("div");
     v1.className = "detail-item full-width";
-    v1.innerHTML = `<video src="${data.vids[0]}" autoplay loop muted playsinline></video>`;
+    v1.innerHTML = `<video src="${data.vids[0]}" autoplay loop muted playsinline controls></video>`;
     detailMediaGrid.appendChild(v1);
   }
-  
-  // 2. Imágenes (Grilla 2x2)
+  // 2. Images
   data.imgs.forEach((src) => {
     const d = document.createElement("div");
     d.className = "detail-item";
@@ -170,15 +157,19 @@ function loadProject(id) {
 }
 
 backBtn.addEventListener("click", () => {
-  detailView.classList.remove("active");
+  // SWAP BACK
+  detailView.style.display = 'none';
+  homeView.style.display = 'block';
+  
   runParticleTransition(false);
+  
   setTimeout(() => {
-    document.body.classList.remove("no-scroll");
-    lenis.start(); // Reactivamos scroll
-  }, 800);
+    lenis.start(); 
+    lenis.resize(); // Force recalculation
+  }, 100);
 });
 
-// --- 7. PARTÍCULAS ---
+// --- 7. PARTICLES ---
 function runParticleTransition(isInitialLoad) {
   const overlay = document.getElementById("particle-overlay");
   overlay.innerHTML = "";
@@ -215,7 +206,7 @@ function runParticleTransition(isInitialLoad) {
   }, 800);
 }
 
-// --- 8. THREE.JS (LOCAL) ---
+// --- 8. THREE.JS ---
 const canvas = document.querySelector("#hero-canvas");
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -239,12 +230,12 @@ loader.setDRACOLoader(dracoLoader);
 
 loader.load("assets/mis-edificios.glb", (gltf) => {
     model = gltf.scene;
-    // POSICIÓN Y ROTACIÓN INICIAL FIJA
+    // Posición inicial fija
     model.position.set(5, -2, 0);
     model.scale.set(0.07, 0.07, 0.07);
-    model.rotation.y = -0.5; // Ángulo inicial forzado
+    model.rotation.y = -0.5; // START ANGLE
     scene.add(model);
-  }, undefined, (error) => { console.error("Error cargando modelo:", error); }
+  }, undefined, (error) => { console.error("Error:", error); }
 );
 
 let mouseX = 0, mouseY = 0;
@@ -259,11 +250,10 @@ const animate = () => {
   requestAnimationFrame(animate);
   if (model) {
     if(window.innerWidth < 768) {
-        // Mobile: rotación automática suave
+        // MOBILE AUTO ROTATION
         model.rotation.y += 0.002;
     } else {
-        // Desktop: interactivo, pero partiendo de la base -0.5
-        // Lerp hacia la posición del mouse
+        // DESKTOP MOUSE INTERACTION (Offset from base angle)
         model.rotation.y += 0.05 * ((mouseX * 0.0005 - 0.5) - model.rotation.y);
         model.rotation.x += 0.05 * (mouseY * 0.0005 - model.rotation.x);
     }
