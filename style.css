@@ -14,35 +14,42 @@ body {
   font-family: var(--font-display);
   overflow-x: hidden; width: 100%;
 }
-/* Scroll Nativo para pagina de proyectos */
 body.project-page { overflow-y: auto; height: auto; }
 body.no-scroll { overflow: hidden; height: 100vh; position: fixed; width: 100%; }
 
 a { text-decoration: none; color: inherit; }
 .interactive-btn { cursor: pointer; }
 
-/* --- LOADER (CORREGIDO: EL TEXTO NO GIRA) --- */
-.loader-container { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #000; z-index: 20000; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s; }
-.loader-content { text-align: center; }
-.loader-circle {
-    width: 80px; height: 80px; position: relative; margin: 0 auto 20px;
-    display: flex; justify-content: center; align-items: center;
-    /* QUITAMOS ANIMATION AQUÍ */
+/* TRANSITION OVERLAY (FADE) */
+.page-transition-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+    background: #000; z-index: 50000; pointer-events: none;
+    opacity: 0; transition: opacity 0.6s ease;
 }
-/* EL GIRO VA SOLO EN EL PSEUDO-ELEMENTO */
-.loader-circle::after {
-    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    border: 1px solid #333; border-radius: 50%;
-    border-top-color: var(--accent-color);
-    animation: spin 1s linear infinite;
+.page-transition-overlay.active { opacity: 1; pointer-events: all; }
+
+/* TEXTO GLITCH (RECUPERADO) */
+.glitch { color: var(--accent-color); font-weight: 700; font-style: italic; }
+
+/* FORMULARIO FOOTER (ESTILOS RECUPERADOS) */
+.footer-form-wrapper { margin-top: 20px; }
+.brutalist-form .form-group { margin-bottom: 25px; }
+.brutalist-form label { display: block; font-family: var(--font-mono); font-size: 0.7rem; color: #888; margin-bottom: 8px; letter-spacing: 1px; }
+.brutalist-form input, .brutalist-form textarea {
+    width: 100%; background: transparent; border: none; border-bottom: 1px solid #333;
+    color: #fff; padding: 10px 0; font-family: var(--font-display); font-size: 1.2rem;
+    transition: 0.3s; border-radius: 0;
 }
-.loader-progress { font-family: var(--font-mono); font-size: 0.8rem; }
-.loader-text { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 2px; color: #666; }
-.loader-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.brutalist-form input:focus, .brutalist-form textarea:focus { border-bottom-color: var(--accent-color); outline: none; }
+.submit-btn-big {
+    width: 100%; background: #fff; color: #000; border: none; padding: 20px;
+    font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s; text-transform: uppercase;
+    margin-top: 10px; display: block;
+}
+.submit-btn-big:hover { background: var(--accent-color); color: #fff; }
 
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-/* --- STICKY NAV --- */
+/* STICKY NAV */
 .sticky-nav {
   position: fixed; top: 0; left: 0; width: 100%; height: 70px;
   background: rgba(5, 5, 5, 0.95); backdrop-filter: blur(15px);
@@ -50,19 +57,11 @@ a { text-decoration: none; color: inherit; }
   display: flex; justify-content: space-between; align-items: center;
   padding: 0 30px; z-index: 1000;
 }
-/* En home, inicia oculto */
 body.home-page .sticky-nav { transform: translateY(-100%); transition: transform 0.6s var(--ease-fluid); }
 body.home-page .sticky-nav.visible { transform: translateY(0); }
-/* En project, siempre visible */
 body.project-page .sticky-nav { transform: translateY(0); }
 
-/* LOGO */
 .nav-logo { display: block; overflow: hidden; height: 35px; min-width: 140px; }
-.logo-wrapper { position: relative; transition: transform 0.4s var(--ease-fluid); }
-.logo-original, .logo-hover { display: flex; flex-direction: column; line-height: 0.9; font-weight: 700; font-size: 0.9rem; text-transform: uppercase; height: 35px; justify-content: center; }
-.logo-hover { position: absolute; top: 100%; left: 0; color: var(--accent-color); }
-.nav-logo:hover .logo-wrapper { transform: translateY(-100%); }
-
 .nav-right { display: flex; gap: 10px; }
 .nav-btn { background: transparent; border: none; color: #aaa; font-family: var(--font-mono); font-size: 0.7rem; padding: 8px 16px; cursor: pointer; }
 .contact-nav-btn { background: var(--accent-color); color: #fff; font-weight: 700; border-radius: 2px; }
@@ -94,13 +93,17 @@ body.project-page .sticky-nav { transform: translateY(0); }
 }
 .project-media img, .project-media video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
 .project-media video { opacity: 0; transition: opacity 0.5s ease; }
+.video-placeholder { opacity: 0; transition: opacity 0.5s ease; position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; }
+
 .project-item:hover .project-media { filter: brightness(1); border-color: rgba(255, 255, 255, 0.4); height: auto; aspect-ratio: 16/9; width: 50%; }
 .project-item:hover .project-media video { opacity: 1; }
+/* Si no hay video, mostramos la imagen placeholder al hacer hover */
+.project-item:hover .project-media .video-placeholder { opacity: 1; }
 
 .project-info h3 { font-size: 2.5rem; margin-bottom: 5px; text-transform: uppercase; }
 .project-info p { font-family: var(--font-mono); font-size: 0.75rem; color: #888; }
 
-/* PROJECT DETAIL PAGE (NATIVO) */
+/* PROJECT DETAIL PAGE */
 .detail-container-grid { 
     display: grid; grid-template-columns: 350px 1fr; gap: 60px; 
     padding: 120px 5vw 100px; max-width: 1600px; margin: 0 auto;
@@ -131,6 +134,13 @@ body.project-page .sticky-nav { transform: translateY(0); }
 .contact-form input, .contact-form textarea { width: 100%; background: #111; border: 1px solid #333; color: #fff; padding: 15px; margin-bottom: 20px; }
 .submit-btn { width: 100%; background: #fff; color: #000; padding: 15px; font-weight: 700; cursor: pointer; border: none; }
 
+/* LOADER */
+.loader-container { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #000; z-index: 20000; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s; }
+.loader-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.loader-circle { width: 50px; height: 50px; position: relative; margin: 0 auto 20px; display: flex; justify-content: center; align-items: center; }
+.loader-circle::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 1px solid #333; border-radius: 50%; border-top-color: var(--accent-color); animation: spin 1s linear infinite; }
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
 
 /* RESPONSIVE */
