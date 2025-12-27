@@ -3,183 +3,171 @@ import { GLTFLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/l
 import { DRACOLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/DRACOLoader.js";
 import Lenis from "https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/+esm";
 
-// --- LOADER (Solo carga inicial home) ---
+// --- LOADER ---
 const loaderElement = document.getElementById("loader");
 const progressText = document.querySelector(".loader-progress");
 
 let progress = 0;
 const fakeLoad = setInterval(() => {
-  progress += Math.floor(Math.random() * 10) + 5;
-  if (progress > 100) progress = 100;
+  progress += Math.floor(Math.random() * 10) + 5;
+  if (progress > 100) progress = 100;
   if(progressText) progressText.innerText = progress + "%";
 
-  if (progress === 100) {
-    clearInterval(fakeLoad);
-    if(loaderElement) loaderElement.classList.add('loader-hidden');
-  }
+  if (progress === 100) {
+    clearInterval(fakeLoad);
+    if(loaderElement) loaderElement.classList.add('loader-hidden');
+  }
 }, 50);
 
-// --- TRANSICIÓN FADE ENTRE PÁGINAS ---
+// --- TRANSICIÓN FADE (CORREGIDA PARA BFCACHE) ---
 const overlay = document.querySelector('.page-transition-overlay');
-// Al cargar la página, quitamos el negro
-window.addEventListener('load', () => { if(overlay) overlay.classList.remove('active'); });
 
-// Al hacer clic en un link, ponemos el negro
+// Función para limpiar el overlay
+const removeOverlay = () => {
+    if(overlay) overlay.classList.remove('active');
+};
+
+// 1. Carga normal
+window.addEventListener('load', removeOverlay);
+
+// 2. Carga desde el historial (Botón atrás del navegador) - SOLUCIÓN AL BUG
+window.addEventListener('pageshow', (event) => {
+    // Si la página se carga desde la memoria caché (back button), quitamos el negro
+    if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
+        removeOverlay();
+    } else {
+        // Por seguridad, lo quitamos siempre
+        removeOverlay();
+    }
+});
+
+// Navegación con fade
 document.querySelectorAll('.link-transition').forEach(link => {
     link.addEventListener('click', (e) => {
-        e.preventDefault();
+        // Solo prevenimos si es un link interno real
         const target = link.getAttribute('href');
-        if(overlay) overlay.classList.add('active');
-        setTimeout(() => { window.location.href = target; }, 600); // Espera la transición CSS
+        if (target && target !== '#' && !target.startsWith('mailto')) {
+            e.preventDefault();
+            if(overlay) overlay.classList.add('active');
+            setTimeout(() => { window.location.href = target; }, 600);
+        }
     });
 });
 
 // --- LENIS SCROLL ---
 const lenis = new Lenis({ duration: 1.2, smooth: true });
-function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+function raf(time) {
+  lenis.raf(time);
+  requestAnimationFrame(raf);
+}
 requestAnimationFrame(raf);
 
-// =================================================================
-// LÓGICA DE LA PÁGINA PRINCIPAL (HOME)
-// =================================================================
+// --- HOME LOGIC ---
 if (document.body.classList.contains('home-page')) {
     
-    // Sticky Nav (Aparece al scrollear)
     const stickyNav = document.querySelector(".sticky-nav");
     lenis.on("scroll", (e) => {
         if (e.scroll > window.innerHeight * 0.5) stickyNav.classList.add("visible");
         else stickyNav.classList.remove("visible");
     });
 
-    // Lógica de Preview de Video (Desktop Hover + Mobile Touch)
+    // Video Preview Logic
     document.querySelectorAll(".project-item").forEach((item) => {
-      const video = item.querySelector("video");
-      item.addEventListener("mouseenter", () => {
-        if (video) { video.currentTime = 0; video.play().catch(() => {}); }
-      });
-      item.addEventListener("mouseleave", () => {
-        if (video) video.pause();
-      });
-      // Soporte táctil
+      const video = item.querySelector("video");
+      item.addEventListener("mouseenter", () => {
+        if (video) { video.currentTime = 0; video.play().catch(() => {}); }
+      });
+      item.addEventListener("mouseleave", () => {
+        if (video) video.pause();
+      });
       item.addEventListener("touchstart", () => {
           if (video) video.play().catch(() => {});
       }, {passive: true});
     });
 
-    // Escena 3D (Solo se carga en la Home)
+    // 3D Scene
     initThreeJS();
 }
 
-// =================================================================
-// LÓGICA DE LA PÁGINA DE PROYECTO (DETALLE)
-// =================================================================
+// --- PROJECT DETAIL LOGIC ---
 if (document.body.classList.contains('project-page')) {
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
     
-    // --- BASE DE DATOS DE PROYECTOS ---
+    // DATA REAL
     const projectData = {
         1: { 
-            title: "Departamento", 
-            desc: "Renderizado realista de interiores buscando una iluminación cálida y texturas fotorrealistas.", 
-            stack: ["Blender", "Cycles", "Archviz"], 
+            title: "Departamento", desc: "Renderizado realista de interiores buscando una iluminación cálida y texturas fotorrealistas.", stack: ["Blender", "Cycles", "Archviz"], 
             imgs: ["assets/proyecto1.png"], 
             vids: ["assets/proyecto1.mp4"] 
         },
         2: { 
-            title: "Tren Montañas", 
-            desc: "Animación de entorno natural con énfasis en la escala y la atmósfera.", 
-            stack: ["Blender", "Animation", "Environment"], 
+            title: "Tren Montañas", desc: "Animación de entorno natural con énfasis en la escala y la atmósfera.", stack: ["Blender", "Animation", "Environment"], 
             imgs: ["assets/proyecto2.png"], 
             vids: ["assets/proyecto2.mp4"] 
         },
         3: { 
-            title: "Voronoi Flux", 
-            desc: "Exploración de caos organizado. Motion graphics abstractos generados mediante teselación Voronoi y manipulación temporal.", 
-            stack: ["After Effects", "Simulation", "Noise"], 
+            title: "Voronoi Flux", desc: "Exploración de caos organizado. Motion graphics abstractos generados mediante teselación Voronoi y manipulación temporal.", stack: ["After Effects", "Simulation", "Noise"], 
             imgs: ["assets/proyecto3.png"], 
             vids: ["assets/proyecto3.mp4"] 
         },
         4: { 
-            title: "Visual Experiments", 
-            desc: "Colección de experimentos visuales y pruebas de renderizado.", 
-            stack: ["Blender", "Cycles"], 
+            title: "Visual Experiments", desc: "Colección de experimentos visuales y pruebas de renderizado.", stack: ["Blender", "Cycles"], 
             imgs: ["assets/proyecto4.png"], 
             vids: ["assets/proyecto4.mp4"] 
         },
         5: { 
-            title: "100 Felines", 
-            desc: "Estudio de carácter y movimiento a través de la ilustración. Una colección de bocetos rápidos capturando la esencia felina.", 
-            stack: ["Photoshop", "2D Illustration", "Sketching"], 
+            title: "100 Felines", desc: "Estudio de carácter y movimiento a través de la ilustración. Una colección de bocetos rápidos capturando la esencia felina.", stack: ["Photoshop", "2D Illustration", "Sketching"], 
             // PROYECTO 5: SOLO IMÁGENES (0 al 3)
-            imgs: [
-                "assets/proyecto5_0.png", 
-                "assets/proyecto5_1.png", 
-                "assets/proyecto5_2.png", 
-                "assets/proyecto5_3.png"
-            ], 
-            vids: [] // Array vacío, no mostrará reproductor
+            imgs: ["assets/proyecto5_0.png", "assets/proyecto5_1.png", "assets/proyecto5_2.png", "assets/proyecto5_3.png"], 
+            vids: [] 
         },
         6: { 
-            title: "Procedural Span", 
-            desc: "Arquitectura generativa. Puente animado creado íntegramente con Geometry Nodes, permitiendo variaciones infinitas.", 
-            stack: ["Blender", "Geometry Nodes", "Procedural"], 
+            title: "Procedural Span", desc: "Arquitectura generativa. Puente animado creado íntegramente con Geometry Nodes, permitiendo variaciones infinitas.", stack: ["Blender", "Geometry Nodes", "Procedural"], 
             // PROYECTO 6: CORREGIDO
             imgs: ["assets/proyecto6.png"], 
             vids: ["assets/proyecto6.mp4"] 
         },
     };
 
-    // Inyectar contenido si existe el ID
     if (id && projectData[id]) {
         const data = projectData[id];
-        
-        // Textos
         document.getElementById("detail-title").innerText = data.title;
         document.getElementById("detail-desc").innerText = data.desc;
-        
-        // Lista de tecnologías
         const ul = document.getElementById("detail-stack-list");
         if(ul) ul.innerHTML = data.stack.map(t => `<li>${t}</li>`).join('');
         
         const grid = document.querySelector(".detail-media-grid");
         
-        // 1. CARGAR VIDEO (Solo si el array tiene elementos)
         if(data.vids && data.vids.length > 0) {
             data.vids.forEach(vidSrc => {
-                const v = document.createElement('div'); 
-                v.className = 'detail-item full-width'; // Video ocupa ancho completo
+                const v = document.createElement('div'); v.className = 'detail-item full-width';
                 v.innerHTML = `<video src="${vidSrc}" controls autoplay muted loop playsinline></video>`;
                 grid.appendChild(v);
             });
         }
-
-        // 2. CARGAR IMÁGENES
-        if(data.imgs && data.imgs.length > 0) {
+        if(data.imgs) {
             data.imgs.forEach(src => {
-                const i = document.createElement('div'); 
-                i.className = 'detail-item';
-                i.innerHTML = `<img src="${src}" alt="${data.title}">`;
+                const i = document.createElement('div'); i.className = 'detail-item';
+                i.innerHTML = `<img src="${src}">`;
                 grid.appendChild(i);
             });
         }
     }
 }
 
-// --- MODAL DE CONTACTO (GLOBAL) ---
+// --- MODAL CONTACTO ---
 const modal = document.getElementById("contact-modal");
 if(modal) {
     const openBtns = document.querySelectorAll(".open-contact-trigger");
     const closeBtn = document.getElementById("close-modal-btn");
     
-    // Abrir Modal
     openBtns.forEach(btn => btn.addEventListener("click", () => {
         modal.classList.add("active");
         lenis.stop();
         document.body.classList.add("no-scroll");
     }));
     
-    // Cerrar Modal
     const closeModal = () => {
         modal.classList.remove("active");
         lenis.start();
@@ -187,23 +175,18 @@ if(modal) {
     };
     
     if(closeBtn) closeBtn.addEventListener("click", closeModal);
-    // Cerrar al hacer clic fuera del contenido
     modal.addEventListener("click", (e) => { if(e.target === modal) closeModal(); });
 }
 
-// --- CAMBIO DE IDIOMA ---
+// --- IDIOMA ---
 let currentLang = "es";
 const langBtns = document.querySelectorAll('#lang-switch-nav, #lang-switch-hero');
 
 langBtns.forEach(btn => btn.addEventListener("click", () => {
     currentLang = currentLang === "es" ? "en" : "es";
-    
-    // Cambiar textos data-es / data-en
     document.querySelectorAll("[data-es]").forEach(el => {
         el.innerText = el.getAttribute(`data-${currentLang}`);
     });
-
-    // Actualizar texto del botón
     langBtns.forEach(b => {
         const span = b.querySelector('.lang-text');
         if(span) span.innerText = currentLang.toUpperCase();
@@ -211,10 +194,10 @@ langBtns.forEach(btn => btn.addEventListener("click", () => {
     });
 }));
 
-// --- ESCENA 3D (THREE.JS) ---
+// --- THREE JS ---
 function initThreeJS() {
     const canvas = document.querySelector("#hero-canvas");
-    if(!canvas) return; // Si no hay canvas (ej: en project.html), no ejecutar
+    if(!canvas) return;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -233,7 +216,6 @@ function initThreeJS() {
     let model;
     const loader = new GLTFLoader();
     const dracoLoader = new DRACOLoader();
-    // Usamos el decoder de Google estático
     dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
     loader.setDRACOLoader(dracoLoader);
 
@@ -241,14 +223,13 @@ function initThreeJS() {
         model = gltf.scene;
         model.position.set(5, -2, 0); 
         model.scale.set(0.07, 0.07, 0.07);
-        model.rotation.y = -0.5; // Posición inicial
+        model.rotation.y = -0.5;
         scene.add(model);
     });
 
     let mouseX = 0, mouseY = 0;
     const windowHalfX = window.innerWidth / 2;
     const windowHalfY = window.innerHeight / 2;
-    
     document.addEventListener("mousemove", (event) => {
         mouseX = event.clientX - windowHalfX;
         mouseY = event.clientY - windowHalfY;
@@ -257,11 +238,8 @@ function initThreeJS() {
     const animate = () => {
         requestAnimationFrame(animate);
         if (model) {
-            // DETECCIÓN MOBILE: Si el ancho es menor a 768px, rota solo
-            if(window.innerWidth < 768) {
-                model.rotation.y += 0.002; // Velocidad de rotación automática
-            } else {
-                // DESKTOP: Interacción con el mouse (Lerp suave)
+            if(window.innerWidth < 768) model.rotation.y += 0.002;
+            else {
                 model.rotation.y += 0.05 * ((mouseX * 0.0005 - 0.5) - model.rotation.y);
                 model.rotation.x += 0.05 * (mouseY * 0.0005 - model.rotation.x);
             }
