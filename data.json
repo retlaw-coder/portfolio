@@ -65,5 +65,28 @@
     "desc_en": "Node-based generative architecture.",
     "stack": ["Blender", "GeoNodes"],
     "captions": {}
+  },
+  {
+    "id": "7",
+    "title": "Nombre Proyecto 7",
+    "subtitle": "Categoría / Rol",
+    "subtitle_en": "Category / Role",
+    "desc": "Descripción breve del proyecto 7 en español.",
+    "desc_en": "Brief description of project 7 in English.",
+    "stack": ["Herramienta 1", "Herramienta 2"],
+    "captions": {
+      "v0": "Descripción del video principal",
+      "0": "Descripción de la imagen de portada"
+    }
+  },
+  {
+    "id": "8",
+    "title": "Nombre Proyecto 8",
+    "subtitle": "Categoría / Rol",
+    "subtitle_en": "Category / Role",
+    "desc": "Descripción breve del proyecto 8 en español.",
+    "desc_en": "Brief description of project 8 in English.",
+    "stack": ["Herramienta A", "Herramienta B"],
+    "captions": {}
   }
 ]
