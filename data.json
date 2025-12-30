@@ -3,66 +3,67 @@
     "id": "1",
     "title": "Departamento",
     "subtitle": "3D / Blender",
+    "subtitle_en": "3D / Blender",
     "desc": "Renderizado realista de interiores buscando una iluminación cálida y texturas fotorrealistas.",
+    "desc_en": "Realistic interior rendering aiming for warm lighting and photorealistic textures.",
     "stack": ["Blender", "Cycles", "Archviz"],
     "captions": {
-      "v0": "Recorrido general del espacio (Video Hero).",
-      "0": "Render estático de la portada.",
-      "1": "Detalle de la iluminación diurna.",
-      "v1": "Breakdown de la composición (Video Extra)."
+      "v0": "Recorrido general (Video Hero)",
+      "0": "Render estático portada"
     }
   },
   {
     "id": "2",
     "title": "Tren Montañas",
-    "subtitle": "Animation / Shaders",
+    "subtitle": "Animación / Shaders",
+    "subtitle_en": "Animation / Shaders",
     "desc": "Animación de entorno natural con énfasis en la escala y la atmósfera.",
+    "desc_en": "Natural environment animation emphasizing scale and atmosphere.",
     "stack": ["Blender", "Evee"],
-    "captions": {
-      "v0": "Animación final renderizada."
-    }
+    "captions": {}
   },
   {
     "id": "3",
     "title": "Voronoi Flux",
     "subtitle": "Motion Graphics",
+    "subtitle_en": "Motion Graphics",
     "desc": "Exploración de caos organizado.",
+    "desc_en": "Exploration of organized chaos.",
     "stack": ["After Effects", "Simulation"],
-    "captions": {
-      "v0": "Main loop sequence.",
-      "1": "Styleframe A.",
-      "2": "Styleframe B."
-    }
+    "captions": {}
   },
   {
     "id": "4",
     "title": "Walk Cycle",
     "subtitle": "Visuals",
-    "desc": "Pruebas de rigging y animación de personajes.",
+    "subtitle_en": "Visuals",
+    "desc": "Pruebas de rigging y animación.",
+    "desc_en": "Rigging and animation tests.",
     "stack": ["Blender", "Mixamo"],
     "captions": {}
   },
   {
     "id": "5",
     "title": "Dibujos",
-    "subtitle": "Sketch / 2D",
+    "subtitle": "Ilustración / 2D",
+    "subtitle_en": "Illustration / 2D",
     "desc": "Estudio de carácter y movimiento a través de la ilustración.",
+    "desc_en": "Character and movement study through illustration.",
     "stack": ["Photoshop", "Procreate"],
     "captions": {
-      "0": "Boceto inicial.",
-      "1": "Lineart limpio.",
-      "2": "Coloreado base."
+      "0": "Boceto inicial",
+      "1": "Lineart",
+      "2": "Color"
     }
   },
   {
     "id": "6",
     "title": "Procedural Span",
     "subtitle": "Geometry Nodes",
+    "subtitle_en": "Geometry Nodes",
     "desc": "Arquitectura generada por nodos.",
+    "desc_en": "Node-based generative architecture.",
     "stack": ["Blender", "GeoNodes"],
-    "captions": {
-      "v0": "Generación procedural en tiempo real.",
-      "1": "Árbol de nodos."
-    }
+    "captions": {}
   }
 ]
