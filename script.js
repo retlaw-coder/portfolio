@@ -6,6 +6,8 @@ import Lenis from "https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/+es
 // --- CONFIGURACIÓN GLOBAL ---
 const ASSETS_PATH = "assets/";
 const DATA_URL = "data.json";
+let currentLang = "es"; // Estado global del idioma
+let currentProjectData = null; // Para guardar datos del proyecto actual y traducir
 
 // --- 1. LOADER & TRANSICIONES ---
 const loaderElement = document.getElementById("loader");
@@ -30,9 +32,7 @@ window.addEventListener('pageshow', () => { if (overlay) overlay.classList.remov
 
 function bindLinks() {
     document.querySelectorAll('.link-transition').forEach(link => {
-        // Evitamos agregar listeners duplicados si ya existen
         if(link.dataset.bound) return; 
-        
         link.addEventListener('click', (e) => {
             const target = link.getAttribute('href');
             if (target && target !== '#' && !target.startsWith('mailto')) {
@@ -41,7 +41,7 @@ function bindLinks() {
                 setTimeout(() => { window.location.href = target; }, 600);
             }
         });
-        link.dataset.bound = true; // Marcamos como listo
+        link.dataset.bound = true; 
     });
 }
 bindLinks();
@@ -58,49 +58,41 @@ requestAnimationFrame(raf);
 
 // --- 3. VISUAL FX ---
 
-// A. GHOST CURSOR (SQUARE NEON)
+// A. GHOST CURSOR
 const TRAIL_LENGTH = 12; 
 const HEAD_LERP = 0.15;  
 const TAIL_LERP = 0.25;  
 let mouseX = 0, mouseY = 0;
 let cursorElements = []; 
 
-// Solo activamos en Desktop
 if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
     initGhostCursor();
 }
 
 function initGhostCursor() {
-    // Cabeza
     const head = document.createElement('div');
     head.className = 'cursor-head';
     document.body.appendChild(head);
     cursorElements.push({ el: head, x: 0, y: 0 });
 
-    // Cola
     for (let i = 0; i < TRAIL_LENGTH; i++) {
         const ghost = document.createElement('div');
         ghost.className = 'cursor-ghost';
         document.body.appendChild(ghost);
-        
         const opacity = 0.6 * (1 - (i / TRAIL_LENGTH));
         ghost.style.opacity = opacity;
         const scale = 1 - (i / TRAIL_LENGTH) * 0.5;
         ghost.style.transform = `translate(-50%, -50%) scale(${scale})`;
-
         cursorElements.push({ el: ghost, x: 0, y: 0 });
     }
 
-    // Listener
     document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
-
         const target = e.target;
-        // Detectar si estamos sobre algo interactivo (incluido el video wrapper)
         if (target.tagName === 'A' || target.tagName === 'BUTTON' || 
             target.closest('.interactive-card') || target.closest('.interactive-btn') ||
-            target.closest('.nav-sidebar-btn') || // Botones laterales
+            target.closest('.nav-sidebar-btn') || 
             target.closest('.video-wrapper')) { 
             head.classList.add('hovered');
         } else {
@@ -128,7 +120,7 @@ function animateCursor() {
     requestAnimationFrame(animateCursor);
 }
 
-// B. RIPPLE (MOBILE)
+// B. RIPPLE
 document.addEventListener('touchstart', (e) => {
     const touch = e.touches[0];
     createRipple(touch.clientX, touch.clientY);
@@ -144,7 +136,7 @@ function createRipple(x, y) {
 }
 
 
-// --- 4. APP LOGIC (DATA DRIVEN) ---
+// --- 4. APP LOGIC ---
 
 async function initApp() {
     try {
@@ -157,6 +149,9 @@ async function initApp() {
         } else if (document.body.classList.contains('project-page')) {
             renderProjectDetail(projectsData);
         }
+        
+        setupLanguageSwitcher(); // Iniciar lógica de idioma
+        
     } catch (error) {
         console.error("Error System:", error);
     }
@@ -214,46 +209,38 @@ function renderHome(data) {
 async function renderProjectDetail(allProjects) {
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
-    
-    // Encontrar índice actual para navegación
     const currentIndex = allProjects.findIndex(p => p.id === id);
     const project = allProjects[currentIndex];
 
     if (!project) { window.location.href = 'index.html'; return; }
-
-    // --- A. SIDEBAR NAV BUTTONS (LOOP) ---
-    const total = allProjects.length;
-    // Cálculo circular (Loop infinito)
-    const nextIndex = (currentIndex + 1) % total;
-    // El + total asegura que no sea negativo
-    const prevIndex = (currentIndex - 1 + total) % total;
     
+    currentProjectData = project; // Guardar referencia para traducción
+
+    // A. Sidebar Nav Loop
+    const total = allProjects.length;
+    const nextIndex = (currentIndex + 1) % total;
+    const prevIndex = (currentIndex - 1 + total) % total;
     const nextId = allProjects[nextIndex].id;
     const prevId = allProjects[prevIndex].id;
     
-    // Asignar links
     const prevBtn = document.getElementById('prev-project-btn');
     const nextBtn = document.getElementById('next-project-btn');
-    
     if (prevBtn) prevBtn.setAttribute('href', `project.html?id=${prevId}`);
     if (nextBtn) nextBtn.setAttribute('href', `project.html?id=${nextId}`);
-    
-    // Re-bindear links para el fade transition
     bindLinks();
 
-
-    // --- B. RENDER SIDEBAR INFO ---
+    // B. Sidebar Info (Con atributos de traducción)
     const sidebar = document.querySelector('.detail-sidebar');
     sidebar.innerHTML = `
         <div class="detail-header-block">
             <span class="detail-meta-label">PROJECT_ID: ${project.id.padStart(3, '0')}</span>
-            <h1>${project.title}</h1>
-            <span class="detail-meta-label" style="margin-top:10px; color:var(--accent-color)">// ${project.subtitle}</span>
+            <h1 id="dyn-title">${project.title}</h1>
+            <span class="detail-meta-label" style="margin-top:10px; color:var(--accent-color)" id="dyn-subtitle">// ${project.subtitle}</span>
         </div>
         <div class="detail-body-block">
-            <span class="detail-meta-label">SYSTEM_DESC:</span>
-            <p class="detail-desc-text">${project.desc}</p>
-            <span class="detail-meta-label">TOOLS_USED:</span>
+            <span class="detail-meta-label" data-es="DESCRIPCIÓN_SISTEMA:" data-en="SYSTEM_DESC:">DESCRIPCIÓN_SISTEMA:</span>
+            <p class="detail-desc-text" id="dyn-desc">${project.desc}</p>
+            <span class="detail-meta-label" data-es="HERRAMIENTAS:" data-en="TOOLS_USED:">HERRAMIENTAS:</span>
             <div class="tech-tags-container" style="margin-bottom: 20px;">
                 ${project.stack.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
             </div>
@@ -262,26 +249,25 @@ async function renderProjectDetail(allProjects) {
         </div>
     `;
 
-    // --- C. PREPARAR LAYOUT GRID ---
+    // C. Layout & Buffering
     const mainGrid = document.querySelector(".detail-media-grid");
     mainGrid.innerHTML = ''; 
-
     const videoZone = document.createElement('div');
     videoZone.className = 'video-zone';
-    
     const imageZone = document.createElement('div');
     imageZone.className = 'image-zone';
 
-    // --- D. SCAN ASSETS (BUFFERING) ---
     let v0Exists = false;
     let foundExtras = [];
     let foundImages = [];
     
-    // Check v0 (Asumimos existencia por convención)
+    // VERIFICACIÓN REAL DE V0 (Para Proyecto 5)
     const v0Path = `${ASSETS_PATH}p${id}_v0.mp4`;
-    v0Exists = true; 
+    try {
+        const res = await fetch(v0Path, { method: 'HEAD' });
+        if (res.ok) v0Exists = true; 
+    } catch(e) {}
 
-    // Loop de escaneo
     let index = 0;
     let keepLoading = true;
     let consecutiveErrors = 0;
@@ -299,7 +285,7 @@ async function renderProjectDetail(allProjects) {
             }
         } catch(e) {}
 
-        // Videos Extras (Solo si index > 0)
+        // Videos Extras
         if (index > 0) {
             const vidPath = `${ASSETS_PATH}p${id}_v${index}.mp4`;
             try {
@@ -313,75 +299,49 @@ async function renderProjectDetail(allProjects) {
 
         if (foundSomething) consecutiveErrors = 0;
         else consecutiveErrors++;
-        
         if (consecutiveErrors > 2) keepLoading = false;
         index++;
     }
 
-    // --- E. DECISIÓN DE VIDEOS (LÓGICA EXCLUSIVA) ---
+    // D. Render Videos (Solo si existen)
     let videosToRender = [];
-    
     if (foundExtras.length > 0) {
-        // Si hay extras, SOLO mostramos los extras (v0 se oculta)
         videosToRender = foundExtras;
     } else {
-        // Si no hay extras, mostramos el v0 como fallback
-        if (v0Exists) {
-            videosToRender = [{ path: v0Path, index: 'v0' }];
-        }
+        if (v0Exists) videosToRender = [{ path: v0Path, index: 'v0' }];
     }
 
-    // --- F. RENDER VIDEOS (CUSTOM PLAYER) ---
     if (videosToRender.length > 0) {
-        
         videosToRender.forEach((vid, idx) => {
             const wrapper = document.createElement('div');
             wrapper.className = 'video-wrapper';
-
             const captionText = (project.captions && project.captions[vid.index]) 
                 ? project.captions[vid.index] : `SEQ_${vid.index.toUpperCase()}`;
 
             wrapper.innerHTML = `
                 <video src="${vid.path}" loop muted playsinline preload="metadata" oncontextmenu="return false;"></video>
-                <div class="play-overlay">
-                    <div class="play-icon"></div>
-                </div>
+                <div class="play-overlay"><div class="play-icon"></div></div>
                 <div class="video-caption-overlay">// ${captionText}</div>
             `;
 
             const videoElement = wrapper.querySelector('video');
-            
-            // RESET AL FINALIZAR
             videoElement.addEventListener('ended', () => {
                 wrapper.classList.remove('active');
                 videoElement.currentTime = 0; 
-                // videoElement.pause(); // Implícito
             });
-
-            // CLICK LOGIC (Acordeón)
             wrapper.addEventListener('click', () => {
                 const wasPlaying = !videoElement.paused;
-                
-                // Resetear otros
                 document.querySelectorAll('.video-wrapper').forEach(w => {
-                    w.classList.remove('active');
-                    w.querySelector('video').pause();
+                    w.classList.remove('active'); w.querySelector('video').pause();
                 });
-
-                if (!wasPlaying) {
-                    wrapper.classList.add('active');
-                    videoElement.play();
-                } 
-                // Si estaba sonando, el reset global ya lo detuvo y contrajo
+                if (!wasPlaying) { wrapper.classList.add('active'); videoElement.play(); } 
             });
-
             videoZone.appendChild(wrapper);
         });
-        
         mainGrid.appendChild(videoZone);
     }
 
-    // --- G. RENDER IMÁGENES ---
+    // E. Render Images
     if (foundImages.length > 0) {
         foundImages.forEach(img => {
             const wrapper = document.createElement('div');
@@ -401,12 +361,53 @@ async function renderProjectDetail(allProjects) {
         mainGrid.appendChild(imageZone);
     }
     
-    // Recalcular scroll después de inyectar todo
+    // Actualizar textos al idioma actual antes de mostrar
+    updatePageLanguage();
     setTimeout(() => lenis.resize(), 500);
 }
 
 
-// --- 5. EXTRAS ---
+// --- 5. LANGUAGE SYSTEM ---
+function setupLanguageSwitcher() {
+    const langBtns = document.querySelectorAll('#lang-switch-nav, #lang-switch-hero');
+    
+    langBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            currentLang = currentLang === "es" ? "en" : "es";
+            
+            // Actualizar Botones
+            langBtns.forEach(b => {
+                const span = b.querySelector('.lang-text');
+                if(span) span.innerText = currentLang.toUpperCase();
+                else b.innerText = currentLang.toUpperCase();
+            });
+
+            updatePageLanguage();
+        });
+    });
+}
+
+function updatePageLanguage() {
+    // 1. Textos estáticos (data-es / data-en)
+    document.querySelectorAll("[data-es]").forEach(el => {
+        const text = el.getAttribute(`data-${currentLang}`);
+        if(text) el.innerText = text;
+    });
+
+    // 2. Textos dinámicos del proyecto (Si estamos en detalle)
+    if (document.body.classList.contains('project-page') && currentProjectData) {
+        const titleEl = document.getElementById('dyn-title');
+        const subEl = document.getElementById('dyn-subtitle');
+        const descEl = document.getElementById('dyn-desc');
+
+        if(titleEl) titleEl.innerText = currentProjectData.title; // Título suele ser igual, pero se puede agregar title_en
+        if(subEl) subEl.innerText = `// ${currentLang === 'es' ? currentProjectData.subtitle : (currentProjectData.subtitle_en || currentProjectData.subtitle)}`;
+        if(descEl) descEl.innerText = currentLang === 'es' ? currentProjectData.desc : (currentProjectData.desc_en || currentProjectData.desc);
+    }
+}
+
+
+// --- 6. EXTRAS (Modal) ---
 const modal = document.getElementById("contact-modal");
 if(modal) {
     document.querySelectorAll(".open-contact-trigger").forEach(btn => 
@@ -421,21 +422,8 @@ if(modal) {
     });
 }
 
-let currentLang = "es";
-document.querySelectorAll('#lang-switch-nav, #lang-switch-hero').forEach(btn => 
-    btn.addEventListener("click", () => {
-        currentLang = currentLang === "es" ? "en" : "es";
-        document.querySelectorAll("[data-es]").forEach(el => {
-            el.innerText = el.getAttribute(`data-${currentLang}`);
-        });
-        const span = btn.querySelector('.lang-text');
-        if(span) span.innerText = currentLang.toUpperCase();
-        else btn.innerText = currentLang.toUpperCase();
-    })
-);
 
-
-// --- 6. THREE.JS SCENE ---
+// --- 7. THREE.JS SCENE ---
 function initThreeJS() {
     const canvas = document.querySelector("#hero-canvas");
     if(!canvas) return;
