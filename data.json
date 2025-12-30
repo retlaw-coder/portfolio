@@ -1,0 +1,58 @@
+[
+  {
+    "id": "1",
+    "title": "Departamento",
+    "subtitle": "3D / Blender",
+    "desc": "Renderizado realista de interiores buscando una iluminación cálida.",
+    "stack": ["Blender", "Cycles", "Archviz"],
+    "captions": {
+      "1": "Vista general del living con iluminación diurna.",
+      "3": "Detalle de texturas en el mobiliario."
+    }
+  },
+  {
+    "id": "2",
+    "title": "Tren entre montañas",
+    "subtitle": "Animation / Shaders",
+    "desc": "Animación de entorno natural con énfasis en la escala.",
+    "stack": ["Blender", "Animation"],
+    "captions": {}
+  },
+  {
+    "id": "3",
+    "title": "Voronoi Flux",
+    "subtitle": "Motion Graphics",
+    "desc": "Exploración de caos organizado.",
+    "stack": ["After Effects", "Simulation"],
+    "captions": {
+      "0": "Nota: Este texto saldrá debajo del Video Hero (índice 0)."
+    }
+  },
+  {
+    "id": "4",
+    "title": "Walk Cycle",
+    "subtitle": "Visuals",
+    "desc": "Experimentos de rigging y loops.",
+    "stack": ["Blender", "Mixamo"],
+    "captions": {}
+  },
+  {
+    "id": "5",
+    "title": "Dibujos",
+    "subtitle": "Sketch",
+    "desc": "Estudio de carácter y movimiento.",
+    "stack": ["Photoshop", "2D"],
+    "captions": {
+      "1": "Boceto inicial rápido.",
+      "4": "Estudio de luces y sombras."
+    }
+  },
+  {
+    "id": "6",
+    "title": "Procedural Span",
+    "subtitle": "Geometry Nodes",
+    "desc": "Arquitectura generada por nodos.",
+    "stack": ["Blender", "GeoNodes"],
+    "captions": {}
+  }
+]

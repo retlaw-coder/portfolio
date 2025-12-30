@@ -3,198 +3,331 @@ import { GLTFLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/l
 import { DRACOLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/DRACOLoader.js";
 import Lenis from "https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/+esm";
 
+const ASSETS_PATH = "assets/";
+const DATA_URL = "data.json";
+
 // --- LOADER ---
 const loaderElement = document.getElementById("loader");
 const progressText = document.querySelector(".loader-progress");
-
-let progress = 0;
-const fakeLoad = setInterval(() => {
-  progress += Math.floor(Math.random() * 10) + 5;
-  if (progress > 100) progress = 100;
-  if(progressText) progressText.innerText = progress + "%";
-
-  if (progress === 100) {
-    clearInterval(fakeLoad);
-    if(loaderElement) loaderElement.classList.add('loader-hidden');
-  }
-}, 50);
-
-// --- TRANSICIÓN FADE (CORREGIDA PARA BFCACHE) ---
 const overlay = document.querySelector('.page-transition-overlay');
 
-// Función para limpiar el overlay
-const removeOverlay = () => {
-    if(overlay) overlay.classList.remove('active');
-};
-
-// 1. Carga normal
-window.addEventListener('load', removeOverlay);
-
-// 2. Carga desde el historial (Botón atrás del navegador) - SOLUCIÓN AL BUG
-window.addEventListener('pageshow', (event) => {
-    // Si la página se carga desde la memoria caché (back button), quitamos el negro
-    if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
-        removeOverlay();
-    } else {
-        // Por seguridad, lo quitamos siempre
-        removeOverlay();
-    }
-});
-
-// Navegación con fade
-document.querySelectorAll('.link-transition').forEach(link => {
-    link.addEventListener('click', (e) => {
-        // Solo prevenimos si es un link interno real
-        const target = link.getAttribute('href');
-        if (target && target !== '#' && !target.startsWith('mailto')) {
-            e.preventDefault();
-            if(overlay) overlay.classList.add('active');
-            setTimeout(() => { window.location.href = target; }, 600);
+if (loaderElement) {
+    let loadProgress = 0;
+    const fakeLoad = setInterval(() => {
+        loadProgress += Math.floor(Math.random() * 10) + 5;
+        if (loadProgress > 100) loadProgress = 100;
+        if (progressText) progressText.innerText = loadProgress + "%";
+        if (loadProgress === 100) {
+            clearInterval(fakeLoad);
+            loaderElement.classList.add('loader-hidden');
         }
+    }, 30);
+}
+
+window.addEventListener('load', () => { if (overlay) overlay.classList.remove('active'); });
+window.addEventListener('pageshow', () => { if (overlay) overlay.classList.remove('active'); });
+
+function bindLinks() {
+    document.querySelectorAll('.link-transition').forEach(link => {
+        link.addEventListener('click', (e) => {
+            const target = link.getAttribute('href');
+            if (target && target !== '#' && !target.startsWith('mailto')) {
+                e.preventDefault();
+                if (overlay) overlay.classList.add('active');
+                setTimeout(() => { window.location.href = target; }, 600);
+            }
+        });
     });
-});
+}
+bindLinks();
 
 // --- LENIS SCROLL ---
-const lenis = new Lenis({ duration: 1.2, smooth: true });
-function raf(time) {
-  lenis.raf(time);
-  requestAnimationFrame(raf);
-}
+const lenis = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smooth: true
+});
+function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
 requestAnimationFrame(raf);
 
-// --- HOME LOGIC ---
-if (document.body.classList.contains('home-page')) {
+
+// ==========================================
+// NUEVO SISTEMA DE CURSOR FANTASMA (NEÓN)
+// ==========================================
+
+// Configuración
+const TRAIL_LENGTH = 12; // Cantidad de fantasmas
+const HEAD_LERP = 0.15;  // Velocidad del cursor principal (0.1 = lento, 1 = instantaneo)
+const TAIL_LERP = 0.25;  // Qué tan rápido la cola alcanza a la cabeza
+
+// Variables de estado
+let mouseX = 0, mouseY = 0;
+let cursorElements = []; // Array para guardar los divs
+
+// Solo activar en Desktop
+if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    initGhostCursor();
+}
+
+function initGhostCursor() {
+    // 1. Crear Cursor Principal (Cabeza)
+    const head = document.createElement('div');
+    head.className = 'cursor-head';
+    document.body.appendChild(head);
     
+    // Guardamos la cabeza en el array (índice 0)
+    cursorElements.push({
+        el: head,
+        x: 0,
+        y: 0
+    });
+
+    // 2. Crear Fantasmas (Cola)
+    for (let i = 0; i < TRAIL_LENGTH; i++) {
+        const ghost = document.createElement('div');
+        ghost.className = 'cursor-ghost';
+        document.body.appendChild(ghost);
+
+        // Opacidad decreciente (el último es casi invisible)
+        // Calcula opacidad: empieza en 0.5 y baja hasta 0
+        const opacity = 0.6 * (1 - (i / TRAIL_LENGTH));
+        ghost.style.opacity = opacity;
+        
+        // Escala decreciente (opcional, para efecto cometa)
+        const scale = 1 - (i / TRAIL_LENGTH) * 0.5;
+        ghost.style.transform = `translate(-50%, -50%) scale(${scale})`;
+
+        cursorElements.push({
+            el: ghost,
+            x: 0,
+            y: 0
+        });
+    }
+
+    // 3. Listener de movimiento real
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+
+        // Detectar Hover para agrandar la cabeza
+        const target = e.target;
+        if (target.tagName === 'A' || target.tagName === 'BUTTON' || 
+            target.closest('.interactive-card') || target.closest('.interactive-btn')) {
+            head.classList.add('hovered');
+        } else {
+            head.classList.remove('hovered');
+        }
+    });
+
+    // 4. Loop de Animación (Física)
+    animateCursor();
+}
+
+function animateCursor() {
+    // A. Mover la cabeza hacia el mouse
+    // Usamos interpolación lineal (Lerp) para suavidad
+    const head = cursorElements[0];
+    head.x += (mouseX - head.x) * HEAD_LERP;
+    head.y += (mouseY - head.y) * HEAD_LERP;
+    head.el.style.left = `${head.x}px`;
+    head.el.style.top = `${head.y}px`;
+
+    // B. Mover cada fantasma hacia el elemento ANTERIOR
+    // Esto crea el efecto de cadena o serpiente
+    for (let i = 1; i < cursorElements.length; i++) {
+        const current = cursorElements[i];
+        const prev = cursorElements[i - 1]; // El elemento al que persigue
+
+        // Lerp hacia el anterior
+        current.x += (prev.x - current.x) * TAIL_LERP;
+        current.y += (prev.y - current.y) * TAIL_LERP;
+
+        current.el.style.left = `${current.x}px`;
+        current.el.style.top = `${current.y}px`;
+    }
+
+    requestAnimationFrame(animateCursor);
+}
+
+
+// --- EFECTO ONDA EXPANSIVA (MOBILE) ---
+document.addEventListener('touchstart', (e) => {
+    const touch = e.touches[0];
+    createRipple(touch.clientX, touch.clientY);
+}, { passive: true });
+
+function createRipple(x, y) {
+    const ripple = document.createElement('div');
+    ripple.className = 'mobile-ripple';
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+    document.body.appendChild(ripple);
+    setTimeout(() => { ripple.remove(); }, 600);
+}
+
+
+// --- RESTO DE TU APP (DATA, RENDER, ETC) ---
+
+async function initApp() {
+    try {
+        const response = await fetch(DATA_URL);
+        const projectsData = await response.json();
+
+        if (document.body.classList.contains('home-page')) {
+            renderHome(projectsData);
+            initThreeJS();
+        } else if (document.body.classList.contains('project-page')) {
+            renderProjectDetail(projectsData);
+        }
+    } catch (error) {
+        console.error("Error System:", error);
+    }
+}
+initApp();
+
+function renderHome(data) {
+    const container = document.getElementById('dynamic-projects-list');
+    if (!container) return;
+
+    container.innerHTML = data.map((p, index) => {
+        const thumbImg = `${ASSETS_PATH}p${p.id}_0.png`;
+        const hoverVid = `${ASSETS_PATH}p${p.id}_v.mp4`;
+        const num = (index + 1).toString().padStart(2, '0');
+
+        return `
+        <a href="project.html?id=${p.id}" class="project-item interactive-card link-transition">
+            <div class="corner-accent top-left"></div><div class="corner-accent top-right"></div>
+            <div class="corner-accent bottom-left"></div><div class="corner-accent bottom-right"></div>
+            <span class="project-number">${num}</span>
+            <div class="project-media">
+                <img src="${thumbImg}" alt="${p.title}" loading="lazy" />
+                <video src="${hoverVid}" loop muted playsinline></video>
+            </div>
+            <div class="project-info">
+                <h3>${p.title}</h3>
+                <p>${p.subtitle}</p>
+            </div>
+        </a>
+        `;
+    }).join('');
+
+    bindLinks();
+    
+    document.querySelectorAll(".project-item").forEach((item) => {
+        const video = item.querySelector("video");
+        if(video) {
+            video.addEventListener("error", () => { video.style.display = 'none'; });
+            item.addEventListener("mouseenter", () => { video.currentTime = 0; video.play().catch(()=>{}); });
+            item.addEventListener("mouseleave", () => { video.pause(); });
+        }
+    });
+
     const stickyNav = document.querySelector(".sticky-nav");
     lenis.on("scroll", (e) => {
         if (e.scroll > window.innerHeight * 0.5) stickyNav.classList.add("visible");
         else stickyNav.classList.remove("visible");
     });
-
-    // Video Preview Logic
-    document.querySelectorAll(".project-item").forEach((item) => {
-      const video = item.querySelector("video");
-      item.addEventListener("mouseenter", () => {
-        if (video) { video.currentTime = 0; video.play().catch(() => {}); }
-      });
-      item.addEventListener("mouseleave", () => {
-        if (video) video.pause();
-      });
-      item.addEventListener("touchstart", () => {
-          if (video) video.play().catch(() => {});
-      }, {passive: true});
-    });
-
-    // 3D Scene
-    initThreeJS();
 }
 
-// --- PROJECT DETAIL LOGIC ---
-if (document.body.classList.contains('project-page')) {
+async function renderProjectDetail(allProjects) {
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
-    
-    // DATA REAL
-    const projectData = {
-        1: { 
-            title: "Departamento", desc: "Renderizado realista de interiores buscando una iluminación cálida y texturas fotorrealistas.", stack: ["Blender", "Cycles", "Archviz"], 
-            imgs: ["assets/proyecto1.png"], 
-            vids: ["assets/proyecto1.mp4"] 
-        },
-        2: { 
-            title: "Tren Montañas", desc: "Animación de entorno natural con énfasis en la escala y la atmósfera.", stack: ["Blender", "Animation", "Environment"], 
-            imgs: ["assets/proyecto2.png"], 
-            vids: ["assets/proyecto2.mp4"] 
-        },
-        3: { 
-            title: "Voronoi Flux", desc: "Exploración de caos organizado. Motion graphics abstractos generados mediante teselación Voronoi y manipulación temporal.", stack: ["After Effects", "Simulation", "Noise"], 
-            imgs: ["assets/proyecto3.png"], 
-            vids: ["assets/proyecto3.mp4"] 
-        },
-        4: { 
-            title: "Visual Experiments", desc: "Colección de experimentos visuales y pruebas de renderizado.", stack: ["Blender", "Cycles"], 
-            imgs: ["assets/proyecto4.png"], 
-            vids: ["assets/proyecto4.mp4"] 
-        },
-        5: { 
-            title: "100 Felines", desc: "Estudio de carácter y movimiento a través de la ilustración. Una colección de bocetos rápidos capturando la esencia felina.", stack: ["Photoshop", "2D Illustration", "Sketching"], 
-            // PROYECTO 5: SOLO IMÁGENES (0 al 3)
-            imgs: ["assets/proyecto5_0.png", "assets/proyecto5_1.png", "assets/proyecto5_2.png", "assets/proyecto5_3.png"], 
-            vids: [] 
-        },
-        6: { 
-            title: "Procedural Span", desc: "Arquitectura generativa. Puente animado creado íntegramente con Geometry Nodes, permitiendo variaciones infinitas.", stack: ["Blender", "Geometry Nodes", "Procedural"], 
-            // PROYECTO 6: CORREGIDO
-            imgs: ["assets/proyecto6.png"], 
-            vids: ["assets/proyecto6.mp4"] 
-        },
-    };
+    const project = allProjects.find(p => p.id === id);
 
-    if (id && projectData[id]) {
-        const data = projectData[id];
-        document.getElementById("detail-title").innerText = data.title;
-        document.getElementById("detail-desc").innerText = data.desc;
-        const ul = document.getElementById("detail-stack-list");
-        if(ul) ul.innerHTML = data.stack.map(t => `<li>${t}</li>`).join('');
+    if (!project) { window.location.href = 'index.html'; return; }
+
+    const sidebar = document.querySelector('.detail-sidebar');
+    
+    sidebar.innerHTML = `
+        <div class="detail-header-block">
+            <span class="detail-meta-label">PROJECT_ID: ${project.id.padStart(3, '0')}</span>
+            <h1>${project.title}</h1>
+            <span class="detail-meta-label" style="margin-top:10px; color:var(--accent-color)">// ${project.subtitle}</span>
+        </div>
+        <div class="detail-body-block">
+            <span class="detail-meta-label">SYSTEM_DESC:</span>
+            <p class="detail-desc-text">${project.desc}</p>
+            
+            <span class="detail-meta-label">TOOLS_USED:</span>
+            <div class="tech-tags-container" style="margin-bottom: 20px;">
+                ${project.stack.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
+            </div>
+             <span class="detail-meta-label">STATUS:</span>
+             <p style="font-family: var(--font-mono); font-size: 0.8rem; color: #fff;">COMPLETED_RENDER</p>
+        </div>
+    `;
+
+    const grid = document.querySelector(".detail-media-grid");
+    
+    const heroVidPath = `${ASSETS_PATH}p${id}_v.mp4`;
+    const vidContainer = document.createElement('div');
+    vidContainer.className = 'detail-item full-width';
+    
+    const vidCaption = project.captions && project.captions["video"] ? 
+        `<p class="project-caption">// ${project.captions["video"]}</p>` : '';
         
-        const grid = document.querySelector(".detail-media-grid");
-        
-        if(data.vids && data.vids.length > 0) {
-            data.vids.forEach(vidSrc => {
-                const v = document.createElement('div'); v.className = 'detail-item full-width';
-                v.innerHTML = `<video src="${vidSrc}" controls autoplay muted loop playsinline></video>`;
-                grid.appendChild(v);
-            });
-        }
-        if(data.imgs) {
-            data.imgs.forEach(src => {
-                const i = document.createElement('div'); i.className = 'detail-item';
-                i.innerHTML = `<img src="${src}">`;
-                grid.appendChild(i);
-            });
-        }
+    vidContainer.innerHTML = `
+        <video src="${heroVidPath}" controls autoplay muted loop playsinline></video>
+        ${vidCaption}
+    `;
+    grid.appendChild(vidContainer);
+
+    let index = 0; 
+    let keepLoading = true;
+
+    while (keepLoading && index < 25) { 
+        const imgPath = `${ASSETS_PATH}p${id}_${index}.png`;
+        try {
+            const response = await fetch(imgPath, { method: 'HEAD' });
+            if (response.ok) {
+                const el = document.createElement('div');
+                el.className = 'detail-item';
+                el.innerHTML = `<img src="${imgPath}" loading="lazy">`;
+                grid.appendChild(el);
+
+                if (project.captions && project.captions[index.toString()]) {
+                    const cap = document.createElement('p');
+                    cap.className = 'project-caption';
+                    cap.innerText = `// ${project.captions[index.toString()]}`;
+                    grid.appendChild(cap);
+                }
+                index++;
+            } else {
+                keepLoading = false;
+            }
+        } catch (e) { keepLoading = false; }
     }
+    
+    setTimeout(() => lenis.resize(), 500);
 }
 
-// --- MODAL CONTACTO ---
 const modal = document.getElementById("contact-modal");
 if(modal) {
-    const openBtns = document.querySelectorAll(".open-contact-trigger");
-    const closeBtn = document.getElementById("close-modal-btn");
-    
-    openBtns.forEach(btn => btn.addEventListener("click", () => {
-        modal.classList.add("active");
-        lenis.stop();
-        document.body.classList.add("no-scroll");
-    }));
-    
-    const closeModal = () => {
+    document.querySelectorAll(".open-contact-trigger").forEach(btn => 
+        btn.addEventListener("click", () => {
+            modal.classList.add("active");
+            lenis.stop();
+        })
+    );
+    document.getElementById("close-modal-btn")?.addEventListener("click", () => {
         modal.classList.remove("active");
         lenis.start();
-        document.body.classList.remove("no-scroll");
-    };
-    
-    if(closeBtn) closeBtn.addEventListener("click", closeModal);
-    modal.addEventListener("click", (e) => { if(e.target === modal) closeModal(); });
+    });
 }
 
-// --- IDIOMA ---
 let currentLang = "es";
-const langBtns = document.querySelectorAll('#lang-switch-nav, #lang-switch-hero');
-
-langBtns.forEach(btn => btn.addEventListener("click", () => {
-    currentLang = currentLang === "es" ? "en" : "es";
-    document.querySelectorAll("[data-es]").forEach(el => {
-        el.innerText = el.getAttribute(`data-${currentLang}`);
-    });
-    langBtns.forEach(b => {
-        const span = b.querySelector('.lang-text');
+document.querySelectorAll('#lang-switch-nav, #lang-switch-hero').forEach(btn => 
+    btn.addEventListener("click", () => {
+        currentLang = currentLang === "es" ? "en" : "es";
+        document.querySelectorAll("[data-es]").forEach(el => {
+            el.innerText = el.getAttribute(`data-${currentLang}`);
+        });
+        const span = btn.querySelector('.lang-text');
         if(span) span.innerText = currentLang.toUpperCase();
-        else b.innerText = currentLang.toUpperCase();
-    });
-}));
+        else btn.innerText = currentLang.toUpperCase();
+    })
+);
 
-// --- THREE JS ---
 function initThreeJS() {
     const canvas = document.querySelector("#hero-canvas");
     if(!canvas) return;

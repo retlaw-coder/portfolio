@@ -8,8 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+    
     <link rel="stylesheet" href="style.css" />
   </head>
+  
   <body class="home-page">
     
     <div class="loader-container" id="loader">
@@ -46,7 +48,7 @@
             <h1 class="hero-title reveal-text blend-mode-text">WALTER <br> CUSTODIO</h1>
             <h2 class="hero-subtitle reveal-text" style="animation-delay: 0.1s">
               <span data-es="DISEÑADOR" data-en="MULTIMEDIA">DISEÑADOR</span>
-              <span class="glitch" data-es="MULTIMEDIA" data-en="DESIGNER">MULTIMEDIAL</span>
+              <span class="glitch" data-es="MULTIMEDIA" data-en="DESIGNER">MULTIMEDIA</span>
             </h2>
             <p class="location reveal-text" style="animation-delay: 0.2s">BASED IN ARGENTINA</p>
           </div>
@@ -60,91 +62,8 @@
             <h3 class="section-title heavy-title sticky-title">TRABAJOS SELECCIONADOS</h3>
           </div>
 
-          <div class="projects-list">
-            <a href="project.html?id=1" class="project-item interactive-card link-transition">
-              <div class="corner-accent top-left"></div><div class="corner-accent top-right"></div>
-              <div class="corner-accent bottom-left"></div><div class="corner-accent bottom-right"></div>
-              <span class="project-number">01</span>
-              <div class="project-media">
-                <img src="assets/proyecto1.png" alt="P1" />
-                <video src="assets/proyecto1.mp4" loop muted playsinline></video>
-              </div>
-              <div class="project-info">
-                <h3>Departamento</h3>
-                <p>3D / Blender</p>
-              </div>
-            </a>
-
-            <a href="project.html?id=2" class="project-item interactive-card link-transition">
-              <div class="corner-accent top-left"></div><div class="corner-accent top-right"></div>
-              <div class="corner-accent bottom-left"></div><div class="corner-accent bottom-right"></div>
-              <span class="project-number">02</span>
-              <div class="project-media">
-                <img src="assets/proyecto2.png" alt="P2" />
-                <video src="assets/proyecto2.mp4" loop muted playsinline></video>
-              </div>
-              <div class="project-info">
-                <h3>Tren entre montañas</h3>
-                <p>Animation / shaders / modifiers</p>
-              </div>
-            </a>
-
-            <a href="project.html?id=3" class="project-item interactive-card link-transition">
-              <div class="corner-accent top-left"></div><div class="corner-accent top-right"></div>
-              <div class="corner-accent bottom-left"></div><div class="corner-accent bottom-right"></div>
-              <span class="project-number">03</span>
-              <div class="project-media">
-                <img src="assets/proyecto3.png" alt="P3" />
-                <video src="assets/proyecto3.mp4" loop muted playsinline></video>
-              </div>
-              <div class="project-info">
-                <h3>VORONOI FLUX</h3>
-                <p>Motion graphics abstracto</p>
-              </div>
-            </a>
-
-            <a href="project.html?id=4" class="project-item interactive-card link-transition">
-                <div class="corner-accent top-left"></div><div class="corner-accent top-right"></div>
-                <div class="corner-accent bottom-left"></div><div class="corner-accent bottom-right"></div>
-                <span class="project-number">04</span>
-                <div class="project-media">
-                  <img src="assets/proyecto4.png" alt="P4" />
-                  <video src="assets/proyecto4.mp4" loop muted playsinline></video>
-                </div>
-                <div class="project-info">
-                  <h3>Walk cycle</h3>
-                  <p>Visuals</p>
-                </div>
-            </a>
-
-            <a href="project.html?id=5" class="project-item interactive-card link-transition">
-                <div class="corner-accent top-left"></div><div class="corner-accent top-right"></div>
-                <div class="corner-accent bottom-left"></div><div class="corner-accent bottom-right"></div>
-                <span class="project-number">05</span>
-                <div class="project-media">
-                  <img src="assets/proyecto5_0.png" alt="P5" />
-                  <img src="assets/proyecto5_1.png" class="video-placeholder" alt="P5 Hover"/>
-                </div>
-                <div class="project-info">
-                  <h3>Proyecto 5</h3>
-                  <p>Motion 3D</p>
-                </div>
-            </a>
-
-            <a href="project.html?id=6" class="project-item interactive-card link-transition">
-                <div class="corner-accent top-left"></div><div class="corner-accent top-right"></div>
-                <div class="corner-accent bottom-left"></div><div class="corner-accent bottom-right"></div>
-                <span class="project-number">06</span>
-                <div class="project-media">
-                  <img src="assets/proyecto6.png" alt="P6" />
-                  <video src="assets/proyecto6.mp4" loop muted playsinline></video>
-                </div>
-                <div class="project-info">
-                  <h3>PROCEDURAL SPAN</h3>
-                  <p>Arquitectura generada por nodos</p>
-                </div>
-            </a>
-          </div>
+          <div class="projects-list" id="dynamic-projects-list">
+            </div>
         </div>
       </section>
 
@@ -184,7 +103,7 @@
               <li><span>BLENDER</span> <span class="level">//// EXP</span></li>
               <li><span>PHOTOSHOP</span> <span class="level">//// EXP</span></li>
               <li><span>PREMIER</span> <span class="level">/// ADV</span></li>
-     <li><span>AFTER EFFECTS</span> <span class="level">/// ADV</span></li>
+              <li><span>AFTER EFFECTS</span> <span class="level">/// ADV</span></li>
               <li><span>JAVA, HTML, CSS</span> <span class="level">/// ADV</span></li>
               <li><span>FIGMA</span> <span class="level">/// ADV</span></li>
             </ul>
