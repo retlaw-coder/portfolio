@@ -7,7 +7,6 @@
   --accent-color: #ff3333; /* Rojo Neón */
   --border-dim: rgba(255, 255, 255, 0.15);
   --border-thin: rgba(255, 255, 255, 0.05);
-  --glass-bg: rgba(10, 10, 10, 0.6);
   --ease-fluid: cubic-bezier(0.65, 0, 0.35, 1);
   --font-display: "Space Grotesk", sans-serif;
   --font-mono: "Space Mono", monospace;
@@ -15,11 +14,7 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html { 
-  width: 100%;
-  overflow-x: hidden;
-  /* IMPORTANTE: Sin scroll-behavior: smooth para no romper Lenis */
-}
+html { width: 100%; overflow-x: hidden; }
 
 body {
   background-color: var(--bg-color);
@@ -30,7 +25,6 @@ body {
   overscroll-behavior: none;
 }
 
-/* Ocultar scrollbar nativa pero permitir scroll */
 body::-webkit-scrollbar { width: 5px; }
 body::-webkit-scrollbar-track { background: #000; }
 body::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
@@ -43,100 +37,56 @@ button { border: none; background: none; font-family: inherit; cursor: pointer; 
 
 
 /* =========================================
-   2. CURSOR SYSTEM (NEON GHOST) - UPDATED
+   2. CURSOR SYSTEM (SQUARE NEON GHOST)
    ========================================= */
-
-/* Ocultar cursor nativo SOLO en PC */
 @media (hover: hover) and (pointer: fine) {
     body, a, button, .interactive-btn, .interactive-card {
         cursor: none !important;
     }
 }
 
-/* Cabeza del Cursor (El que guía) */
 .cursor-head {
-    position: fixed;
-    top: 0; left: 0;
-    
-    /* CAMBIO: Cuadrado Tech */
-    width: 20px; height: 32px; 
-    /* Si quieres proporción áurea vertical, usa: height: 32px; */
-    
-    background: transparent;
-    border: 2px solid var(--accent-color);
-    border-radius: 0; /* Cero radio para esquinas rectas */
-    
-    pointer-events: none;
-    z-index: 10000;
+    position: fixed; top: 0; left: 0;
+    width: 20px; height: 20px;
+    background: transparent; border: 2px solid var(--accent-color); border-radius: 0;
+    pointer-events: none; z-index: 10000;
     transform: translate(-50%, -50%);
-    
-    /* EFECTO NEÓN (Glow Interno + Externo) */
-    box-shadow: 
-        0 0 10px var(--accent-color),
-        inset 0 0 5px var(--accent-color);
-    
+    box-shadow: 0 0 10px var(--accent-color), inset 0 0 5px var(--accent-color);
     transition: width 0.2s, height 0.2s, background-color 0.2s;
     mix-blend-mode: screen; 
 }
 
-/* Estado Hover (Al pasar sobre links) */
 .cursor-head.hovered {
-    width: 32px; height: 50px; /* Se agranda manteniendo forma */
-    /* Si usaste proporción áurea arriba, escala proporcionalmente aquí ej: 40px / 64px */
-    
-    background: rgba(255, 51, 51, 0.1);
-    border-color: #fff;
-    border-radius: 0; /* Aseguramos que siga cuadrado */
+    width: 50px; height: 50px;
+    background: rgba(255, 51, 51, 0.1); border-color: #fff;
     box-shadow: 0 0 20px var(--accent-color), inset 0 0 10px var(--accent-color);
 }
 
-/* La Cola Fantasma (Rastro) */
 .cursor-ghost {
-    position: fixed;
-    top: 0; left: 0;
-    
-    /* CAMBIO: Cuadrado Fantasma */
-    width: 20px; height: 20px; 
-    /* Si cambiaste la cabeza a áurea, cambia esto también a height: 32px; */
-    
-    border: 1px solid var(--accent-color);
-    border-radius: 0; /* Esquinas rectas */
-    
-    background: transparent;
-    pointer-events: none;
-    z-index: 9999;
+    position: fixed; top: 0; left: 0;
+    width: 20px; height: 20px;
+    border: 1px solid var(--accent-color); border-radius: 0;
+    background: transparent; pointer-events: none; z-index: 9999;
     transform: translate(-50%, -50%);
     box-shadow: 0 0 4px var(--accent-color);
 }
 
+
 /* =========================================
-   3. MOBILE RIPPLE (SHOCKWAVE)
+   3. MOBILE RIPPLE
    ========================================= */
 .mobile-ripple {
-    position: fixed;
-    border-radius: 50%;
+    position: fixed; border-radius: 50%;
     transform: translate(-50%, -50%) scale(0);
-    pointer-events: none;
-    z-index: 9998;
-    
-    /* Distorsión óptica ("Heatwave") */
+    pointer-events: none; z-index: 9998;
     backdrop-filter: blur(2px) contrast(1.5) brightness(1.2);
     border: 1px solid rgba(255, 255, 255, 0.3);
-    
     animation: ripple-effect 0.6s cubic-bezier(0, 0, 0.2, 1) forwards;
 }
 
 @keyframes ripple-effect {
-    0% {
-        width: 0px; height: 0px; 
-        opacity: 1;
-        border-width: 4px;
-    }
-    100% {
-        width: 250px; height: 250px; 
-        opacity: 0;
-        border-width: 0px;
-    }
+    0% { width: 0px; height: 0px; opacity: 1; border-width: 4px; }
+    100% { width: 250px; height: 250px; opacity: 0; border-width: 0px; }
 }
 
 
@@ -162,7 +112,6 @@ button { border: none; background: none; font-family: inherit; cursor: pointer; 
 .loader-text { color: #666; font-family: var(--font-mono); letter-spacing: 2px; font-size: 0.7rem; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
-/* Sticky Nav */
 .sticky-nav {
     position: fixed; top: 0; left: 0; width: 100%; height: 70px;
     background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(12px);
@@ -172,7 +121,7 @@ button { border: none; background: none; font-family: inherit; cursor: pointer; 
 }
 body.home-page .sticky-nav { transform: translateY(-100%); transition: transform 0.6s var(--ease-fluid); }
 body.home-page .sticky-nav.visible { transform: translateY(0); }
-body.project-page .sticky-nav { transform: translateY(0); } /* Siempre visible en proyectos */
+body.project-page .sticky-nav { transform: translateY(0); }
 
 .nav-logo { font-weight: 700; font-size: 0.9rem; letter-spacing: -0.5px; color: #fff; }
 .nav-right { display: flex; gap: 10px; }
@@ -181,7 +130,6 @@ body.project-page .sticky-nav { transform: translateY(0); } /* Siempre visible e
 .contact-nav-btn { background: var(--accent-color); color: #fff; font-weight: 700; border-radius: 2px; }
 .contact-nav-btn:hover { background: #fff; color: var(--accent-color); border-color: transparent; }
 
-/* Lang Switch Floating */
 .lang-switch-floating {
     position: fixed; top: 30px; right: 40px; z-index: 500;
     background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2);
@@ -218,8 +166,6 @@ body.project-page .sticky-nav { transform: translateY(0); } /* Siempre visible e
 .projects-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 60px 40px; }
 
 .project-item { display: flex; flex-direction: column; position: relative; overflow: hidden; text-decoration: none; }
-
-/* Decoraciones sutiles en tarjetas */
 .project-item .corner-accent { position: absolute; width: 10px; height: 10px; border-color: #444; border-style: solid; transition: 0.3s; opacity: 0; }
 .project-item:hover .corner-accent { opacity: 1; border-color: var(--accent-color); }
 .top-left { top: 0; left: 0; border-width: 1px 0 0 1px; }
@@ -230,14 +176,10 @@ body.project-page .sticky-nav { transform: translateY(0); } /* Siempre visible e
 .project-number { font-family: var(--font-mono); color: #666; font-size: 0.8rem; margin-bottom: 5px; display: block; }
 
 .project-media { 
-    width: 100%; aspect-ratio: 16/9; 
-    background: #111; margin-bottom: 20px; 
-    position: relative; overflow: hidden; 
-    border: 1px solid var(--border-thin);
-    transition: border-color 0.3s;
+    width: 100%; aspect-ratio: 16/9; background: #111; margin-bottom: 20px; 
+    position: relative; overflow: hidden; border: 1px solid var(--border-thin); transition: border-color 0.3s;
 }
 .project-item:hover .project-media { border-color: #444; }
-
 .project-media img, .project-media video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; transition: transform 0.6s ease; }
 .project-media video { opacity: 0; transition: opacity 0.4s ease; }
 .project-item:hover .project-media video { opacity: 1; }
@@ -248,77 +190,105 @@ body.project-page .sticky-nav { transform: translateY(0); } /* Siempre visible e
 
 
 /* =========================================
-   7. BRUTALIST PROJECT DETAIL (NEW UPGRADE)
+   7. BRUTALIST PROJECT DETAIL (LAYOUT UPDATE)
    ========================================= */
 .detail-container-grid { 
-    display: grid; 
-    grid-template-columns: 350px 1fr; 
-    gap: 60px; 
-    padding: 120px 5vw 100px; 
-    max-width: 1800px; 
-    margin: 0 auto;
-    
-    /* Decoración de Sistema */
-    border-top: 1px solid #333;
-    position: relative;
+    display: grid; grid-template-columns: 350px 1fr; gap: 60px; 
+    padding: 120px 5vw 100px; max-width: 1800px; margin: 0 auto;
+    border-top: 1px solid #333; position: relative;
 }
 .detail-container-grid::before { content: "+"; position: absolute; top: 20px; left: 20px; color: #666; font-family: var(--font-mono); }
 .detail-container-grid::after { content: "SYS.RENDER_MODE // ACTIVE"; position: absolute; top: 20px; right: 5vw; color: var(--accent-color); font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 2px; }
 
-/* Sidebar Ficha Técnica */
-.detail-sidebar { 
-    position: sticky; top: 100px; height: fit-content; 
-    border: 1px solid #333; 
-    background: rgba(10, 10, 10, 0.5); 
-    backdrop-filter: blur(10px);
-}
-
+/* Sidebar */
+.detail-sidebar { position: sticky; top: 100px; height: fit-content; border: 1px solid #333; background: rgba(10, 10, 10, 0.5); backdrop-filter: blur(10px); }
 .detail-header-block { padding: 25px; border-bottom: 1px solid #333; background: rgba(255,255,255,0.02); }
 .detail-header-block h1 { font-size: 2.5rem; line-height: 0.9; margin: 0; letter-spacing: -1px; text-transform: uppercase; }
-
 .detail-body-block { padding: 25px; }
-
-.detail-meta-label { 
-    font-family: var(--font-mono); font-size: 0.65rem; color: #666; 
-    display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; 
-}
-
-.detail-desc-text { 
-    font-size: 1rem; line-height: 1.5; color: #ccc; margin-bottom: 30px; 
-    border-left: 2px solid var(--accent-color); padding-left: 15px; 
-}
-
+.detail-meta-label { font-family: var(--font-mono); font-size: 0.65rem; color: #666; display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+.detail-desc-text { font-size: 1rem; line-height: 1.5; color: #ccc; margin-bottom: 30px; border-left: 2px solid var(--accent-color); padding-left: 15px; }
 .tech-tags-container { display: flex; flex-wrap: wrap; gap: 5px; }
-.tech-tag { 
-    padding: 6px 10px; border: 1px solid #444; 
-    font-family: var(--font-mono); font-size: 0.7rem; color: #aaa; 
-    text-transform: uppercase; background: rgba(0,0,0,0.3);
-}
+.tech-tag { padding: 6px 10px; border: 1px solid #444; font-family: var(--font-mono); font-size: 0.7rem; color: #aaa; text-transform: uppercase; background: rgba(0,0,0,0.3); }
 
-/* Galería */
-.detail-media-grid { display: flex; flex-direction: column; gap: 60px; width: 100%; }
+/* --- MEDIA ZONES --- */
+.detail-media-grid { display: flex; flex-direction: column; gap: 0; width: 100%; }
+
+/* A. Zona Videos (Flex Acordeón) */
+.video-zone {
+    display: flex; gap: 20px; width: 100%;
+    height: auto; max-height: 80vh; min-height: 300px;
+    transition: all 0.6s var(--ease-fluid); align-items: stretch;
+}
+.video-wrapper {
+    position: relative; width: 100%; background: #000; border: 1px solid #333; overflow: hidden; cursor: none;
+    flex: 1; display: flex; justify-content: center; align-items: center;
+    transition: flex 0.8s var(--ease-fluid), border-color 0.3s;
+}
+.video-wrapper.active { flex: 5; border-color: var(--accent-color); }
+.video-wrapper video { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; transition: opacity 0.5s; }
+.video-wrapper.active video { opacity: 1; }
+
+.play-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; justify-content: center; align-items: center;
+    background: rgba(0,0,0,0.2); z-index: 10; pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+}
+.play-icon {
+    width: 80px; height: 80px; background: rgba(255, 51, 51, 0.6);
+    border-radius: 50%; display: flex; justify-content: center; align-items: center;
+    backdrop-filter: blur(5px); box-shadow: 0 0 30px rgba(255, 51, 51, 0.4);
+}
+.play-icon::after {
+    content: ""; display: block; width: 0; height: 0;
+    border-style: solid; border-width: 12px 0 12px 20px;
+    border-color: transparent transparent transparent #fff; margin-left: 4px;
+}
+.video-wrapper.active .play-overlay { opacity: 0; transform: scale(1.5); }
+.video-caption-overlay {
+    position: absolute; bottom: 20px; left: 20px;
+    font-family: var(--font-mono); font-size: 0.7rem; color: #fff;
+    background: rgba(0,0,0,0.7); padding: 5px 10px;
+    border-left: 2px solid var(--accent-color); z-index: 20;
+    opacity: 0; transform: translateY(10px); transition: 0.5s;
+}
+.video-wrapper.active .video-caption-overlay { opacity: 1; transform: translateY(0); }
+
+/* B. Zona Imágenes (GRID 3 Columnas + Margen) */
+.image-zone {
+    /* CAMBIO: Margen superior para separar de videos */
+    margin-top: 80px;
+    /* CAMBIO: Grid de 3 columnas en desktop */
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 20px; 
+    width: 100%;
+}
 
 .detail-item { 
     width: 100%; background: #111; 
     border: 1px solid #333; 
     position: relative; 
-}
-.detail-item img, .detail-item video { width: 100%; height: auto; display: block; }
-
-/* Decoración imagen */
-.detail-item::after { 
-    content: "IMG_DATA_SOURCE"; position: absolute; bottom: 0; right: 0; 
-    font-family: var(--font-mono); font-size: 0.6rem; 
-    background: #000; color: #fff; padding: 4px 8px; 
-    border-top: 1px solid #333; border-left: 1px solid #333;
-    pointer-events: none; 
+    aspect-ratio: auto; overflow: hidden; 
+    
+    /* CAMBIO: Transición para el hover */
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* Captions debajo de las fotos */
+/* CAMBIO: Hover Effect (Expansión suave y borde) */
+.detail-item:hover {
+    transform: scale(1.05); /* Expansión ligera */
+    border-color: var(--accent-color);
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    z-index: 5; /* Para que quede por encima de las otras */
+}
+
+.detail-item img { width: 100%; height: auto; display: block; }
+
 .project-caption {
-    font-family: var(--font-mono); font-size: 0.8rem; color: #888;
-    margin-top: -40px; margin-bottom: 0; padding-left: 20px;
-    border-left: 1px dashed #444; max-width: 600px;
+    font-family: var(--font-mono); font-size: 0.75rem; color: #888;
+    margin-top: 10px; padding-left: 10px; border-left: 2px solid var(--accent-color);
+    grid-column: span 3; /* El texto ocupa el ancho total de la fila si es necesario */
 }
 
 
@@ -334,13 +304,11 @@ body.project-page .sticky-nav { transform: translateY(0); } /* Siempre visible e
 .cv-grid { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 60px; }
 .cv-header { display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-dim); padding-bottom: 15px; margin-bottom: 50px; font-family: var(--font-mono); }
 .cv-label { font-family: var(--font-mono); font-size: 0.75rem; color: #666; margin-bottom: 30px; display: block; border-bottom: 1px solid #222; padding-bottom: 10px; letter-spacing: 1px; }
-
 .tech-list li { display: flex; justify-content: space-between; border-bottom: 1px dashed #333; padding: 12px 0; font-family: var(--font-mono); font-size: 0.9rem; text-transform: uppercase; }
 .cv-entry { margin-bottom: 40px; }
 .cv-entry .year { font-family: var(--font-mono); color: var(--accent-color); font-size: 0.8rem; display: block; margin-bottom: 5px; }
 .cv-entry p { font-size: 1.4rem; font-weight: 500; margin: 0 0 5px 0; color: #fff; line-height: 1.1; }
 .cv-entry small { font-family: var(--font-mono); color: #888; font-size: 0.8rem; }
-
 .contact-text { font-family: var(--font-display); font-size: 1.1rem; color: #aaa; margin-bottom: 30px; line-height: 1.4; }
 .contact-btn-red { display: block; width: 100%; text-align: center; background: var(--accent-color); color: #fff; padding: 20px 0; font-weight: 700; border: 1px solid transparent; font-family: var(--font-mono); font-size: 0.9rem; transition: 0.3s; }
 .contact-btn-red:hover { background: transparent; color: var(--accent-color); border-color: var(--accent-color); }
@@ -371,19 +339,116 @@ body.project-page .sticky-nav { transform: translateY(0); } /* Siempre visible e
     .hero-title { font-size: 3.5rem; }
     
     .projects-layout, .detail-container-grid, .cv-grid, .capabilities-grid { grid-template-columns: 1fr; }
-    
     .sticky-title, .detail-sidebar { position: static; margin-bottom: 40px; height: auto; }
     
-    /* Layout Proyectos Móvil */
     .projects-list { grid-template-columns: 1fr; }
-    
-    /* Restaurar visualización de número y decoraciones en móvil si se ocultaron */
     .project-item .corner-accent { opacity: 1; border-color: #333; }
     
-    /* Ajustes Detail */
-    .detail-container-grid { padding-top: 100px; padding-left: 5vw; padding-right: 5vw; }
-    .detail-sidebar { margin-bottom: 40px; }
+    /* Layout Vertical en Móvil */
+    .video-zone { flex-direction: column; height: auto; max-height: none; }
+    .video-wrapper { width: 100%; height: auto; aspect-ratio: 16/9; flex: none !important; }
     
-    /* Ajustes Ghost Cursor en Touch */
+    /* Imagenes en móvil 1 columna */
+    .image-zone { grid-template-columns: 1fr !important; margin-top: 40px; }
+    .detail-item { aspect-ratio: auto; }
+    .project-caption { grid-column: span 1; }
+    
+    .detail-container-grid { padding-top: 100px; padding-left: 5vw; padding-right: 5vw; }
+    
     .cursor-head, .cursor-ghost { display: none !important; }
+}
+
+/* =========================================
+   SIDEBAR NAVIGATION (PREV / NEXT)
+   ========================================= */
+
+.nav-sidebar-btn {
+    position: fixed;
+    top: 70px; /* Debajo del header */
+    bottom: 0;
+    width: 7vw; /* 7% del ancho */
+    min-width: 50px; /* Mínimo para que sea clickeable en pantallas chicas */
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    
+    background: transparent;
+    z-index: 900; /* Debajo del header (1000) pero sobre el contenido */
+    cursor: pointer;
+    text-decoration: none;
+    border-right: 1px solid var(--border-thin); /* Separador visual sutil */
+    transition: background 0.3s ease;
+}
+
+/* Hover Effect Brutalista */
+.nav-sidebar-btn:hover {
+    background: rgba(255, 51, 51, 0.05); /* Rojo muy sutil */
+    border-color: var(--accent-color);
+}
+
+.prev-btn { left: 0; border-right: 1px solid var(--border-thin); border-left: none; }
+.next-btn { right: 0; border-left: 1px solid var(--border-thin); border-right: none; }
+
+/* Iconografía */
+.arrow-icon {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: #666;
+    transition: transform 0.3s, color 0.3s;
+}
+
+.nav-hint {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: #444;
+    writing-mode: vertical-rl; /* Texto vertical estilo técnico */
+    text-orientation: mixed;
+    letter-spacing: 2px;
+    transition: color 0.3s;
+}
+
+/* Animación al Hover */
+.nav-sidebar-btn:hover .arrow-icon { color: var(--accent-color); transform: scale(1.2); }
+.nav-sidebar-btn:hover .nav-hint { color: #fff; }
+
+
+/* =========================================
+   AJUSTE DE LAYOUT (ESPACIO SEGURO)
+   ========================================= */
+
+/* Modificamos el padding lateral para que los botones NO PISEN el contenido */
+.detail-container-grid { 
+    display: grid; 
+    grid-template-columns: 350px 1fr; 
+    gap: 60px; 
+    
+    /* ANTES: padding: 120px 5vw 100px; */
+    /* AHORA: 9vw para dejar espacio a los botones de 7vw + aire */
+    padding: 120px 9vw 100px; 
+    
+    max-width: 100%; /* Ocupar todo para que el padding funcione bien */
+    margin: 0 auto;
+    border-top: 1px solid #333; 
+    position: relative;
+}
+
+/* Ajuste Responsive Mobile */
+@media (max-width: 900px) {
+    /* Mantenemos los botones, pero ajustamos el padding del contenido */
+    .detail-container-grid { 
+        padding-top: 100px; 
+        padding-left: 10vw; /* Un poco más de espacio en móvil */
+        padding-right: 10vw; 
+    }
+    
+    /* Botones un poco más sutiles en móvil */
+    .nav-sidebar-btn {
+        width: 8vw; /* Un pelín más anchos para el dedo */
+        background: rgba(0,0,0,0.2); /* Fondo suave para diferenciar */
+        backdrop-filter: blur(2px);
+    }
+    .nav-hint { display: none; } /* Ocultamos texto vertical en móvil, solo flechas */
 }

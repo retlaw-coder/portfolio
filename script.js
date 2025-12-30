@@ -3,10 +3,11 @@ import { GLTFLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/l
 import { DRACOLoader } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/DRACOLoader.js";
 import Lenis from "https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/+esm";
 
+// --- CONFIGURACIÓN GLOBAL ---
 const ASSETS_PATH = "assets/";
 const DATA_URL = "data.json";
 
-// --- LOADER ---
+// --- 1. LOADER & TRANSICIONES ---
 const loaderElement = document.getElementById("loader");
 const progressText = document.querySelector(".loader-progress");
 const overlay = document.querySelector('.page-transition-overlay');
@@ -29,6 +30,9 @@ window.addEventListener('pageshow', () => { if (overlay) overlay.classList.remov
 
 function bindLinks() {
     document.querySelectorAll('.link-transition').forEach(link => {
+        // Evitamos agregar listeners duplicados si ya existen
+        if(link.dataset.bound) return; 
+        
         link.addEventListener('click', (e) => {
             const target = link.getAttribute('href');
             if (target && target !== '#' && !target.startsWith('mailto')) {
@@ -37,11 +41,12 @@ function bindLinks() {
                 setTimeout(() => { window.location.href = target; }, 600);
             }
         });
+        link.dataset.bound = true; // Marcamos como listo
     });
 }
 bindLinks();
 
-// --- LENIS SCROLL ---
+// --- 2. LENIS SCROLL ---
 const lenis = new Lenis({
     duration: 1.2,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -51,106 +56,79 @@ function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
 requestAnimationFrame(raf);
 
 
-// ==========================================
-// NUEVO SISTEMA DE CURSOR FANTASMA (NEÓN)
-// ==========================================
+// --- 3. VISUAL FX ---
 
-// Configuración
-const TRAIL_LENGTH = 12; // Cantidad de fantasmas
-const HEAD_LERP = 0.15;  // Velocidad del cursor principal (0.1 = lento, 1 = instantaneo)
-const TAIL_LERP = 0.25;  // Qué tan rápido la cola alcanza a la cabeza
-
-// Variables de estado
+// A. GHOST CURSOR (SQUARE NEON)
+const TRAIL_LENGTH = 12; 
+const HEAD_LERP = 0.15;  
+const TAIL_LERP = 0.25;  
 let mouseX = 0, mouseY = 0;
-let cursorElements = []; // Array para guardar los divs
+let cursorElements = []; 
 
-// Solo activar en Desktop
+// Solo activamos en Desktop
 if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
     initGhostCursor();
 }
 
 function initGhostCursor() {
-    // 1. Crear Cursor Principal (Cabeza)
+    // Cabeza
     const head = document.createElement('div');
     head.className = 'cursor-head';
     document.body.appendChild(head);
-    
-    // Guardamos la cabeza en el array (índice 0)
-    cursorElements.push({
-        el: head,
-        x: 0,
-        y: 0
-    });
+    cursorElements.push({ el: head, x: 0, y: 0 });
 
-    // 2. Crear Fantasmas (Cola)
+    // Cola
     for (let i = 0; i < TRAIL_LENGTH; i++) {
         const ghost = document.createElement('div');
         ghost.className = 'cursor-ghost';
         document.body.appendChild(ghost);
-
-        // Opacidad decreciente (el último es casi invisible)
-        // Calcula opacidad: empieza en 0.5 y baja hasta 0
+        
         const opacity = 0.6 * (1 - (i / TRAIL_LENGTH));
         ghost.style.opacity = opacity;
-        
-        // Escala decreciente (opcional, para efecto cometa)
         const scale = 1 - (i / TRAIL_LENGTH) * 0.5;
         ghost.style.transform = `translate(-50%, -50%) scale(${scale})`;
 
-        cursorElements.push({
-            el: ghost,
-            x: 0,
-            y: 0
-        });
+        cursorElements.push({ el: ghost, x: 0, y: 0 });
     }
 
-    // 3. Listener de movimiento real
+    // Listener
     document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
 
-        // Detectar Hover para agrandar la cabeza
         const target = e.target;
+        // Detectar si estamos sobre algo interactivo (incluido el video wrapper)
         if (target.tagName === 'A' || target.tagName === 'BUTTON' || 
-            target.closest('.interactive-card') || target.closest('.interactive-btn')) {
+            target.closest('.interactive-card') || target.closest('.interactive-btn') ||
+            target.closest('.nav-sidebar-btn') || // Botones laterales
+            target.closest('.video-wrapper')) { 
             head.classList.add('hovered');
         } else {
             head.classList.remove('hovered');
         }
     });
-
-    // 4. Loop de Animación (Física)
     animateCursor();
 }
 
 function animateCursor() {
-    // A. Mover la cabeza hacia el mouse
-    // Usamos interpolación lineal (Lerp) para suavidad
     const head = cursorElements[0];
     head.x += (mouseX - head.x) * HEAD_LERP;
     head.y += (mouseY - head.y) * HEAD_LERP;
     head.el.style.left = `${head.x}px`;
     head.el.style.top = `${head.y}px`;
 
-    // B. Mover cada fantasma hacia el elemento ANTERIOR
-    // Esto crea el efecto de cadena o serpiente
     for (let i = 1; i < cursorElements.length; i++) {
         const current = cursorElements[i];
-        const prev = cursorElements[i - 1]; // El elemento al que persigue
-
-        // Lerp hacia el anterior
+        const prev = cursorElements[i - 1];
         current.x += (prev.x - current.x) * TAIL_LERP;
         current.y += (prev.y - current.y) * TAIL_LERP;
-
         current.el.style.left = `${current.x}px`;
         current.el.style.top = `${current.y}px`;
     }
-
     requestAnimationFrame(animateCursor);
 }
 
-
-// --- EFECTO ONDA EXPANSIVA (MOBILE) ---
+// B. RIPPLE (MOBILE)
 document.addEventListener('touchstart', (e) => {
     const touch = e.touches[0];
     createRipple(touch.clientX, touch.clientY);
@@ -166,7 +144,7 @@ function createRipple(x, y) {
 }
 
 
-// --- RESTO DE TU APP (DATA, RENDER, ETC) ---
+// --- 4. APP LOGIC (DATA DRIVEN) ---
 
 async function initApp() {
     try {
@@ -185,13 +163,15 @@ async function initApp() {
 }
 initApp();
 
+
+// --- RENDER HOME ---
 function renderHome(data) {
     const container = document.getElementById('dynamic-projects-list');
     if (!container) return;
 
     container.innerHTML = data.map((p, index) => {
         const thumbImg = `${ASSETS_PATH}p${p.id}_0.png`;
-        const hoverVid = `${ASSETS_PATH}p${p.id}_v.mp4`;
+        const hoverVid = `${ASSETS_PATH}p${p.id}_v0.mp4`; 
         const num = (index + 1).toString().padStart(2, '0');
 
         return `
@@ -211,7 +191,7 @@ function renderHome(data) {
         `;
     }).join('');
 
-    bindLinks();
+    bindLinks(); 
     
     document.querySelectorAll(".project-item").forEach((item) => {
         const video = item.querySelector("video");
@@ -229,15 +209,41 @@ function renderHome(data) {
     });
 }
 
+
+// --- RENDER PROJECT DETAIL ---
 async function renderProjectDetail(allProjects) {
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
-    const project = allProjects.find(p => p.id === id);
+    
+    // Encontrar índice actual para navegación
+    const currentIndex = allProjects.findIndex(p => p.id === id);
+    const project = allProjects[currentIndex];
 
     if (!project) { window.location.href = 'index.html'; return; }
 
-    const sidebar = document.querySelector('.detail-sidebar');
+    // --- A. SIDEBAR NAV BUTTONS (LOOP) ---
+    const total = allProjects.length;
+    // Cálculo circular (Loop infinito)
+    const nextIndex = (currentIndex + 1) % total;
+    // El + total asegura que no sea negativo
+    const prevIndex = (currentIndex - 1 + total) % total;
     
+    const nextId = allProjects[nextIndex].id;
+    const prevId = allProjects[prevIndex].id;
+    
+    // Asignar links
+    const prevBtn = document.getElementById('prev-project-btn');
+    const nextBtn = document.getElementById('next-project-btn');
+    
+    if (prevBtn) prevBtn.setAttribute('href', `project.html?id=${prevId}`);
+    if (nextBtn) nextBtn.setAttribute('href', `project.html?id=${nextId}`);
+    
+    // Re-bindear links para el fade transition
+    bindLinks();
+
+
+    // --- B. RENDER SIDEBAR INFO ---
+    const sidebar = document.querySelector('.detail-sidebar');
     sidebar.innerHTML = `
         <div class="detail-header-block">
             <span class="detail-meta-label">PROJECT_ID: ${project.id.padStart(3, '0')}</span>
@@ -247,7 +253,6 @@ async function renderProjectDetail(allProjects) {
         <div class="detail-body-block">
             <span class="detail-meta-label">SYSTEM_DESC:</span>
             <p class="detail-desc-text">${project.desc}</p>
-            
             <span class="detail-meta-label">TOOLS_USED:</span>
             <div class="tech-tags-container" style="margin-bottom: 20px;">
                 ${project.stack.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
@@ -257,50 +262,151 @@ async function renderProjectDetail(allProjects) {
         </div>
     `;
 
-    const grid = document.querySelector(".detail-media-grid");
-    
-    const heroVidPath = `${ASSETS_PATH}p${id}_v.mp4`;
-    const vidContainer = document.createElement('div');
-    vidContainer.className = 'detail-item full-width';
-    
-    const vidCaption = project.captions && project.captions["video"] ? 
-        `<p class="project-caption">// ${project.captions["video"]}</p>` : '';
-        
-    vidContainer.innerHTML = `
-        <video src="${heroVidPath}" controls autoplay muted loop playsinline></video>
-        ${vidCaption}
-    `;
-    grid.appendChild(vidContainer);
+    // --- C. PREPARAR LAYOUT GRID ---
+    const mainGrid = document.querySelector(".detail-media-grid");
+    mainGrid.innerHTML = ''; 
 
-    let index = 0; 
+    const videoZone = document.createElement('div');
+    videoZone.className = 'video-zone';
+    
+    const imageZone = document.createElement('div');
+    imageZone.className = 'image-zone';
+
+    // --- D. SCAN ASSETS (BUFFERING) ---
+    let v0Exists = false;
+    let foundExtras = [];
+    let foundImages = [];
+    
+    // Check v0 (Asumimos existencia por convención)
+    const v0Path = `${ASSETS_PATH}p${id}_v0.mp4`;
+    v0Exists = true; 
+
+    // Loop de escaneo
+    let index = 0;
     let keepLoading = true;
+    let consecutiveErrors = 0;
 
-    while (keepLoading && index < 25) { 
+    while (keepLoading && index < 30) {
+        let foundSomething = false;
+
+        // Imágenes
         const imgPath = `${ASSETS_PATH}p${id}_${index}.png`;
         try {
-            const response = await fetch(imgPath, { method: 'HEAD' });
-            if (response.ok) {
-                const el = document.createElement('div');
-                el.className = 'detail-item';
-                el.innerHTML = `<img src="${imgPath}" loading="lazy">`;
-                grid.appendChild(el);
-
-                if (project.captions && project.captions[index.toString()]) {
-                    const cap = document.createElement('p');
-                    cap.className = 'project-caption';
-                    cap.innerText = `// ${project.captions[index.toString()]}`;
-                    grid.appendChild(cap);
-                }
-                index++;
-            } else {
-                keepLoading = false;
+            const res = await fetch(imgPath, { method: 'HEAD' });
+            if (res.ok) {
+                foundImages.push({ path: imgPath, index: index.toString() });
+                foundSomething = true;
             }
-        } catch (e) { keepLoading = false; }
+        } catch(e) {}
+
+        // Videos Extras (Solo si index > 0)
+        if (index > 0) {
+            const vidPath = `${ASSETS_PATH}p${id}_v${index}.mp4`;
+            try {
+                const res = await fetch(vidPath, { method: 'HEAD' });
+                if (res.ok) {
+                    foundExtras.push({ path: vidPath, index: `v${index}` });
+                    foundSomething = true;
+                }
+            } catch(e) {}
+        }
+
+        if (foundSomething) consecutiveErrors = 0;
+        else consecutiveErrors++;
+        
+        if (consecutiveErrors > 2) keepLoading = false;
+        index++;
+    }
+
+    // --- E. DECISIÓN DE VIDEOS (LÓGICA EXCLUSIVA) ---
+    let videosToRender = [];
+    
+    if (foundExtras.length > 0) {
+        // Si hay extras, SOLO mostramos los extras (v0 se oculta)
+        videosToRender = foundExtras;
+    } else {
+        // Si no hay extras, mostramos el v0 como fallback
+        if (v0Exists) {
+            videosToRender = [{ path: v0Path, index: 'v0' }];
+        }
+    }
+
+    // --- F. RENDER VIDEOS (CUSTOM PLAYER) ---
+    if (videosToRender.length > 0) {
+        
+        videosToRender.forEach((vid, idx) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'video-wrapper';
+
+            const captionText = (project.captions && project.captions[vid.index]) 
+                ? project.captions[vid.index] : `SEQ_${vid.index.toUpperCase()}`;
+
+            wrapper.innerHTML = `
+                <video src="${vid.path}" loop muted playsinline preload="metadata" oncontextmenu="return false;"></video>
+                <div class="play-overlay">
+                    <div class="play-icon"></div>
+                </div>
+                <div class="video-caption-overlay">// ${captionText}</div>
+            `;
+
+            const videoElement = wrapper.querySelector('video');
+            
+            // RESET AL FINALIZAR
+            videoElement.addEventListener('ended', () => {
+                wrapper.classList.remove('active');
+                videoElement.currentTime = 0; 
+                // videoElement.pause(); // Implícito
+            });
+
+            // CLICK LOGIC (Acordeón)
+            wrapper.addEventListener('click', () => {
+                const wasPlaying = !videoElement.paused;
+                
+                // Resetear otros
+                document.querySelectorAll('.video-wrapper').forEach(w => {
+                    w.classList.remove('active');
+                    w.querySelector('video').pause();
+                });
+
+                if (!wasPlaying) {
+                    wrapper.classList.add('active');
+                    videoElement.play();
+                } 
+                // Si estaba sonando, el reset global ya lo detuvo y contrajo
+            });
+
+            videoZone.appendChild(wrapper);
+        });
+        
+        mainGrid.appendChild(videoZone);
+    }
+
+    // --- G. RENDER IMÁGENES ---
+    if (foundImages.length > 0) {
+        foundImages.forEach(img => {
+            const wrapper = document.createElement('div');
+            const el = document.createElement('div');
+            el.className = 'detail-item';
+            el.innerHTML = `<img src="${img.path}" loading="lazy">`;
+            wrapper.appendChild(el);
+
+            if (project.captions && project.captions[img.index]) {
+                const cap = document.createElement('p');
+                cap.className = 'project-caption';
+                cap.innerText = `// ${project.captions[img.index]}`;
+                wrapper.appendChild(cap);
+            }
+            imageZone.appendChild(wrapper);
+        });
+        mainGrid.appendChild(imageZone);
     }
     
+    // Recalcular scroll después de inyectar todo
     setTimeout(() => lenis.resize(), 500);
 }
 
+
+// --- 5. EXTRAS ---
 const modal = document.getElementById("contact-modal");
 if(modal) {
     document.querySelectorAll(".open-contact-trigger").forEach(btn => 
@@ -328,6 +434,8 @@ document.querySelectorAll('#lang-switch-nav, #lang-switch-hero').forEach(btn =>
     })
 );
 
+
+// --- 6. THREE.JS SCENE ---
 function initThreeJS() {
     const canvas = document.querySelector("#hero-canvas");
     if(!canvas) return;
