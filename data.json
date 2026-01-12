@@ -1,16 +1,13 @@
 [
   {
     "id": "1",
-    "title": "Departamento",
-    "subtitle": "3D / Blender",
-    "subtitle_en": "3D / Blender",
-    "desc": "Renderizado realista de interiores buscando una iluminación cálida y texturas fotorrealistas.",
-    "desc_en": "Realistic interior rendering aiming for warm lighting and photorealistic textures.",
-    "stack": ["Blender", "Cycles", "Archviz"],
-    "captions": {
-      "v0": "Recorrido general (Video Hero)",
-      "0": "Render estático portada"
-    }
+    "title": "Tren entre Montañas",
+    "subtitle": "3D / Blender / Animación",
+    "subtitle_en": "3D / Blender / Animation",
+    "desc": "Todos los assets generados proceduralmente",
+    "desc_en": "",
+    "stack": ["Blender", "Cycles", "Modifiers", "Premier"],
+    "captions": {}
   },
   {
     "id": "2",
@@ -51,9 +48,9 @@
     "desc_en": "Character and movement study through illustration.",
     "stack": ["Photoshop", "Procreate"],
     "captions": {
-      "0": "Boceto inicial",
-      "1": "Lineart",
-      "2": "Color"
+      "0": "",
+      "1": "",
+      "2": ""
     }
   },
   {
@@ -75,17 +72,17 @@
     "desc_en": "Brief description of project 7 in English.",
     "stack": ["Herramienta 1", "Herramienta 2"],
     "captions": {
-      "v0": "Descripción del video principal",
-      "0": "Descripción de la imagen de portada"
+      "v0": "",
+      "0": ""
     }
   },
   {
     "id": "8",
-    "title": "Nombre Proyecto 8",
-    "subtitle": "Categoría / Rol",
-    "subtitle_en": "Category / Role",
-    "desc": "Descripción breve del proyecto 8 en español.",
-    "desc_en": "Brief description of project 8 in English.",
+    "title": "",
+    "subtitle": "",
+    "subtitle_en": "",
+    "desc": "",
+    "desc_en": "",
     "stack": ["Herramienta A", "Herramienta B"],
     "captions": {}
   }

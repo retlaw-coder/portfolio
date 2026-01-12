@@ -278,8 +278,8 @@ async function renderProjectDetail(allProjects) {
                   .map((tech) => `<span class="tech-tag">${tech}</span>`)
                   .join("")}
             </div>
-             <span class="detail-meta-label">STATUS:</span>
-             <p style="font-family: var(--font-mono); font-size: 0.8rem; color: #fff;">COMPLETED_RENDER</p>
+           
+           
         </div>
     `;
 
@@ -295,7 +295,7 @@ async function renderProjectDetail(allProjects) {
       assets.push({
         type: "video",
         src: v0Path,
-        caption: project.captions?.v0 || "Main Sequence",
+        caption: project.captions?.v0 || ".MP4",
       });
     }
   } catch (e) {}
@@ -332,7 +332,7 @@ async function renderProjectDetail(allProjects) {
           assets.push({
             type: "video",
             src: vidPath,
-            caption: project.captions?.[`v${index}`] || `Sequence ${index}`,
+            caption: project.captions?.[`v${index}`] || `.MP4`,
           });
           foundSomething = true;
         }
