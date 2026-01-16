@@ -6,8 +6,8 @@ import Lenis from "https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/+es
 // --- CONFIGURACIÓN GLOBAL ---
 const ASSETS_PATH = "assets/";
 const DATA_URL = "data.json";
-let currentLang = "es";
-let currentProjectData = null;
+let currentLang = "es"; 
+let currentProjectData = null; 
 
 // --- 1. LOADER ---
 const loaderElement = document.getElementById("loader");
@@ -27,12 +27,8 @@ if (loaderElement) {
   }, 30);
 }
 
-window.addEventListener("load", () => {
-  if (overlay) overlay.classList.remove("active");
-});
-window.addEventListener("pageshow", () => {
-  if (overlay) overlay.classList.remove("active");
-});
+window.addEventListener("load", () => { if (overlay) overlay.classList.remove("active"); });
+window.addEventListener("pageshow", () => { if (overlay) overlay.classList.remove("active"); });
 
 function bindLinks() {
   document.querySelectorAll(".link-transition").forEach((link) => {
@@ -42,9 +38,7 @@ function bindLinks() {
       if (target && target !== "#" && !target.startsWith("mailto")) {
         e.preventDefault();
         if (overlay) overlay.classList.add("active");
-        setTimeout(() => {
-          window.location.href = target;
-        }, 600);
+        setTimeout(() => { window.location.href = target; }, 600);
       }
     });
     link.dataset.bound = true;
@@ -58,34 +52,25 @@ const lenis = new Lenis({
   easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
   smooth: true,
 });
-function raf(time) {
-  lenis.raf(time);
-  requestAnimationFrame(raf);
-}
+function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
 requestAnimationFrame(raf);
 
-// --- 3. VISUAL FX (CURSOR & RIPPLE) ---
+// --- 3. GHOST CURSOR ---
 const TRAIL_LENGTH = 12;
 const HEAD_LERP = 0.15;
 const TAIL_LERP = 0.25;
-let mouseX = 0,
-  mouseY = 0;
+let mouseX = 0, mouseY = 0;
 let cursorElements = [];
 
-if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-  initGhostCursor();
-}
+// Forzamos inicio siempre (se ocultará con CSS en tactil si es necesario)
+initGhostCursor();
 
 function initGhostCursor() {
-  const head = document.createElement("div");
-  head.className = "cursor-head";
-  document.body.appendChild(head);
+  const head = document.createElement("div"); head.className = "cursor-head"; document.body.appendChild(head);
   cursorElements.push({ el: head, x: 0, y: 0 });
 
   for (let i = 0; i < TRAIL_LENGTH; i++) {
-    const ghost = document.createElement("div");
-    ghost.className = "cursor-ghost";
-    document.body.appendChild(ghost);
+    const ghost = document.createElement("div"); ghost.className = "cursor-ghost"; document.body.appendChild(ghost);
     const opacity = 0.6 * (1 - i / TRAIL_LENGTH);
     ghost.style.opacity = opacity;
     const scale = 1 - (i / TRAIL_LENGTH) * 0.5;
@@ -94,17 +79,9 @@ function initGhostCursor() {
   }
 
   document.addEventListener("mousemove", (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
+    mouseX = e.clientX; mouseY = e.clientY;
     const target = e.target;
-    if (
-      target.tagName === "A" ||
-      target.tagName === "BUTTON" ||
-      target.closest(".interactive-card") ||
-      target.closest(".interactive-btn") ||
-      target.closest(".nav-sidebar-btn") ||
-      target.closest(".video-wrapper")
-    ) {
+    if (target.tagName === "A" || target.tagName === "BUTTON" || target.closest(".interactive-card") || target.closest(".interactive-btn")) {
       head.classList.add("hovered");
     } else {
       head.classList.remove("hovered");
@@ -117,38 +94,16 @@ function animateCursor() {
   const head = cursorElements[0];
   head.x += (mouseX - head.x) * HEAD_LERP;
   head.y += (mouseY - head.y) * HEAD_LERP;
-  head.el.style.left = `${head.x}px`;
-  head.el.style.top = `${head.y}px`;
+  head.el.style.left = `${head.x}px`; head.el.style.top = `${head.y}px`;
 
   for (let i = 1; i < cursorElements.length; i++) {
     const current = cursorElements[i];
     const prev = cursorElements[i - 1];
     current.x += (prev.x - current.x) * TAIL_LERP;
     current.y += (prev.y - current.y) * TAIL_LERP;
-    current.el.style.left = `${current.x}px`;
-    current.el.style.top = `${current.y}px`;
+    current.el.style.left = `${current.x}px`; current.el.style.top = `${current.y}px`;
   }
   requestAnimationFrame(animateCursor);
-}
-
-document.addEventListener(
-  "touchstart",
-  (e) => {
-    const touch = e.touches[0];
-    createRipple(touch.clientX, touch.clientY);
-  },
-  { passive: true }
-);
-
-function createRipple(x, y) {
-  const ripple = document.createElement("div");
-  ripple.className = "mobile-ripple";
-  ripple.style.left = `${x}px`;
-  ripple.style.top = `${y}px`;
-  document.body.appendChild(ripple);
-  setTimeout(() => {
-    ripple.remove();
-  }, 600);
 }
 
 // --- 4. APP LOGIC ---
@@ -164,9 +119,7 @@ async function initApp() {
       renderProjectDetail(projectsData);
     }
     setupLanguageSwitcher();
-  } catch (error) {
-    console.error("Error System:", error);
-  }
+  } catch (error) { console.error("Error System:", error); }
 }
 initApp();
 
@@ -175,8 +128,7 @@ function renderHome(data) {
   const container = document.getElementById("dynamic-projects-list");
   if (!container) return;
 
-  container.innerHTML = data
-    .map((p, index) => {
+  container.innerHTML = data.map((p, index) => {
       const thumbImg = `${ASSETS_PATH}p${p.id}_0.png`;
       const hoverVid = `${ASSETS_PATH}p${p.id}_v0.mp4`;
       const num = (index + 1).toString().padStart(2, "0");
@@ -194,26 +146,17 @@ function renderHome(data) {
                 <h3>${p.title}</h3>
                 <p>${p.subtitle}</p>
             </div>
-        </a>
-        `;
-    })
-    .join("");
+        </a>`;
+    }).join("");
 
   bindLinks();
 
   document.querySelectorAll(".project-item").forEach((item) => {
     const video = item.querySelector("video");
     if (video) {
-      video.addEventListener("error", () => {
-        video.style.display = "none";
-      });
-      item.addEventListener("mouseenter", () => {
-        video.currentTime = 0;
-        video.play().catch(() => {});
-      });
-      item.addEventListener("mouseleave", () => {
-        video.pause();
-      });
+      video.addEventListener("error", () => { video.style.display = "none"; });
+      item.addEventListener("mouseenter", () => { video.currentTime = 0; video.play().catch(() => {}); });
+      item.addEventListener("mouseleave", () => { video.pause(); });
     }
   });
 
@@ -224,17 +167,14 @@ function renderHome(data) {
   });
 }
 
-// --- RENDER PROJECT DETAIL ---
+// --- RENDER PROJECT DETAIL (CORREGIDO) ---
 async function renderProjectDetail(allProjects) {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
   const currentIndex = allProjects.findIndex((p) => p.id === id);
   const project = allProjects[currentIndex];
 
-  if (!project) {
-    window.location.href = "index.html";
-    return;
-  }
+  if (!project) { window.location.href = "index.html"; return; }
   currentProjectData = project;
 
   // Sidebar Nav
@@ -243,68 +183,42 @@ async function renderProjectDetail(allProjects) {
   const prevIndex = (currentIndex - 1 + total) % total;
   const prevBtn = document.getElementById("prev-project-btn");
   const nextBtn = document.getElementById("next-project-btn");
-  if (prevBtn)
-    prevBtn.setAttribute(
-      "href",
-      `project.html?id=${allProjects[prevIndex].id}`
-    );
-  if (nextBtn)
-    nextBtn.setAttribute(
-      "href",
-      `project.html?id=${allProjects[nextIndex].id}`
-    );
+  if (prevBtn) prevBtn.setAttribute("href", `project.html?id=${allProjects[prevIndex].id}`);
+  if (nextBtn) nextBtn.setAttribute("href", `project.html?id=${allProjects[nextIndex].id}`);
   bindLinks();
 
-  // Sidebar Info & EXTERNAL LINK LOGIC
+  // Sidebar Info & Link Externo
   const sidebar = document.querySelector(".detail-sidebar");
-
-  // VERIFICAR LINK EXTERNO (Aquí está la magia)
-  let externalLinkHTML = "";
+  let externalLinkHTML = '';
   if (project.external_link) {
-    externalLinkHTML = `
-          <a href="${project.external_link}" target="_blank" rel="noopener noreferrer" class="contact-btn-red interactive-btn" style="margin-top: 20px; display: block; text-decoration: none;" data-es="VER PROTOTIPO ->" data-en="VIEW PROTOTYPE ->">VER PROTOTIPO -></a>
-      `;
+      externalLinkHTML = `<a href="${project.external_link}" target="_blank" rel="noopener noreferrer" class="contact-btn-red interactive-btn" style="margin-top: 20px; display: block; text-decoration: none;" data-es="VER PROTOTIPO ->" data-en="VIEW PROTOTYPE ->">VER PROTOTIPO -></a>`;
   }
 
   sidebar.innerHTML = `
         <div class="detail-header-block">
-            <span class="detail-meta-label">PROJECT_ID: ${project.id.padStart(
-              3,
-              "0"
-            )}</span>
+            <span class="detail-meta-label">PROJECT_ID: ${project.id.padStart(3,"0")}</span>
             <h1 id="dyn-title">${project.title}</h1>
-            <span class="detail-meta-label" style="margin-top:10px; color:var(--accent-color)" id="dyn-subtitle">// ${
-              project.subtitle
-            }</span>
+            <span class="detail-meta-label" style="margin-top:10px; color:var(--accent-color)" id="dyn-subtitle">// ${project.subtitle}</span>
         </div>
         <div class="detail-body-block">
             <span class="detail-meta-label" data-es="DESCRIPCIÓN_SISTEMA:" data-en="SYSTEM_DESC:">DESCRIPCIÓN_SISTEMA:</span>
             <p class="detail-desc-text" id="dyn-desc">${project.desc}</p>
             <span class="detail-meta-label" data-es="HERRAMIENTAS:" data-en="TOOLS_USED:">HERRAMIENTAS:</span>
             <div class="tech-tags-container" style="margin-bottom: 20px;">
-                ${project.stack
-                  .map((tech) => `<span class="tech-tag">${tech}</span>`)
-                  .join("")}
+                ${project.stack.map((tech) => `<span class="tech-tag">${tech}</span>`).join("")}
             </div>
             ${externalLinkHTML}
         </div>
     `;
 
-  // Gallery Logic
+  // Recolectar Assets
   const assets = [];
-  // Video v0
   const v0Path = `${ASSETS_PATH}p${id}_v0.mp4`;
   try {
     const res = await fetch(v0Path, { method: "HEAD" });
-    if (res.ok)
-      assets.push({
-        type: "video",
-        src: v0Path,
-        caption: project.captions?.v0 || ".MP4",
-      });
+    if (res.ok) assets.push({ type: "video", src: v0Path, caption: project.captions?.v0 || ".MP4" });
   } catch (e) {}
 
-  // Images & Extra Videos loop
   let index = 0;
   let keepLoading = true;
   let consecutiveErrors = 0;
@@ -315,12 +229,7 @@ async function renderProjectDetail(allProjects) {
     try {
       const res = await fetch(imgPath, { method: "HEAD" });
       if (res.ok) {
-        assets.push({
-          type: "image",
-          src: imgPath,
-          caption:
-            project.captions?.[index.toString()] || `Render View ${index}`,
-        });
+        assets.push({ type: "image", src: imgPath, caption: project.captions?.[index.toString()] || `Render View ${index}` });
         foundSomething = true;
       }
     } catch (e) {}
@@ -330,58 +239,49 @@ async function renderProjectDetail(allProjects) {
       try {
         const res = await fetch(vidPath, { method: "HEAD" });
         if (res.ok) {
-          assets.push({
-            type: "video",
-            src: vidPath,
-            caption: project.captions?.[`v${index}`] || `.MP4`,
-          });
+          assets.push({ type: "video", src: vidPath, caption: project.captions?.[`v${index}`] || `.MP4` });
           foundSomething = true;
         }
       } catch (e) {}
     }
-
-    if (foundSomething) consecutiveErrors = 0;
-    else consecutiveErrors++;
+    if (foundSomething) consecutiveErrors = 0; else consecutiveErrors++;
     if (consecutiveErrors > 2) keepLoading = false;
     index++;
   }
 
-  // Render Grid
+  // --- RENDER GALERÍA (FIX: Clases coinciden con CSS) ---
   const mainGrid = document.querySelector(".detail-media-grid");
-  mainGrid.innerHTML = "";
+  mainGrid.innerHTML = ""; 
 
   if (assets.length === 0) {
-    mainGrid.innerHTML =
-      '<p style="color:#666; font-family:monospace;">// NO_MEDIA_FOUND</p>';
+    mainGrid.innerHTML = '<p style="color:#666; font-family:monospace;">// NO_MEDIA_FOUND</p>';
     return;
   }
 
-  const galleryContainer = document.createElement("div");
-  galleryContainer.className = "gallery-container";
-
+  // 1. Display Principal (Usamos main-display-container que existe en CSS)
   const initialAsset = assets[0];
   const displayDiv = document.createElement("div");
-  displayDiv.className = "gallery-display";
+  displayDiv.className = "main-display-container"; // CORREGIDO AQUÍ
   displayDiv.innerHTML = generateDisplayHTML(initialAsset);
-  galleryContainer.appendChild(displayDiv);
+  mainGrid.appendChild(displayDiv);
 
+  // 2. Miniaturas (Usamos thumbnails-track que existe en CSS)
   const thumbsContainer = document.createElement("div");
-  thumbsContainer.className = "gallery-thumbs";
+  thumbsContainer.className = "thumbnails-track"; // CORREGIDO AQUÍ
 
   assets.forEach((asset, idx) => {
     const thumb = document.createElement("div");
     thumb.className = `thumb-item ${idx === 0 ? "active" : ""}`;
-    let innerHTML =
-      asset.type === "video"
-        ? `<video src="${asset.src}#t=0.1" preload="metadata" muted playsinline></video><span class="thumb-type-icon">VID</span>`
-        : `<img src="${asset.src}" loading="lazy">`;
+    let innerHTML = asset.type === "video" ? 
+        `<video src="${asset.src}#t=0.1" preload="metadata" muted playsinline></video>` : 
+        `<img src="${asset.src}" loading="lazy">`;
     thumb.innerHTML = innerHTML;
 
     thumb.addEventListener("click", () => {
-      document
-        .querySelectorAll(".thumb-item")
-        .forEach((t) => t.classList.remove("active"));
+      document.querySelectorAll(".thumb-item").forEach((t) => t.classList.remove("active"));
       thumb.classList.add("active");
+      
+      // Lógica de click (Desktop vs Mobile)
       if (window.innerWidth > 900) {
         displayDiv.innerHTML = generateDisplayHTML(asset);
         const vid = displayDiv.querySelector("video");
@@ -393,19 +293,22 @@ async function renderProjectDetail(allProjects) {
     thumbsContainer.appendChild(thumb);
   });
 
-  galleryContainer.appendChild(thumbsContainer);
-  mainGrid.appendChild(galleryContainer);
+  mainGrid.appendChild(thumbsContainer);
   updatePageLanguage();
   setTimeout(() => lenis.resize(), 500);
 }
 
 function generateDisplayHTML(asset) {
   if (asset.type === "video") {
-    return `<video src="${asset.src}" controls autoplay loop muted playsinline style="width:100%; height:100%; object-fit:contain;"></video><div class="display-caption">// ${asset.caption}</div>`;
+    return `<video src="${asset.src}" controls autoplay loop muted playsinline class="main-display-media"></video><div class="display-caption">// ${asset.caption}</div>`;
   } else {
-    return `<img src="${asset.src}" alt="Project Image"><div class="display-caption">// ${asset.caption}</div>`;
+    // Agregamos evento onclick aquí también para abrir lightbox al tocar la imagen grande en mobile
+    return `<img src="${asset.src}" alt="Project Image" class="main-display-media" onclick="window.innerWidth <= 900 ? document.dispatchEvent(new CustomEvent('openLightbox', {detail: '${asset.src}'})) : null"><div class="display-caption">// ${asset.caption}</div>`;
   }
 }
+
+// Evento global para el lightbox (fix helper)
+document.addEventListener('openLightbox', (e) => openLightbox({type:'image', src:e.detail}));
 
 function openLightbox(asset) {
   let lightbox = document.querySelector(".lightbox-overlay");
@@ -415,28 +318,28 @@ function openLightbox(asset) {
     lightbox.innerHTML = `<button class="lightbox-close">×</button><div class="lightbox-content"></div>`;
     document.body.appendChild(lightbox);
     const close = () => {
-      lightbox.classList.remove("active");
-      lightbox.querySelector(".lightbox-content").innerHTML = "";
+        lightbox.classList.remove("active");
+        lightbox.querySelector(".lightbox-content").innerHTML = "";
     };
     lightbox.querySelector(".lightbox-close").addEventListener("click", close);
-    lightbox.addEventListener("click", (e) => {
-      if (e.target === lightbox) close();
-    });
+    lightbox.addEventListener("click", (e) => { if (e.target === lightbox) close(); });
   }
   const contentDiv = lightbox.querySelector(".lightbox-content");
-  if (asset.type === "video") {
-    contentDiv.innerHTML = `<video src="${asset.src}" controls autoplay loop playsinline></video>`;
+  // Si asset viene del evento personalizado, normalizar
+  const src = asset.src || asset;
+  const type = asset.type || 'image';
+
+  if (type === "video") {
+    contentDiv.innerHTML = `<video src="${src}" controls autoplay loop playsinline></video>`;
   } else {
-    contentDiv.innerHTML = `<img src="${asset.src}">`;
+    contentDiv.innerHTML = `<img src="${src}">`;
   }
   lightbox.classList.add("active");
 }
 
 // --- LANGUAGE ---
 function setupLanguageSwitcher() {
-  const langBtns = document.querySelectorAll(
-    "#lang-switch-nav, #lang-switch-hero"
-  );
+  const langBtns = document.querySelectorAll("#lang-switch-nav, #lang-switch-hero");
   langBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       currentLang = currentLang === "es" ? "en" : "es";
@@ -460,52 +363,27 @@ function updatePageLanguage() {
     const subEl = document.getElementById("dyn-subtitle");
     const descEl = document.getElementById("dyn-desc");
     if (titleEl) titleEl.innerText = currentProjectData.title;
-    if (subEl)
-      subEl.innerText = `// ${
-        currentLang === "es"
-          ? currentProjectData.subtitle
-          : currentProjectData.subtitle_en || currentProjectData.subtitle
-      }`;
-    if (descEl)
-      descEl.innerText =
-        currentLang === "es"
-          ? currentProjectData.desc
-          : currentProjectData.desc_en || currentProjectData.desc;
+    if (subEl) subEl.innerText = `// ${currentLang === "es" ? currentProjectData.subtitle : currentProjectData.subtitle_en || currentProjectData.subtitle}`;
+    if (descEl) descEl.innerText = currentLang === "es" ? currentProjectData.desc : currentProjectData.desc_en || currentProjectData.desc;
   }
 }
 
-// --- MODAL ---
+// --- MODAL & THREE.JS ---
 const modal = document.getElementById("contact-modal");
 if (modal) {
   document.querySelectorAll(".open-contact-trigger").forEach((btn) =>
-    btn.addEventListener("click", () => {
-      modal.classList.add("active");
-      lenis.stop();
-    })
+    btn.addEventListener("click", () => { modal.classList.add("active"); lenis.stop(); })
   );
-  document.getElementById("close-modal-btn")?.addEventListener("click", () => {
-    modal.classList.remove("active");
-    lenis.start();
-  });
+  document.getElementById("close-modal-btn")?.addEventListener("click", () => { modal.classList.remove("active"); lenis.start(); });
 }
 
-// --- THREE.JS ---
 function initThreeJS() {
   const canvas = document.querySelector("#hero-canvas");
   if (!canvas) return;
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   camera.position.set(0, 1, 5);
-  const renderer = new THREE.WebGLRenderer({
-    canvas: canvas,
-    alpha: true,
-    antialias: true,
-  });
+  const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -515,26 +393,16 @@ function initThreeJS() {
   scene.add(directionalLight);
   const loader = new GLTFLoader();
   const dracoLoader = new DRACOLoader();
-  dracoLoader.setDecoderPath(
-    "https://www.gstatic.com/draco/versioned/decoders/1.5.6/"
-  );
+  dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
   loader.setDRACOLoader(dracoLoader);
   let model;
   loader.load("assets/mis-edificios.glb", (gltf) => {
-    model = gltf.scene;
-    model.position.set(5, -2, 0);
-    model.scale.set(0.07, 0.07, 0.07);
-    model.rotation.y = -0.5;
-    scene.add(model);
+    model = gltf.scene; model.position.set(5, -2, 0); model.scale.set(0.07, 0.07, 0.07); model.rotation.y = -0.5; scene.add(model);
   });
-  let mouseX = 0,
-    mouseY = 0;
+  let mouseX = 0, mouseY = 0;
   const windowHalfX = window.innerWidth / 2;
   const windowHalfY = window.innerHeight / 2;
-  document.addEventListener("mousemove", (event) => {
-    mouseX = event.clientX - windowHalfX;
-    mouseY = event.clientY - windowHalfY;
-  });
+  document.addEventListener("mousemove", (event) => { mouseX = event.clientX - windowHalfX; mouseY = event.clientY - windowHalfY; });
   const animate = () => {
     requestAnimationFrame(animate);
     if (model) {
