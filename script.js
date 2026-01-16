@@ -6,10 +6,10 @@ import Lenis from "https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/+es
 // --- CONFIGURACIÓN GLOBAL ---
 const ASSETS_PATH = "assets/";
 const DATA_URL = "data.json";
-let currentLang = "es"; // Estado global del idioma
-let currentProjectData = null; // Para guardar datos del proyecto actual y traducir
+let currentLang = "es";
+let currentProjectData = null;
 
-// --- 1. LOADER & TRANSICIONES ---
+// --- 1. LOADER ---
 const loaderElement = document.getElementById("loader");
 const progressText = document.querySelector(".loader-progress");
 const overlay = document.querySelector(".page-transition-overlay");
@@ -64,9 +64,7 @@ function raf(time) {
 }
 requestAnimationFrame(raf);
 
-// --- 3. VISUAL FX ---
-
-// A. GHOST CURSOR
+// --- 3. VISUAL FX (CURSOR & RIPPLE) ---
 const TRAIL_LENGTH = 12;
 const HEAD_LERP = 0.15;
 const TAIL_LERP = 0.25;
@@ -133,7 +131,6 @@ function animateCursor() {
   requestAnimationFrame(animateCursor);
 }
 
-// B. RIPPLE
 document.addEventListener(
   "touchstart",
   (e) => {
@@ -155,7 +152,6 @@ function createRipple(x, y) {
 }
 
 // --- 4. APP LOGIC ---
-
 async function initApp() {
   try {
     const response = await fetch(DATA_URL);
@@ -167,8 +163,7 @@ async function initApp() {
     } else if (document.body.classList.contains("project-page")) {
       renderProjectDetail(projectsData);
     }
-
-    setupLanguageSwitcher(); // Iniciar lógica de idioma
+    setupLanguageSwitcher();
   } catch (error) {
     console.error("Error System:", error);
   }
@@ -229,7 +224,7 @@ function renderHome(data) {
   });
 }
 
-// --- RENDER PROJECT DETAIL (MODO GALERÍA) ---
+// --- RENDER PROJECT DETAIL ---
 async function renderProjectDetail(allProjects) {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
@@ -240,24 +235,37 @@ async function renderProjectDetail(allProjects) {
     window.location.href = "index.html";
     return;
   }
-
   currentProjectData = project;
 
-  // A. Sidebar Nav Loop
+  // Sidebar Nav
   const total = allProjects.length;
   const nextIndex = (currentIndex + 1) % total;
   const prevIndex = (currentIndex - 1 + total) % total;
-  const nextId = allProjects[nextIndex].id;
-  const prevId = allProjects[prevIndex].id;
-
   const prevBtn = document.getElementById("prev-project-btn");
   const nextBtn = document.getElementById("next-project-btn");
-  if (prevBtn) prevBtn.setAttribute("href", `project.html?id=${prevId}`);
-  if (nextBtn) nextBtn.setAttribute("href", `project.html?id=${nextId}`);
+  if (prevBtn)
+    prevBtn.setAttribute(
+      "href",
+      `project.html?id=${allProjects[prevIndex].id}`
+    );
+  if (nextBtn)
+    nextBtn.setAttribute(
+      "href",
+      `project.html?id=${allProjects[nextIndex].id}`
+    );
   bindLinks();
 
-  // B. Sidebar Info
+  // Sidebar Info & EXTERNAL LINK LOGIC
   const sidebar = document.querySelector(".detail-sidebar");
+
+  // VERIFICAR LINK EXTERNO (Aquí está la magia)
+  let externalLinkHTML = "";
+  if (project.external_link) {
+    externalLinkHTML = `
+          <a href="${project.external_link}" target="_blank" rel="noopener noreferrer" class="contact-btn-red interactive-btn" style="margin-top: 20px; display: block; text-decoration: none;" data-es="VER PROTOTIPO ->" data-en="VIEW PROTOTYPE ->">VER PROTOTIPO -></a>
+      `;
+  }
+
   sidebar.innerHTML = `
         <div class="detail-header-block">
             <span class="detail-meta-label">PROJECT_ID: ${project.id.padStart(
@@ -278,37 +286,31 @@ async function renderProjectDetail(allProjects) {
                   .map((tech) => `<span class="tech-tag">${tech}</span>`)
                   .join("")}
             </div>
-           
-           
+            ${externalLinkHTML}
         </div>
     `;
 
-  // C. Recolectar Assets (Videos e Imágenes unificados)
-  // Intentamos detectar qué archivos existen (v0, 0.png, v1, 1.png, etc.)
+  // Gallery Logic
   const assets = [];
-
-  // 1. Chequear Video Hero (v0)
+  // Video v0
   const v0Path = `${ASSETS_PATH}p${id}_v0.mp4`;
   try {
     const res = await fetch(v0Path, { method: "HEAD" });
-    if (res.ok) {
+    if (res.ok)
       assets.push({
         type: "video",
         src: v0Path,
         caption: project.captions?.v0 || ".MP4",
       });
-    }
   } catch (e) {}
 
-  // 2. Loop de detección mixta (Imágenes y Videos extra)
+  // Images & Extra Videos loop
   let index = 0;
   let keepLoading = true;
   let consecutiveErrors = 0;
 
   while (keepLoading && index < 20) {
     let foundSomething = false;
-
-    // Chequear Imagen
     const imgPath = `${ASSETS_PATH}p${id}_${index}.png`;
     try {
       const res = await fetch(imgPath, { method: "HEAD" });
@@ -323,7 +325,6 @@ async function renderProjectDetail(allProjects) {
       }
     } catch (e) {}
 
-    // Chequear Video Extra (v1, v2...) - Omitimos v0 porque ya lo cargamos
     if (index > 0) {
       const vidPath = `${ASSETS_PATH}p${id}_v${index}.mp4`;
       try {
@@ -341,15 +342,13 @@ async function renderProjectDetail(allProjects) {
 
     if (foundSomething) consecutiveErrors = 0;
     else consecutiveErrors++;
-
-    // Si fallamos 3 veces seguidas, asumimos que no hay más
     if (consecutiveErrors > 2) keepLoading = false;
     index++;
   }
 
-  // D. Renderizar Estructura de Galería
+  // Render Grid
   const mainGrid = document.querySelector(".detail-media-grid");
-  mainGrid.innerHTML = ""; // Limpiar
+  mainGrid.innerHTML = "";
 
   if (assets.length === 0) {
     mainGrid.innerHTML =
@@ -357,155 +356,110 @@ async function renderProjectDetail(allProjects) {
     return;
   }
 
-  // Contenedor General
   const galleryContainer = document.createElement("div");
   galleryContainer.className = "gallery-container";
 
-  // 1. Display Principal (Inicia con el primer asset)
   const initialAsset = assets[0];
   const displayDiv = document.createElement("div");
   displayDiv.className = "gallery-display";
   displayDiv.innerHTML = generateDisplayHTML(initialAsset);
   galleryContainer.appendChild(displayDiv);
 
-  // 2. Miniaturas
   const thumbsContainer = document.createElement("div");
   thumbsContainer.className = "gallery-thumbs";
 
   assets.forEach((asset, idx) => {
     const thumb = document.createElement("div");
     thumb.className = `thumb-item ${idx === 0 ? "active" : ""}`;
-
-    // Contenido del thumb (Video tag si es video, Img si es imagen)
-    let innerHTML = "";
-    if (asset.type === "video") {
-      innerHTML = `
-            <video src="${asset.src}#t=0.1" preload="metadata" muted playsinline></video>
-            <span class="thumb-type-icon">VID</span>
-          `;
-    } else {
-      innerHTML = `<img src="${asset.src}" loading="lazy">`;
-    }
+    let innerHTML =
+      asset.type === "video"
+        ? `<video src="${asset.src}#t=0.1" preload="metadata" muted playsinline></video><span class="thumb-type-icon">VID</span>`
+        : `<img src="${asset.src}" loading="lazy">`;
     thumb.innerHTML = innerHTML;
 
-    // --- EVENTO CLICK ---
     thumb.addEventListener("click", () => {
-      // Remover clase active de todos
       document
         .querySelectorAll(".thumb-item")
         .forEach((t) => t.classList.remove("active"));
       thumb.classList.add("active");
-
       if (window.innerWidth > 900) {
-        // DESKTOP: Cambiar Display Principal
         displayDiv.innerHTML = generateDisplayHTML(asset);
-        // Si es video, reproducir automáticamente
         const vid = displayDiv.querySelector("video");
         if (vid) vid.play().catch(() => {});
       } else {
-        // MOBILE: Abrir Lightbox (Primer Plano)
         openLightbox(asset);
       }
     });
-
     thumbsContainer.appendChild(thumb);
   });
 
   galleryContainer.appendChild(thumbsContainer);
   mainGrid.appendChild(galleryContainer);
-
   updatePageLanguage();
   setTimeout(() => lenis.resize(), 500);
 }
 
-// --- HELPER: Generar HTML para el Display ---
 function generateDisplayHTML(asset) {
   if (asset.type === "video") {
-    return `
-            <video src="${asset.src}" controls autoplay loop muted playsinline style="width:100%; height:100%; object-fit:contain;"></video>
-            <div class="display-caption">// ${asset.caption}</div>
-        `;
+    return `<video src="${asset.src}" controls autoplay loop muted playsinline style="width:100%; height:100%; object-fit:contain;"></video><div class="display-caption">// ${asset.caption}</div>`;
   } else {
-    return `
-            <img src="${asset.src}" alt="Project Image">
-            <div class="display-caption">// ${asset.caption}</div>
-        `;
+    return `<img src="${asset.src}" alt="Project Image"><div class="display-caption">// ${asset.caption}</div>`;
   }
 }
 
-// --- HELPER: Lightbox para Móvil ---
 function openLightbox(asset) {
-  // Buscar si ya existe el lightbox, si no crearlo
   let lightbox = document.querySelector(".lightbox-overlay");
   if (!lightbox) {
     lightbox = document.createElement("div");
     lightbox.className = "lightbox-overlay";
-    lightbox.innerHTML = `
-            <button class="lightbox-close">×</button>
-            <div class="lightbox-content"></div>
-        `;
+    lightbox.innerHTML = `<button class="lightbox-close">×</button><div class="lightbox-content"></div>`;
     document.body.appendChild(lightbox);
-
-    // Cerrar eventos
-    lightbox.querySelector(".lightbox-close").addEventListener("click", () => {
+    const close = () => {
       lightbox.classList.remove("active");
-      lightbox.querySelector(".lightbox-content").innerHTML = ""; // Limpiar para detener videos
-    });
+      lightbox.querySelector(".lightbox-content").innerHTML = "";
+    };
+    lightbox.querySelector(".lightbox-close").addEventListener("click", close);
     lightbox.addEventListener("click", (e) => {
-      if (e.target === lightbox) {
-        lightbox.classList.remove("active");
-        lightbox.querySelector(".lightbox-content").innerHTML = "";
-      }
+      if (e.target === lightbox) close();
     });
   }
-
   const contentDiv = lightbox.querySelector(".lightbox-content");
-  // Usamos el mismo generador, pero aseguramos controles en video
   if (asset.type === "video") {
     contentDiv.innerHTML = `<video src="${asset.src}" controls autoplay loop playsinline></video>`;
   } else {
     contentDiv.innerHTML = `<img src="${asset.src}">`;
   }
-
   lightbox.classList.add("active");
 }
 
-// --- 5. LANGUAGE SYSTEM ---
+// --- LANGUAGE ---
 function setupLanguageSwitcher() {
   const langBtns = document.querySelectorAll(
     "#lang-switch-nav, #lang-switch-hero"
   );
-
   langBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       currentLang = currentLang === "es" ? "en" : "es";
-
-      // Actualizar Botones
       langBtns.forEach((b) => {
         const span = b.querySelector(".lang-text");
         if (span) span.innerText = currentLang.toUpperCase();
         else b.innerText = currentLang.toUpperCase();
       });
-
       updatePageLanguage();
     });
   });
 }
 
 function updatePageLanguage() {
-  // 1. Textos estáticos (data-es / data-en)
   document.querySelectorAll("[data-es]").forEach((el) => {
     const text = el.getAttribute(`data-${currentLang}`);
     if (text) el.innerText = text;
   });
-
-  // 2. Textos dinámicos del proyecto (Si estamos en detalle)
   if (document.body.classList.contains("project-page") && currentProjectData) {
     const titleEl = document.getElementById("dyn-title");
     const subEl = document.getElementById("dyn-subtitle");
     const descEl = document.getElementById("dyn-desc");
-
-    if (titleEl) titleEl.innerText = currentProjectData.title; // Título suele ser igual, pero se puede agregar title_en
+    if (titleEl) titleEl.innerText = currentProjectData.title;
     if (subEl)
       subEl.innerText = `// ${
         currentLang === "es"
@@ -520,7 +474,7 @@ function updatePageLanguage() {
   }
 }
 
-// --- 6. EXTRAS (Modal) ---
+// --- MODAL ---
 const modal = document.getElementById("contact-modal");
 if (modal) {
   document.querySelectorAll(".open-contact-trigger").forEach((btn) =>
@@ -535,11 +489,10 @@ if (modal) {
   });
 }
 
-// --- 7. THREE.JS SCENE ---
+// --- THREE.JS ---
 function initThreeJS() {
   const canvas = document.querySelector("#hero-canvas");
   if (!canvas) return;
-
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
     75,
@@ -548,7 +501,6 @@ function initThreeJS() {
     1000
   );
   camera.position.set(0, 1, 5);
-
   const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
     alpha: true,
@@ -556,21 +508,18 @@ function initThreeJS() {
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
   scene.add(ambientLight);
   const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
   directionalLight.position.set(5, 5, 5);
   scene.add(directionalLight);
-
-  let model;
   const loader = new GLTFLoader();
   const dracoLoader = new DRACOLoader();
   dracoLoader.setDecoderPath(
     "https://www.gstatic.com/draco/versioned/decoders/1.5.6/"
   );
   loader.setDRACOLoader(dracoLoader);
-
+  let model;
   loader.load("assets/mis-edificios.glb", (gltf) => {
     model = gltf.scene;
     model.position.set(5, -2, 0);
@@ -578,7 +527,6 @@ function initThreeJS() {
     model.rotation.y = -0.5;
     scene.add(model);
   });
-
   let mouseX = 0,
     mouseY = 0;
   const windowHalfX = window.innerWidth / 2;
@@ -587,7 +535,6 @@ function initThreeJS() {
     mouseX = event.clientX - windowHalfX;
     mouseY = event.clientY - windowHalfY;
   });
-
   const animate = () => {
     requestAnimationFrame(animate);
     if (model) {
@@ -600,7 +547,6 @@ function initThreeJS() {
     renderer.render(scene, camera);
   };
   animate();
-
   window.addEventListener("resize", () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
