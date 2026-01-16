@@ -1283,3 +1283,26 @@ body.project-page .sticky-nav {
     gap: 10px;
   }
 }
+/* BOTÓN ENLACE EXTERNO (FIGMA/WEB) */
+.external-link-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 30px;
+  padding: 15px 0;
+  border: 1px solid var(--accent-color);
+  color: var(--accent-color);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.external-link-btn:hover {
+  background: var(--accent-color);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(255, 51, 51, 0.4);
+}
