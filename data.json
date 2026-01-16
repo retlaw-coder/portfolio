@@ -11,11 +11,11 @@
   },
   {
     "id": "2",
-    "title": "Tren Montañas",
-    "subtitle": "Animación / Shaders",
-    "subtitle_en": "Animation / Shaders",
-    "desc": "Animación de entorno natural con énfasis en la escala y la atmósfera.",
-    "desc_en": "Natural environment animation emphasizing scale and atmosphere.",
+    "title": "Departamento",
+    "subtitle": " modelado 3d/ Shaders",
+    "subtitle_en": "3D modeling / Shaders",
+    "desc": "Modelo 3D de un departamento para un cliente que quería venderlo",
+    "desc_en": "",
     "stack": ["Blender", "Evee"],
     "captions": {}
   },
@@ -26,17 +26,17 @@
     "subtitle_en": "Motion Graphics",
     "desc": "Exploración de caos organizado.",
     "desc_en": "Exploration of organized chaos.",
-    "stack": ["After Effects", "Simulation"],
+    "stack": ["Blender", "Shaders"],
     "captions": {}
   },
   {
     "id": "4",
     "title": "Walk Cycle",
-    "subtitle": "Visuals",
-    "subtitle_en": "Visuals",
+    "subtitle": "Practica de animación",
+    "subtitle_en": "Animation practice",
     "desc": "Pruebas de rigging y animación.",
     "desc_en": "Rigging and animation tests.",
-    "stack": ["Blender", "Mixamo"],
+    "stack": ["Blender"],
     "captions": {}
   },
   {
@@ -46,7 +46,7 @@
     "subtitle_en": "Illustration / 2D",
     "desc": "Estudio de carácter y movimiento a través de la ilustración.",
     "desc_en": "Character and movement study through illustration.",
-    "stack": ["Photoshop", "Procreate"],
+    "stack": ["Photoshop"],
     "captions": {
       "0": "",
       "1": "",
@@ -83,7 +83,7 @@
     "subtitle_en": "",
     "desc": "",
     "desc_en": "",
-    "stack": ["Herramienta A", "Herramienta B"],
+    "stack": ["A", "B"],
     "captions": {}
   }
 ]
