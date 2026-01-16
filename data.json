@@ -5,17 +5,17 @@
     "subtitle": "3D / Blender / Animación",
     "subtitle_en": "3D / Blender / Animation",
     "desc": "Todos los assets generados proceduralmente",
-    "desc_en": "",
+    "desc_en": "All assets generated procedurally",
     "stack": ["Blender", "Cycles", "Modifiers", "Premier"],
     "captions": {}
   },
   {
     "id": "2",
     "title": "Departamento",
-    "subtitle": " modelado 3d/ Shaders",
-    "subtitle_en": "3D modeling / Shaders",
+    "subtitle": "Modelado 3D / Shaders",
+    "subtitle_en": "3D Modeling / Shaders",
     "desc": "Modelo 3D de un departamento para un cliente que quería venderlo",
-    "desc_en": "",
+    "desc_en": "3D model of an apartment for a client looking to sell it",
     "stack": ["Blender", "Evee"],
     "captions": {}
   },
@@ -32,7 +32,7 @@
   {
     "id": "4",
     "title": "Walk Cycle",
-    "subtitle": "Practica de animación",
+    "subtitle": "Práctica de animación",
     "subtitle_en": "Animation practice",
     "desc": "Pruebas de rigging y animación.",
     "desc_en": "Rigging and animation tests.",
@@ -55,22 +55,22 @@
   },
   {
     "id": "6",
-    "title": "Procedural Span",
-    "subtitle": "Geometry Nodes",
-    "subtitle_en": "Geometry Nodes",
-    "desc": "Arquitectura generada por nodos.",
-    "desc_en": "Node-based generative architecture.",
-    "stack": ["Blender", "GeoNodes"],
+    "title": "Diseño UX-UI",
+    "subtitle": "Aplicación móvil",
+    "subtitle_en": "Mobile application",
+    "desc": "Proyecto de aplicación para móvil",
+    "desc_en": "Mobile application project",
+    "stack": ["Figma", "Photoshop"],
     "captions": {}
   },
   {
     "id": "7",
-    "title": "Nombre Proyecto 7",
-    "subtitle": "Categoría / Rol",
-    "subtitle_en": "Category / Role",
-    "desc": "Descripción breve del proyecto 7 en español.",
-    "desc_en": "Brief description of project 7 in English.",
-    "stack": ["Herramienta 1", "Herramienta 2"],
+    "title": "",
+    "subtitle": "",
+    "subtitle_en": "",
+    "desc": "",
+    "desc_en": "",
+    "stack": [],
     "captions": {
       "v0": "",
       "0": ""
@@ -78,12 +78,12 @@
   },
   {
     "id": "8",
-    "title": "",
-    "subtitle": "",
-    "subtitle_en": "",
-    "desc": "",
-    "desc_en": "",
-    "stack": ["A", "B"],
+    "title": "Data Driven Motion",
+    "subtitle": "Procedural / Geo Nodes",
+    "subtitle_en": "Procedural / Geo Nodes",
+    "desc": "Motion graphic procedural modificable mediante archivos de texto externos.",
+    "desc_en": "Procedural motion graphic modifiable via external text files.",
+    "stack": ["Blender", "Geometry Nodes"],
     "captions": {}
   }
 ]
