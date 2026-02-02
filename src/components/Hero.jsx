@@ -32,48 +32,42 @@ export default function Hero({ currentLang }) {
 
         sceneRef.current = { scene, camera, renderer };
 
-        // --- MODEL LOADING ---
-        setTimeout(() => {
-            const loader = new GLTFLoader();
-            const draco = new DRACOLoader();
-            draco.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
-            loader.setDRACOLoader(draco);
+        // --- MODEL LOADING (Start immediately, not after delay) ---
+        const loader = new GLTFLoader();
+        const draco = new DRACOLoader();
+        draco.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
+        loader.setDRACOLoader(draco);
 
-            loader.load(
-                "/assets/edificios.glb",
-                (gltf) => {
-                    const model = gltf.scene;
+        loader.load(
+            "/assets/edificios.glb",
+            (gltf) => {
+                const model = gltf.scene;
 
-                    // EXACT ORIGINAL TRANSFORMS
-                    model.position.set(10, -2, -8);
-                    model.scale.set(0.065, 0.065, 0.065);
-                    model.rotation.y = -5; // Initial rotation
+                // 🎯 POSITION: Adjust X, Y, Z coordinates
+                model.position.set(10, -2, -8);
 
-                    model.traverse((c) => {
-                        if (c.isMesh) {
-                            c.material.transparent = true;
-                            c.material.opacity = 0;
-                        }
-                    });
-                    scene.add(model);
-                    modelRef.current = model;
+                // 🎯 SCALE: Adjust size (all axes)
+                model.scale.set(0.065, 0.065, 0.065);
 
-                    // Fade in animation
-                    let start = null;
-                    const fadeIn = (timestamp) => {
-                        if (!start) start = timestamp;
-                        const progress = Math.min((timestamp - start) / 1200, 1);
-                        model.traverse((c) => {
-                            if (c.isMesh) c.material.opacity = progress;
-                        });
-                        if (progress < 1) requestAnimationFrame(fadeIn);
-                    };
-                    requestAnimationFrame(fadeIn);
-                },
-                undefined,
-                (error) => console.error("Error loading 3D model:", error)
-            );
-        }, 100);
+                // 🎯 INITIAL ROTATION: Change this value to rotate the model
+                // Try values like: 0, 1.5, 3, -1.5, etc.
+                // Positive = counterclockwise, Negative = clockwise
+                model.rotation.y = -5;
+
+                // Make model visible immediately (no fade)
+                model.traverse((c) => {
+                    if (c.isMesh) {
+                        c.material.transparent = false;
+                        c.material.opacity = 1;
+                    }
+                });
+
+                scene.add(model);
+                modelRef.current = model;
+            },
+            undefined,
+            (error) => console.error("Error loading 3D model:", error)
+        );
 
         // --- INTERACTION ---
         const handleMouseMove = (e) => {

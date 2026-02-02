@@ -1,88 +1,38 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import './CustomCursor.css';
 
 export default function CustomCursor() {
     const cursorRef = useRef(null);
-    const [position, setPosition] = useState({ x: 0, y: 0 });
-    const [targetPosition, setTargetPosition] = useState({ x: 0, y: 0 });
-    const [isHovering, setIsHovering] = useState(false);
-    const [isVisible, setIsVisible] = useState(false); // Initially hidden to avoid jumping
+    const ghostsRef = useRef([]);
+    const requestRef = useRef();
 
     useEffect(() => {
-        // Only on desktop devices
+        // Only on desktop
         const isTouchDevice = window.matchMedia("(hover: none)").matches;
         if (isTouchDevice) return;
 
-        setIsVisible(true);
-
-        const onMouseMove = (e) => {
-            setTargetPosition({ x: e.clientX, y: e.clientY });
-
-            // Check for hover targets
-            const target = e.target;
-            const isClickable =
-                target.tagName === 'A' ||
-                target.tagName === 'BUTTON' ||
-                target.closest('a') ||
-                target.closest('button') ||
-                target.classList.contains('interactive-card') ||
-                target.classList.contains('project-item') ||
-                target.closest('.project-item');
-
-            setIsHovering(!!isClickable);
-        };
-
-        window.addEventListener('mousemove', onMouseMove);
-
-        // Animation loop for smooth follow
-        let rafId;
-        const animateCursor = () => {
-            setPosition(prev => {
-                const dx = targetPosition.x - prev.x;
-                const dy = targetPosition.y - prev.y;
-
-                // Lerp factor (0.1 for smooth delay)
-                return {
-                    x: prev.x + dx * 0.15,
-                    y: prev.y + dy * 0.15
-                };
-            });
-            rafId = requestAnimationFrame(animateCursor);
-        };
-        rafId = requestAnimationFrame(animateCursor);
-
-        return () => {
-            window.removeEventListener('mousemove', onMouseMove);
-            cancelAnimationFrame(rafId);
-        };
-    }, [targetPosition]); // Dependency on targetPosition ensures loop updates with fresh target
-
-    // We actually need a ref for the values inside the loop if we want to avoid re-renders per frame for the loop itself,
-    // but React state is fine for simple cursor if optimized properly. 
-    // However, for pure performance, direct DOM manipulation is often better for cursors.
-    // Let's refactor to direct DOM for 60fps smoothness without React render overhead.
-
-    useEffect(() => {
         const cursor = cursorRef.current;
-        if (!cursor) return;
+        const trailLength = 12;
 
-        // Only on desktop
-        const isTouchDevice = window.matchMedia("(hover: none)").matches;
-        if (isTouchDevice) {
-            cursor.style.display = 'none';
-            return;
+        // Initialize ghosts
+        // We render them via JS to append to body or keep them in component? 
+        // For performance and structure matching original, let's create them dynamically or render them in JSX.
+        // Rendering in JSX is more React-friendly.
+
+        const mouse = { x: 0, y: 0 };
+        const cursorState = { x: 0, y: 0 };
+        const ghosts = [];
+
+        // Initialize ghost states
+        for (let i = 0; i < trailLength; i++) {
+            ghosts.push({ x: 0, y: 0 });
         }
 
-        let currentX = 0;
-        let currentY = 0;
-        let targetX = 0;
-        let targetY = 0;
+        const handleMouseMove = (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
 
-        const onMouseMove = (e) => {
-            targetX = e.clientX;
-            targetY = e.clientY;
-
-            // Check hover
+            // Hover check
             const target = e.target;
             const isClickable =
                 target.tagName === 'A' ||
@@ -91,7 +41,8 @@ export default function CustomCursor() {
                 target.closest('button') ||
                 target.classList.contains('interactive-card') ||
                 target.classList.contains('project-item') ||
-                target.closest('.project-item');
+                target.closest('.project-item') ||
+                window.getComputedStyle(target).cursor === 'pointer';
 
             if (isClickable) {
                 cursor.classList.add('hover');
@@ -100,26 +51,71 @@ export default function CustomCursor() {
             }
         };
 
-        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mousemove', handleMouseMove);
 
-        let rafId;
         const animate = () => {
-            const dx = targetX - currentX;
-            const dy = targetY - currentY;
+            // Head interpolation
+            const headLerp = 0.35;
+            cursorState.x += (mouse.x - cursorState.x) * headLerp;
+            cursorState.y += (mouse.y - cursorState.y) * headLerp;
 
-            currentX += dx * 0.15;
-            currentY += dy * 0.15;
+            if (cursor) {
+                cursor.style.left = `${cursorState.x}px`;
+                cursor.style.top = `${cursorState.y}px`;
+            }
 
-            cursor.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
-            rafId = requestAnimationFrame(animate);
+            // Tail interpolation
+            const tailLerp = 0.35;
+            let prevX = cursorState.x;
+            let prevY = cursorState.y;
+
+            ghosts.forEach((ghost, i) => {
+                const el = ghostsRef.current[i];
+                if (el) {
+                    ghost.x += (prevX - ghost.x) * tailLerp;
+                    ghost.y += (prevY - ghost.y) * tailLerp;
+
+                    el.style.left = `${ghost.x}px`;
+                    el.style.top = `${ghost.y}px`;
+
+                    prevX = ghost.x;
+                    prevY = ghost.y;
+                }
+            });
+
+            requestRef.current = requestAnimationFrame(animate);
         };
-        animate();
+
+        requestRef.current = requestAnimationFrame(animate);
 
         return () => {
-            window.removeEventListener('mousemove', onMouseMove);
-            cancelAnimationFrame(rafId);
+            window.removeEventListener('mousemove', handleMouseMove);
+            if (requestRef.current) cancelAnimationFrame(requestRef.current);
         };
     }, []);
 
-    return <div ref={cursorRef} className="custom-cursor"></div>;
+    // Render ghosts
+    const trailLength = 12;
+    const ghostElements = Array.from({ length: trailLength }).map((_, i) => {
+        const scale = 1 - (i / trailLength) * 0.5;
+        const opacity = 1 - (i / trailLength) * 0.8;
+        return (
+            <div
+                key={i}
+                ref={el => ghostsRef.current[i] = el}
+                className="cursor-ghost"
+                style={{
+                    transform: `translate(-50%, -50%) scale(${scale})`,
+                    opacity: opacity
+                }}
+            />
+        );
+    });
+
+    return (
+        <>
+            <div ref={cursorRef} className="custom-cursor" />
+            {ghostElements}
+        </>
+    );
 }

@@ -27,7 +27,7 @@ export default function OtherProjects({
                     const actualIndex = categoryProjects.findIndex(p => p.id === project.id);
                     const firstAsset = project.assets && project.assets[0]
                         ? `${ASSETS_PATH}${project.assets[0].src}`
-                        : `${ASSETS_PATH}p${project.id}_0.png`;
+                        : `${ASSETS_PATH}p${project.id}_0.webp`;
 
                     const assetCount = project.assets ? project.assets.length : '?';
                     const projectTitle = currentLang === 'es'

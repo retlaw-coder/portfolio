@@ -1,25 +1,20 @@
 import { useState, useEffect } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams, Link } from 'react-router-dom';
 import ProjectViewer from './ProjectViewer';
 import OtherProjects from './OtherProjects';
 import projectsData from '../data/projects.json';
-
-const CATEGORIES_CONFIG = {
-    '3d': { title: '3D', key: '3d' },
-    'motion': { title: 'Motion Graphics', key: 'motion' },
-    'ui': { title: 'UI/UX', key: 'ui' },
-    'video': { title: 'Video Editing', key: 'video' }
-};
-
-const CATEGORIES_ORDER = ['3d', 'motion', 'ui', 'video'];
+import { CATEGORIES_ORDER, CATEGORIES_CONFIG } from '../utils/categories';
 
 export default function CategoryView({ currentLang }) {
     const { category } = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
     const projectIndex = parseInt(searchParams.get('p') || '0');
 
+    // Normalize category for comparison
+    const currentCategoryKey = category.toLowerCase();
+
     const categoryProjects = projectsData.filter(
-        p => p.category === category
+        p => p.category.toLowerCase() === currentCategoryKey
     );
 
     const currentProject = categoryProjects[projectIndex];
@@ -66,8 +61,8 @@ export default function CategoryView({ currentLang }) {
                                 <span key={index} className="tech-tag">{tech}</span>
                             ))}
                         </div>
-                        {currentProject.link && (
-                            <a href={currentProject.link} target="_blank" rel="noopener noreferrer" className="external-link">
+                        {currentProject.external_link && (
+                            <a href={currentProject.external_link} target="_blank" rel="noopener noreferrer" className="external-link">
                                 {currentLang === 'es' ? 'Ver proyecto →' : 'View project →'}
                             </a>
                         )}
@@ -79,13 +74,13 @@ export default function CategoryView({ currentLang }) {
                     {/* Category Navigation */}
                     <div className="category-top-nav">
                         {CATEGORIES_ORDER.map(cat => (
-                            <a
+                            <Link
                                 key={cat}
-                                href={`/category/${cat}?p=0`}
-                                className={`cat-nav-link ${cat === category ? 'active' : ''}`}
+                                to={`/category/${cat}?p=0`}
+                                className={`cat-nav-link ${cat === currentCategoryKey ? 'active' : ''}`}
                             >
                                 {CATEGORIES_CONFIG[cat].title}
-                            </a>
+                            </Link>
                         ))}
                     </div>
 
@@ -103,8 +98,8 @@ export default function CategoryView({ currentLang }) {
                     <OtherProjects
                         categoryProjects={categoryProjects}
                         currentProjectIndex={projectIndex}
-                        category={category}
-                        categoryTitle={CATEGORIES_CONFIG[category].title}
+                        category={currentCategoryKey}
+                        categoryTitle={CATEGORIES_CONFIG[currentCategoryKey]?.title || currentCategoryKey}
                         onProjectSelect={handleProjectChange}
                         currentLang={currentLang}
                     />
