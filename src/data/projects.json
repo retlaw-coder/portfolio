@@ -1,0 +1,142 @@
+[
+  {
+    "id": "1",
+    "category": "3D",
+    "title": "Tren entre Montañas",
+    "title_en": "Train Through Mountains",
+    "subtitle": "Environment / Animation",
+    "subtitle_en": "Environment / Animation",
+    "desc": "Escenario natural generado proceduralmente.",
+    "desc_en": "Procedurally generated natural environment.",
+    "stack": ["Blender", "Cycles"],
+    "assets": [
+      {"type": "video", "src": "p1_v0.mp4", "vertical": false},
+      {"type": "image", "src": "p1_0.png", "vertical": false}
+    ]
+  },
+  {
+    "id": "2",
+    "category": "3D",
+    "title": "Departamento",
+    "title_en": "Apartment",
+    "subtitle": "Archviz / Shading",
+    "subtitle_en": "Archviz / Shading",
+    "desc": "Renderizado fotorrealista de interiores.",
+    "desc_en": "Photorealistic interior rendering.",
+    "stack": ["Blender", "Octane"],
+    "assets": [
+      {"type": "image", "src": "p2_0.png", "vertical": false},
+      {"type": "image", "src": "p2_1.png", "vertical": false}
+    ]
+  },
+  {
+    "id": "3",
+    "category": "Motion",
+    "title": "Abstract Simulation",
+    "title_en": "Abstract Simulation",
+    "subtitle": "Abstract Simulation",
+    "subtitle_en": "Abstract Simulation",
+    "desc": "Motion graphics experimentales.",
+    "desc_en": "Experimental motion graphics.",
+    "stack": ["Blender", "Shaders", "EEVEE"],
+    "assets": [
+      {"type": "video", "src": "p3_v0.mp4", "vertical": false},
+      {"type": "image", "src": "p3_0.png", "vertical": false}
+    ]
+  },
+  {
+    "id": "4",
+    "category": "3D",
+    "title": "Character Animation",
+    "title_en": "Character Animation",
+    "subtitle": "Character Animation",
+    "subtitle_en": "Character Animation",
+    "desc": "Estudio de movimiento y rigging.",
+    "desc_en": "Movement and rigging study.",
+    "stack": ["Blender", "Rigging"],
+    "assets": [
+      {"type": "video", "src": "p4_v0.mp4", "vertical": false},
+      {"type": "image", "src": "p4_0.png", "vertical": false}
+    ]
+  },
+  {
+    "id": "5",
+    "category": "drawing",
+    "title": "Digital Illustration",
+    "title_en": "Digital Illustration",
+    "subtitle": "Digital Illustration",
+    "subtitle_en": "Digital Illustration",
+    "desc": "Serie de bocetos rápidos en 2D.",
+    "desc_en": "Series of quick 2D sketches.",
+    "stack": ["Photoshop", "Tablet"],
+    "assets": [
+      {"type": "image", "src": "p5_0.png", "vertical": false},
+      {"type": "image", "src": "p5_1.png", "vertical": false},
+      {"type": "image", "src": "p5_2.png", "vertical": false},
+      {"type": "image", "src": "p5_3.png", "vertical": false}
+    ]
+  },
+  {
+    "id": "6",
+    "category": "design",
+    "title": "App UI/UX",
+    "title_en": "App UI/UX",
+    "subtitle": "Mobile Interface",
+    "subtitle_en": "Mobile Interface",
+    "desc": "Diseño de interfaz para aplicación móvil.",
+    "desc_en": "Mobile application interface design.",
+    "stack": ["Figma", "UI Design"],
+    "assets": [
+      {"type": "image", "src": "p6_0.png", "vertical": false},
+      {"type": "image", "src": "p6_1_v.png", "vertical": true},
+      {"type": "image", "src": "p6_2_v.png", "vertical": true},
+      {"type": "image", "src": "p6_3_v.png", "vertical": true}
+    ]
+  },
+  {
+    "id": "7",
+    "category": "design",
+    "title": "UX Research",
+    "title_en": "UX Research",
+    "subtitle": "Interactive Prototype",
+    "subtitle_en": "Interactive Prototype",
+    "desc": "Prototipado de alta fidelidad.",
+    "desc_en": "High-fidelity prototyping.",
+    "stack": ["Figma", "Prototyping"],
+    "external_link": "https://www.figma.com/proto/Kt9SF23xLCg2PnS6PZOX4N/Tp-3.2-Walter?node-id=95-1610&starting-point-node-id=95%3A1610&show-proto-sidebar=1&t=qwXJXCghnJMQZbm4-9",
+    "assets": [
+      {"type": "video", "src": "p7_v0.mp4", "vertical": false},
+      {"type": "image", "src": "p7_0.png", "vertical": false}
+    ]
+  },
+  {
+    "id": "8",
+    "category": "motion",
+    "title": "Data Driven Motion",
+    "title_en": "Data Driven Motion",
+    "subtitle": "Procedural GeoNodes",
+    "subtitle_en": "Procedural GeoNodes",
+    "desc": "Animación controlada por datos externos.",
+    "desc_en": "Animation driven by external data.",
+    "stack": ["Blender", "Geo Nodes"],
+    "assets": [
+      {"type": "video", "src": "p8_v0.mp4", "vertical": false},
+      {"type": "image", "src": "p8_0.png", "vertical": false}
+    ]
+  },
+  {
+    "id": "9",
+    "category": "editing",
+    "title": "Reel 2024",
+    "title_en": "Reel 2024",
+    "subtitle": "Video Editing",
+    "subtitle_en": "Video Editing",
+    "desc": "Compilación de trabajos de edición y color.",
+    "desc_en": "Compilation of editing and color work.",
+    "stack": ["Premiere", "DaVinci"],
+    "assets": [
+      {"type": "video", "src": "p9_v0.mp4", "vertical": false},
+      {"type": "image", "src": "p9_0.png", "vertical": false}
+    ]
+  }
+]
