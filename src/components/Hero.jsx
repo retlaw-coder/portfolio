@@ -39,7 +39,7 @@ export default function Hero({ currentLang }) {
         loader.setDRACOLoader(draco);
 
         loader.load(
-            `${import.meta.env.BASE_URL}assets/edificios.glb`,
+            `${import.meta.env.BASE_URL}assets/final-city.glb`,
             (gltf) => {
                 const model = gltf.scene;
 
