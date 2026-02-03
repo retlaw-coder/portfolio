@@ -21,6 +21,37 @@ Portfolio personal de Walter Custodio - 3D Artist & Multimedia Designer.
 - 👆 **Touch Gestures** - Swipe navigation on mobile
 - ♿ **Accessible** - ARIA labels, keyboard navigation
 
+## 🚀 Deployment
+
+### Quick Deploy
+
+```bash
+# Opción 1: Script automático (Windows)
+.\deploy.ps1
+
+# Opción 2: Manual
+npm run build
+npm run deploy
+```
+
+### GitHub Pages Setup
+
+1. Ve a: `Settings → Pages`
+2. Source: `GitHub Actions` (recomendado) o `gh-pages branch`
+3. Espera unos minutos
+4. Tu sitio estará en: `https://TU_USERNAME.github.io/portfolio/`
+
+### Troubleshooting
+
+Si encuentras errores en GitHub Pages, consulta:
+- 📘 **[RESUMEN_CORRECCIONES.md](RESUMEN_CORRECCIONES.md)** - Resumen de correcciones aplicadas
+- 📗 **[GITHUB_PAGES_FIX.md](GITHUB_PAGES_FIX.md)** - Guía completa de troubleshooting
+
+**Errores comunes resueltos:**
+- ✅ Error de carga del modelo 3D (JSON parsing)
+- ✅ Errores 404 en rutas
+- ✅ Configuración de assets para GitHub Pages
+
 ## 👤 Author
 
 **Walter Custodio**

@@ -5,4 +5,15 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
     plugins: [react()],
     base: "/portfolio/",
+    assetsInclude: ['**/*.glb', '**/*.gltf'],
+    build: {
+        assetsInlineLimit: 0, // Don't inline any assets
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    three: ['three']
+                }
+            }
+        }
+    }
 })

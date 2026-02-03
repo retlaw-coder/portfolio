@@ -38,9 +38,14 @@ export default function Hero({ currentLang }) {
         draco.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
         loader.setDRACOLoader(draco);
 
+        // Use proper path for GitHub Pages - the public folder is served at the root
+        const modelPath = import.meta.env.BASE_URL + 'assets/final-city.glb';
+        console.log('Loading model from:', modelPath);
+
         loader.load(
-            `${import.meta.env.BASE_URL}assets/final-city.glb`,
+            modelPath,
             (gltf) => {
+                console.log('Model loaded successfully!');
                 const model = gltf.scene;
 
                 // 🎯 POSITION: Adjust X, Y, Z coordinates
