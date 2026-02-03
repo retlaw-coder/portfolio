@@ -30,7 +30,6 @@ MIT License - feel free to use this template for your own portfolio!
 ## 👤 Author
 
 **Walter Custodio**
-- Portfolio: [waltercustodio.com](https://waltercustodio.com)
 - Location: Argentina
 
 ## 🙏 Acknowledgments
