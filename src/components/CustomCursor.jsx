@@ -8,8 +8,8 @@ export default function CustomCursor() {
 
     useEffect(() => {
         // Only on desktop
-        const isTouchDevice = window.matchMedia("(hover: none)").matches;
-        if (isTouchDevice) return;
+        // const isTouchDevice = window.matchMedia("(hover: none)").matches;
+        // if (isTouchDevice) return;
 
         const cursor = cursorRef.current;
         const trailLength = 12;

@@ -32,10 +32,11 @@
     transform: translate(-50%, -50%);
 }
 
+/* 
 @media (hover: none) {
-
     .custom-cursor,
     .cursor-ghost {
         display: none !important;
     }
 }
+*/

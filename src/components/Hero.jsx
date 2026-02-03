@@ -39,12 +39,12 @@ export default function Hero({ currentLang }) {
         loader.setDRACOLoader(draco);
 
         loader.load(
-            "/assets/edificios.glb",
+            `${import.meta.env.BASE_URL}assets/edificios.glb`,
             (gltf) => {
                 const model = gltf.scene;
 
                 // 🎯 POSITION: Adjust X, Y, Z coordinates
-                model.position.set(10, -2, -8);
+                model.position.set(3, -2, 0);
 
                 // 🎯 SCALE: Adjust size (all axes)
                 model.scale.set(0.065, 0.065, 0.065);
