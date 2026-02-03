@@ -2,8 +2,6 @@
 
 Portfolio personal de Walter Custodio - 3D Artist & Multimedia Designer.
 
-![Portfolio Preview](./public/walter-cv.png)
-
 ## 🚀 Tech Stack
 
 - **React 18** - UI Framework
@@ -22,10 +20,6 @@ Portfolio personal de Walter Custodio - 3D Artist & Multimedia Designer.
 - 🎯 **Smooth Animations** - Custom loader & transitions
 - 👆 **Touch Gestures** - Swipe navigation on mobile
 - ♿ **Accessible** - ARIA labels, keyboard navigation
-
-## 📝 License
-
-MIT License - feel free to use this template for your own portfolio!
 
 ## 👤 Author
 
