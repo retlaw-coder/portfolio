@@ -1,64 +1,83 @@
 # Portfolio - Walter Custodio
 
-Portfolio personal de Walter Custodio - 3D Artist & Multimedia Designer.
+Portfolio personal desarrollado con React + Vite, Three.js y animaciones modernas.
 
-## 🚀 Tech Stack
-
-- **React 18** - UI Framework
-- **Vite** - Build tool & dev server
-- **React Router** - SPA routing
-- **Three.js** - 3D graphics
-- **CSS3** - Styling (no frameworks)
-
-## ✨ Features
-
-- 🎨 **Modern Design** - Tech/cyberpunk aesthetic
-- 🌐 **Bilingual** - Spanish & English support
-- 📱 **Fully Responsive** - Mobile, tablet, desktop optimized
-- 🎭 **3D Hero** - Interactive Three.js scene (desktop only)
-- ⚡ **Fast Loading** - Optimized assets & code splitting
-- 🎯 **Smooth Animations** - Custom loader & transitions
-- 👆 **Touch Gestures** - Swipe navigation on mobile
-- ♿ **Accessible** - ARIA labels, keyboard navigation
-
-## 🚀 Deployment
-
-### Quick Deploy
+## 🚀 Inicio Rápido
 
 ```bash
-# Opción 1: Script automático (Windows)
-.\deploy.ps1
+# Instalar dependencias
+npm install
 
-# Opción 2: Manual
+# Ejecutar en desarrollo
+npm run dev
+
+# Construir para producción
 npm run build
-npm run deploy
+
+# Vista previa de producción
+npm run preview
 ```
 
-### GitHub Pages Setup
+## 📁 Estructura del Proyecto
 
-1. Ve a: `Settings → Pages`
-2. Source: `GitHub Actions` (recomendado) o `gh-pages branch`
-3. Espera unos minutos
-4. Tu sitio estará en: `https://TU_USERNAME.github.io/portfolio/`
+```
+portfolio-main/
+├── public/
+│   └── assets/          # Imágenes, videos y modelo 3D
+├── src/
+│   ├── components/      # Componentes React
+│   ├── data/           # Datos de proyectos
+│   ├── utils/          # Utilidades
+│   └── main.jsx        # Punto de entrada
+├── index.html
+├── package.json
+└── vite.config.js
+```
 
-### Troubleshooting
+## 🎨 Características
 
-Si encuentras errores en GitHub Pages, consulta:
-- 📘 **[RESUMEN_CORRECCIONES.md](RESUMEN_CORRECCIONES.md)** - Resumen de correcciones aplicadas
-- 📗 **[GITHUB_PAGES_FIX.md](GITHUB_PAGES_FIX.md)** - Guía completa de troubleshooting
+- ✨ Animaciones suaves con Lenis
+- 🎯 Cursor personalizado
+- 🌐 Modelo 3D interactivo (Three.js)
+- 📱 Diseño responsive
+- 🚀 Optimizado para rendimiento
+- 🌍 Multiidioma (ES/EN)
 
-**Errores comunes resueltos:**
-- ✅ Error de carga del modelo 3D (JSON parsing)
-- ✅ Errores 404 en rutas
-- ✅ Configuración de assets para GitHub Pages
+## 🛠️ Tecnologías
 
-## 👤 Author
+- React 18
+- Vite
+- Three.js
+- Lenis (smooth scroll)
+- WebP (imágenes optimizadas)
 
-**Walter Custodio**
-- Location: Argentina
+## 📦 Deployment
 
-## 🙏 Acknowledgments
+El proyecto está configurado para GitHub Pages con base path `/portfolio/`.
 
-- Three.js for 3D graphics
-- Vite for blazing fast builds
-- React team for the amazing framework
+```bash
+npm run build
+```
+
+Los archivos de producción se generan en la carpeta `dist/`.
+
+## 🎯 Configuración del Modelo 3D
+
+Para ajustar la posición, escala o rotación del modelo 3D, edita:
+
+**Archivo:** `src/components/Hero.jsx` (líneas 51-59)
+
+```javascript
+// Posición (X, Y, Z)
+model.position.set(3, -2, 0);
+
+// Escala
+model.scale.set(0.065, 0.065, 0.065);
+
+// Rotación
+model.rotation.y = -5;
+```
+
+## 📄 Licencia
+
+© 2026 Walter Custodio. Todos los derechos reservados.

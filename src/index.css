@@ -171,6 +171,18 @@ a:focus-visible {
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* =========================================
    LOADER & TRANSITIONS
    ========================================= */
@@ -239,34 +251,46 @@ a:focus-visible {
   filter: blur(20px);
 }
 
-.loader-content {
-  width: 300px;
+.loader-box {
+  width: 500px;
+  max-width: 90vw;
   font-family: var(--font-mono);
 }
 
+.loader-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+}
+
 .boot-log {
-  height: 60px;
+  height: 80px;
   overflow: hidden;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: #666;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   border-left: 2px solid #333;
-  padding-left: 10px;
+  padding-left: 15px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
 }
 
 .boot-log p {
-  margin: 2px 0;
+  margin: 3px 0;
   transition: opacity 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .loader-bar-wrapper {
   width: 100%;
-  height: 4px;
+  height: 6px;
   background: #222;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   position: relative;
   overflow: hidden;
 }
@@ -436,7 +460,7 @@ body.category-page .sticky-nav {
   /* El resto igual... */
   font-family: var(--font-mono);
   font-size: 0.7rem;
-  color: #ffffff;
+  color: #ff3333;
   letter-spacing: 2px;
   z-index: 5;
   pointer-events: none;
@@ -1461,6 +1485,7 @@ body.category-page .sticky-nav {
     transition-duration: 0.01ms !important;
   }
 }
+
 /* Main Display Wrapper - Buttons only around main image */
 .main-display-wrapper {
   position: relative;
@@ -1500,4 +1525,3 @@ body.category-page .sticky-nav {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
-

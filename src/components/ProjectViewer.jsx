@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import useSwipe from '../hooks/useSwipe';
 
-const ASSETS_PATH = '/assets/';
+const ASSETS_PATH = import.meta.env.BASE_URL + 'assets/';
 
 export default function ProjectViewer({ project, projectIndex, totalProjects, onPrev, onNext, currentLang }) {
     const [currentAssetIndex, setCurrentAssetIndex] = useState(0);
