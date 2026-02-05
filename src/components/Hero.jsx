@@ -18,13 +18,13 @@ export default function Hero({ currentLang }) {
     const [enableAnimation, setEnableAnimation] = useState(true); // Enable by default for subtle animation
     const [modelLoaded, setModelLoaded] = useState(false);
     const [showRetlaw, setShowRetlaw] = useState(false);
+    const isAnimatingRef = useRef(true); // 🔄 Ref for loop access without re-renders
     const timerRef = useRef(null);
 
     useEffect(() => {
         // --- THREE.JS SETUP ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        // Camera position from original script.js
         camera.position.set(0, 1, 5);
 
         const renderer = new THREE.WebGLRenderer({
@@ -43,28 +43,24 @@ export default function Hero({ currentLang }) {
 
         sceneRef.current = { scene, camera, renderer };
 
-        // --- MODEL LOADING (Start immediately, not after delay) ---
+        // --- MODEL LOADING ---
         const loader = new GLTFLoader();
         const draco = new DRACOLoader();
         draco.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
         loader.setDRACOLoader(draco);
 
-        // Use proper path for GitHub Pages - the public folder is served at the root
         const modelPath = import.meta.env.BASE_URL + 'assets/final-city.glb';
         console.log('Loading model from:', modelPath);
 
         loader.load(
             modelPath,
             (gltf) => {
-                console.log('Model loaded successfully!');
                 const model = gltf.scene;
-
-                // 🎯 Use state values for initial position
+                // Initial setup
                 model.position.set(position.x, position.y, position.z);
                 model.scale.set(scale, scale, scale);
                 model.rotation.set(rotation.x, rotation.y, rotation.z);
 
-                // Make model visible immediately (no fade)
                 model.traverse((c) => {
                     if (c.isMesh) {
                         c.material.transparent = false;
@@ -76,11 +72,7 @@ export default function Hero({ currentLang }) {
                 modelRef.current = model;
                 setModelLoaded(true);
             },
-            (xhr) => {
-                // Progress callback
-                const percentComplete = (xhr.loaded / xhr.total) * 100;
-                console.log(`Model loading: ${percentComplete.toFixed(2)}%`);
-            },
+            undefined,
             (error) => console.error("Error loading 3D model:", error)
         );
 
@@ -96,15 +88,14 @@ export default function Hero({ currentLang }) {
         document.addEventListener("mousemove", handleMouseMove);
 
         // --- ANIMATION LOOP ---
+        let reqId;
         const animate = () => {
-            requestAnimationFrame(animate);
-            if (modelRef.current && enableAnimation) {
-                // Subtle rotation on Y axis (spinning)
+            reqId = requestAnimationFrame(animate);
+            // Use ref for animation state to avoid restarting effect
+            if (modelRef.current && isAnimatingRef.current) {
                 modelRef.current.rotation.y += 0.003;
-
-                // Subtle floating effect on Y position (up and down)
-                const time = Date.now() * 0.001; // Convert to seconds
-                const floatAmount = Math.sin(time * 0.5) * 0.3; // Oscillate between -0.3 and 0.3
+                const time = Date.now() * 0.001;
+                const floatAmount = Math.sin(time * 0.5) * 0.3;
                 modelRef.current.position.y = position.y + floatAmount;
             }
             renderer.render(scene, camera);
@@ -120,13 +111,19 @@ export default function Hero({ currentLang }) {
         window.addEventListener("resize", handleResize);
 
         return () => {
+            cancelAnimationFrame(reqId);
             document.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("resize", handleResize);
+            // Dispose logic
             renderer.dispose();
+            if (modelRef.current) {
+                scene.remove(modelRef.current);
+            }
         };
-    }, [enableAnimation]);
+    }, []); // Empty dependency array = Runs once on mount!
 
-    // 🎮 UPDATE MODEL IN REAL-TIME
+    // 🎮 UPDATE MODEL IN REAL-TIME FROM SLIDERS
+    // This effect handles updates when sliders move, without reloading the scene
     useEffect(() => {
         if (modelRef.current) {
             modelRef.current.position.set(position.x, position.y, position.z);
@@ -135,24 +132,31 @@ export default function Hero({ currentLang }) {
         }
     }, [position, rotation, scale]);
 
-    // 🎮 CAPTURE CURRENT VALUES WHEN CONTROLS OPEN & STOP ANIMATION
+    // 🎮 TOGGLE ANIMATION & CAPTURE VALUES
     useEffect(() => {
-        if (showControls && modelRef.current) {
-            // Stop animation when controls open
+        if (showControls) {
+            // STOP animation
+            isAnimatingRef.current = false;
             setEnableAnimation(false);
 
-            // Capture current model values
-            setPosition({
-                x: parseFloat(modelRef.current.position.x.toFixed(2)),
-                y: parseFloat(modelRef.current.position.y.toFixed(2)),
-                z: parseFloat(modelRef.current.position.z.toFixed(2))
-            });
-            setRotation({
-                x: parseFloat(modelRef.current.rotation.x.toFixed(2)),
-                y: parseFloat(modelRef.current.rotation.y.toFixed(2)),
-                z: parseFloat(modelRef.current.rotation.z.toFixed(2))
-            });
-            setScale(parseFloat(modelRef.current.scale.x.toFixed(3)));
+            if (modelRef.current) {
+                // Capture current values so sliders match reality
+                setPosition({
+                    x: parseFloat(modelRef.current.position.x.toFixed(2)),
+                    y: parseFloat(modelRef.current.position.y.toFixed(2)),
+                    z: parseFloat(modelRef.current.position.z.toFixed(2))
+                });
+                setRotation({
+                    x: parseFloat(modelRef.current.rotation.x.toFixed(2)),
+                    y: parseFloat(modelRef.current.rotation.y.toFixed(2)),
+                    z: parseFloat(modelRef.current.rotation.z.toFixed(2))
+                });
+                setScale(parseFloat(modelRef.current.scale.x.toFixed(3)));
+            }
+        } else {
+            // RESUME animation
+            isAnimatingRef.current = true;
+            setEnableAnimation(true);
         }
     }, [showControls]);
 
@@ -299,7 +303,7 @@ export default function Hero({ currentLang }) {
                         transition: 'all 0.3s ease',
                     }}
                 >
-                    {showControls ? '✕ CLOSE' : '🎮 CONTROLS'}
+                    {showControls ? '✕ CLOSE' : 'CONTROLS'}
                 </button>
             )}
 
@@ -321,38 +325,14 @@ export default function Hero({ currentLang }) {
                     minWidth: '300px',
                 }}>
                     <h3 style={{ margin: '0 0 15px 0', color: '#ff3333', fontSize: '16px', fontWeight: '700' }}>
-                        🎮 3D MODEL CONTROLS
+                        3D MODEL CONTROLS
                     </h3>
 
-                    {/* ANIMATION TOGGLE */}
-                    <div style={{
-                        marginBottom: '20px',
-                        padding: '10px',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        borderRadius: '5px',
-                        border: '1px solid rgba(255, 255, 255, 0.1)'
-                    }}>
-                        <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                            <input
-                                type="checkbox"
-                                checked={enableAnimation}
-                                onChange={(e) => setEnableAnimation(e.target.checked)}
-                                style={{ marginRight: '10px', cursor: 'pointer' }}
-                            />
-                            <span style={{ color: enableAnimation ? '#ff3333' : '#b0b0b0' }}>
-                                {enableAnimation ? '✅ Auto-Rotation ON' : '❌ Auto-Rotation OFF'}
-                            </span>
-                        </label>
-                        <p style={{ margin: '5px 0 0 0', fontSize: '10px', color: '#888' }}>
-                            {enableAnimation
-                                ? 'Rotación suave en Y + efecto flotante'
-                                : 'Modelo estático - usa los sliders'}
-                        </p>
-                    </div>
+                    {/* ANIMATION TOGGLE REMOVED */}
 
                     {/* POSITION */}
                     <div style={{ marginBottom: '20px' }}>
-                        <h4 style={{ color: '#ff3333', margin: '0 0 10px 0', fontSize: '13px', fontWeight: '700' }}>📍 POSITION</h4>
+                        <h4 style={{ color: '#ff3333', margin: '0 0 10px 0', fontSize: '13px', fontWeight: '700' }}>POSITION</h4>
 
                         <label style={{ display: 'block', marginBottom: '5px' }}>
                             X: {position.x.toFixed(2)}
@@ -396,13 +376,13 @@ export default function Hero({ currentLang }) {
 
                     {/* ROTATION */}
                     <div style={{ marginBottom: '20px' }}>
-                        <h4 style={{ color: '#ff3333', margin: '0 0 10px 0', fontSize: '13px', fontWeight: '700' }}>🔄 ROTATION</h4>
+                        <h4 style={{ color: '#ff3333', margin: '0 0 10px 0', fontSize: '13px', fontWeight: '700' }}>ROTATION</h4>
 
                         <label style={{ display: 'block', marginBottom: '5px' }}>
                             X: {rotation.x.toFixed(2)} rad
                             <input
                                 type="range"
-                                min="-1"
+                                min="0"
                                 max="1"
                                 step="0.01"
                                 value={rotation.x}
@@ -415,8 +395,8 @@ export default function Hero({ currentLang }) {
                             Y: {rotation.y.toFixed(2)} rad
                             <input
                                 type="range"
-                                min="-1.5"
-                                max="0.5"
+                                min="-3.14"
+                                max="3.14"
                                 step="0.01"
                                 value={rotation.y}
                                 onChange={(e) => setRotation({ ...rotation, y: parseFloat(e.target.value) })}
@@ -428,8 +408,8 @@ export default function Hero({ currentLang }) {
                             Z: {rotation.z.toFixed(2)} rad
                             <input
                                 type="range"
-                                min="-1"
-                                max="1"
+                                min="0.02"
+                                max="0.8"
                                 step="0.01"
                                 value={rotation.z}
                                 onChange={(e) => setRotation({ ...rotation, z: parseFloat(e.target.value) })}
@@ -440,78 +420,28 @@ export default function Hero({ currentLang }) {
 
                     {/* SCALE */}
                     <div style={{ marginBottom: '20px' }}>
-                        <h4 style={{ color: '#ff3333', margin: '0 0 10px 0', fontSize: '13px', fontWeight: '700' }}>📏 SCALE</h4>
+                        <h4 style={{ color: '#ff3333', margin: '0 0 10px 0', fontSize: '13px', fontWeight: '700' }}>SCALE</h4>
 
                         <label style={{ display: 'block', marginBottom: '5px' }}>
-                            Size: {scale.toFixed(3)}
+                            Size: {((scale - 0.075) / (0.122 - 0.075)).toFixed(2)}
                             <input
                                 type="range"
-                                min="0.05"
-                                max="0.15"
-                                step="0.001"
-                                value={scale}
-                                onChange={(e) => setScale(parseFloat(e.target.value))}
+                                min="0"
+                                max="1"
+                                step="0.01"
+                                value={(scale - 0.075) / (0.122 - 0.075)}
+                                onChange={(e) => {
+                                    const val = parseFloat(e.target.value);
+                                    const minScale = 0.075;
+                                    const maxScale = 0.122;
+                                    const newScale = minScale + (val * (maxScale - minScale));
+                                    setScale(newScale);
+                                }}
                                 style={{ width: '100%', display: 'block' }}
                             />
                         </label>
                     </div>
 
-                    {/* COPY VALUES */}
-                    <button
-                        onClick={() => {
-                            const code = `model.position.set(${position.x.toFixed(2)}, ${position.y.toFixed(2)}, ${position.z.toFixed(2)});
-model.scale.set(${scale.toFixed(3)}, ${scale.toFixed(3)}, ${scale.toFixed(3)});
-model.rotation.set(${rotation.x.toFixed(2)}, ${rotation.y.toFixed(2)}, ${rotation.z.toFixed(2)});`;
-                            navigator.clipboard.writeText(code);
-                            alert('✅ Código copiado al portapapeles!');
-                        }}
-                        style={{
-                            width: '100%',
-                            padding: '10px',
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            color: '#fff',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            borderRadius: '5px',
-                            cursor: 'pointer',
-                            fontFamily: 'var(--font-mono)',
-                            fontWeight: 'bold',
-                            marginBottom: '10px',
-                            transition: '0.3s'
-                        }}
-                        onMouseOver={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
-                        onMouseOut={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.1)'}
-                    >
-                        📋 COPY VALUES
-                    </button>
-
-                    {/* RESET */}
-                    <button
-                        onClick={() => {
-                            setPosition({ x: 10.00, y: -5.40, z: -20.00 });
-                            setRotation({ x: -0.08, y: -0.48, z: 0.02 });
-                            setScale(0.096);
-                        }}
-                        style={{
-                            width: '100%',
-                            padding: '10px',
-                            background: 'rgba(255, 51, 51, 0.2)',
-                            color: '#ff3333',
-                            border: '1px solid #ff3333',
-                            borderRadius: '5px',
-                            cursor: 'pointer',
-                            fontFamily: 'var(--font-mono)',
-                            fontWeight: 'bold',
-                            transition: '0.3s'
-                        }}
-                        onMouseOver={(e) => e.target.style.background = 'rgba(255, 51, 51, 0.4)'}
-                        onMouseOut={(e) => e.target.style.background = 'rgba(255, 51, 51, 0.2)'}
-                    >
-                        🔄 RESET INICIAL
-                    </button>
-
-                    <p style={{ marginTop: '15px', fontSize: '10px', color: '#888', textAlign: 'center' }}>
-                        Mueve los sliders para ajustar en tiempo real
-                    </p>
                 </div>
             )}
         </>
