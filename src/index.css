@@ -402,6 +402,9 @@ body.category-page .sticky-nav {
   height: 100vh;
   z-index: -1;
   pointer-events: none;
+  /* Oval mask effect for the 3D model */
+  -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
 }
 
 .hero {
@@ -460,6 +463,7 @@ body.category-page .sticky-nav {
   /* El resto igual... */
   font-family: var(--font-mono);
   font-size: 0.7rem;
+  font-weight: 700;
   color: #ff3333;
   letter-spacing: 2px;
   z-index: 5;
