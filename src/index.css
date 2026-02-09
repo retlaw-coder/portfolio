@@ -247,8 +247,6 @@ a:focus-visible {
 .loader-container.loader-hidden {
   opacity: 0;
   pointer-events: none;
-  transform: scale(1.5);
-  filter: blur(20px);
 }
 
 .loader-box {
@@ -371,6 +369,8 @@ body.category-page .sticky-nav {
   color: #fff;
   font-weight: 700;
   border-radius: 2px;
+  min-width: 120px;
+  text-align: center;
 }
 
 .lang-switch-floating {
@@ -456,43 +456,36 @@ body.category-page .sticky-nav {
 .scroll-indicator {
   position: absolute;
   bottom: 10px;
-  /* Antes era 30px. 10px lo deja bien abajo */
   left: 50%;
   transform: translateX(-50%);
-
-  /* El resto igual... */
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  font-weight: 700;
+  font-size: 0.8rem;
+  font-weight: 800;
+  /* Bolder */
   color: #ff3333;
   letter-spacing: 2px;
   z-index: 5;
   pointer-events: none;
-
-  /* "infinite" es lo que hace que sea un loop constante */
+  mix-blend-mode: exclusion;
+  /* Invert effect */
   animation: scrollHintAnim 2s infinite ease-in-out;
 }
 
 @keyframes scrollHintAnim {
   0% {
-    opacity: 0.3;
-    /* Empieza casi transparente */
+    opacity: 0.5;
+    /* Increased visibility */
     transform: translate(-50%, 0);
-    /* Centrado X, posición original Y */
   }
 
   50% {
     opacity: 1;
-    /* Totalmente visible a mitad de camino */
     transform: translate(-50%, -15px);
-    /* Sube 15px (el saltito) */
   }
 
   100% {
-    opacity: 0.3;
-    /* Vuelve a ser transparente */
+    opacity: 0.5;
     transform: translate(-50%, 0);
-    /* Vuelve a bajar */
   }
 }
 
@@ -587,18 +580,29 @@ body.category-page .sticky-nav {
    ========================================= */
 .detail-container-grid {
   display: grid;
-  grid-template-columns: clamp(300px, 25vw, 400px) 1fr;
-  gap: 60px;
+  grid-template-columns: 1fr clamp(300px, 25vw, 400px);
+  grid-template-areas:
+    "nav ."
+    "content sidebar";
+  gap: 20px 60px;
+  /* Reduced vertical gap to bring nav closer */
   padding: 120px 9vw 100px;
   max-width: 1800px;
   margin: 0 auto;
   border-top: 1px solid #333;
   position: relative;
+  align-items: start;
+}
+
+.left-column-wrapper {
+  grid-area: sidebar;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
 }
 
 .detail-sidebar {
-  position: sticky;
-  top: 100px;
+  position: relative;
   height: fit-content;
   background: rgba(10, 10, 10, 0.8);
   border: 1px solid #333;
@@ -654,6 +658,7 @@ body.category-page .sticky-nav {
 }
 
 .detail-media-grid {
+  grid-area: content;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -661,10 +666,12 @@ body.category-page .sticky-nav {
 }
 
 .category-top-nav {
+  grid-area: nav;
   display: flex;
   gap: 15px;
-  margin-bottom: 30px;
+  /* margin-bottom moved to gap control */
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .cat-nav-link {
@@ -699,8 +706,19 @@ body.category-page .sticky-nav {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  padding-left: 40px;
-  padding-right: 40px;
+  /* Reduced gap from 25px */
+  /* Removed padding for buttons, now they overlap naturally or we can add it back if desired */
+  /* User wanted thumbnails aligned with video. if buttons overlap video, then alignment is 1:1. */
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* This wrapper class is unused now as we merged it,
+   but keeping it harmless or removing it if desired */
+.main-display-wrapper {
+  position: relative;
+  width: 100%;
+  /* No padding, buttons overlay */
 }
 
 /* MAIN DISPLAY */
@@ -759,6 +777,7 @@ body.category-page .sticky-nav {
   padding-right: 0;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  /* Removed padding/margin logic - they are inside gallery-wrapper */
 }
 
 /* Snap scrolling on mobile for better UX */
@@ -782,14 +801,15 @@ body.category-page .sticky-nav {
 }
 
 .thumb-item {
-  width: 120px;
-  height: 70px;
+  width: 140px;
+  /* Adjusted size slightly */
+  height: 80px;
   flex-shrink: 0;
   background: #111;
   border: 1px solid #333;
   cursor: pointer;
-  opacity: 0.5;
-  transition: 0.3s;
+  opacity: 0.6;
+  transition: all 0.3s ease;
 }
 
 .thumb-item img,
@@ -799,10 +819,15 @@ body.category-page .sticky-nav {
   object-fit: cover;
 }
 
-.thumb-item:hover,
+.thumb-item:hover {
+  opacity: 0.8;
+  border-color: #666;
+}
+
 .thumb-item.active {
   opacity: 1;
   border-color: var(--accent-color);
+  border-width: 2px;
 }
 
 /* NAV SIDEBAR BUTTONS */
@@ -819,7 +844,7 @@ body.category-page .sticky-nav {
   background: rgba(0, 0, 0, 0.7);
   z-index: 20;
   backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
   opacity: 0;
 }
@@ -834,7 +859,7 @@ body.category-page .sticky-nav {
 /* Always visible on touch devices */
 @media (hover: none) {
   .nav-sidebar-btn:not(.disabled) {
-    opacity: 0.6;
+    opacity: 0.8;
   }
 
   .nav-sidebar-btn:active {
@@ -843,7 +868,7 @@ body.category-page .sticky-nav {
 }
 
 .nav-sidebar-btn:hover {
-  background: rgba(5, 5, 5, 0.9);
+  background: rgba(20, 20, 20, 0.9);
 }
 
 /* Se ubican en las esquinas del wrapper (cubriendo el padding) */
@@ -858,15 +883,19 @@ body.category-page .sticky-nav {
 }
 
 .arrow-icon {
-  font-size: 1.2rem;
-  color: #fff;
+  font-size: 1.5rem;
+  /* Larger icon */
+  color: #fff !important;
+  /* Force White */
   transition: 0.3s;
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  font-weight: bold;
 }
 
 .nav-sidebar-btn:hover .arrow-icon {
-  color: var(--accent-color);
-  transform: scale(1.15);
+  transform: scale(1.2);
+  /* Keep it white on hover, maybe glow */
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 /* Better touch feedback on mobile */
@@ -922,14 +951,14 @@ body.category-page .sticky-nav {
    OTHER PROJECTS SECTION
    ========================================= */
 .other-projects-section {
-  margin-top: 20px;
+  margin-top: 0;
   width: 100%;
 }
 
 .other-projects-separator {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
   margin-bottom: 20px;
   opacity: 0.5;
 }
@@ -942,20 +971,22 @@ body.category-page .sticky-nav {
 
 .separator-text {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   color: var(--text-secondary);
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   white-space: nowrap;
 }
 
 .other-projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
+  /* Make them smaller: 2 columns in sidebar context usually fits around 140-160px */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
 }
 
 .other-project-card {
-  background: rgba(10, 10, 10, 0.5);
+  background: rgba(10, 10, 10, 0.3);
+  /* Lower opacity background */
   border: 1px solid var(--border-thin);
   transition: all 0.3s ease;
   cursor: pointer;
@@ -963,17 +994,17 @@ body.category-page .sticky-nav {
 }
 
 .other-project-card:hover {
-  border-color: var(--accent-color);
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(255, 51, 51, 0.2);
+  border-color: #666;
+  /* Subtler hover color */
+  transform: translateY(-2px);
+  /* Removed heavy box-shadow */
 }
 
 /* Touch feedback for mobile */
 @media (hover: none) {
   .other-project-card:active {
-    border-color: var(--accent-color);
+    border-color: #666;
     transform: scale(0.98);
-    box-shadow: 0 4px 10px rgba(255, 51, 51, 0.3);
   }
 }
 
@@ -982,6 +1013,13 @@ body.category-page .sticky-nav {
   aspect-ratio: 16/9;
   overflow: hidden;
   background: #111;
+  opacity: 0.8;
+  /* Slightly dimmed images by default */
+  transition: opacity 0.3s ease;
+}
+
+.other-project-card:hover .other-project-thumb {
+  opacity: 1;
 }
 
 .other-project-thumb img {
@@ -993,24 +1031,35 @@ body.category-page .sticky-nav {
 
 .other-project-card:hover .other-project-thumb img {
   transform: scale(1.05);
+  /* reduced zoom */
 }
 
 .other-project-info {
-  padding: 15px;
+  padding: 10px;
+  /* reduced padding */
 }
 
 .other-project-info h4 {
-  font-size: 1rem;
+  font-size: 0.8rem;
+  /* smaller title */
   font-weight: 700;
-  margin: 0 0 5px 0;
-  color: #fff;
+  margin: 0 0 3px 0;
+  color: #ccc;
+  /* less bright by default */
   text-transform: uppercase;
+  transition: color 0.3s;
+}
+
+.other-project-card:hover h4 {
+  color: #fff;
 }
 
 .other-project-count {
+  display: block;
   font-family: var(--font-mono);
-  font-size: 0.65rem;
-  color: var(--text-secondary);
+  font-size: 0.6rem;
+  color: #666;
+  /* dimmer */
 }
 
 /* =========================================
@@ -1284,14 +1333,42 @@ body.category-page .sticky-nav {
   }
 
   .detail-container-grid {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     padding-left: 5vw;
     padding-right: 5vw;
   }
 
+  .left-column-wrapper {
+    display: contents;
+  }
+
+  .category-top-nav {
+    order: 0;
+    margin-bottom: 30px;
+    width: 100%;
+  }
+
   .detail-sidebar {
+    order: 1;
     position: static;
     margin-bottom: 40px;
+  }
+
+  .detail-media-grid {
+    order: 2;
+    margin-bottom: 80px;
+  }
+
+  .other-projects-section {
+    order: 3;
+    padding-top: 40px;
+    border-top: 1px solid var(--border-thin);
+  }
+
+  .other-projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
 
   .main-display-container.triple-view {

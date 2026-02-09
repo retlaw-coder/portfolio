@@ -3,7 +3,16 @@ import useSwipe from '../hooks/useSwipe';
 
 const ASSETS_PATH = import.meta.env.BASE_URL + 'assets/';
 
-export default function ProjectViewer({ project, projectIndex, totalProjects, onPrev, onNext, currentLang }) {
+export default function ProjectViewer({
+    project,
+    projectIndex,
+    totalProjects,
+    onPrev,
+    onNext,
+    currentLang,
+    isFirstGlobal,
+    isLastGlobal
+}) {
     const [currentAssetIndex, setCurrentAssetIndex] = useState(0);
     const [assets, setAssets] = useState([]);
     const displayRef = useRef(null);
@@ -17,74 +26,102 @@ export default function ProjectViewer({ project, projectIndex, totalProjects, on
                 isVertical: asset.vertical || false
             }));
             setAssets(loadedAssets);
+
+            // Default to start, but could support "start at end" via prop if needed later
             setCurrentAssetIndex(0);
         }
     }, [project]);
 
     // Swipe gestures
     const swipeHandlers = useSwipe(
-        () => onNext(), // swipe left = next project
-        () => onPrev()  // swipe right = prev project
+        () => handleNext(), // swipe left = next
+        () => handlePrev()  // swipe right = prev
     );
 
     const handleThumbnailClick = (index) => {
         setCurrentAssetIndex(index);
     };
 
+    const handlePrev = () => {
+        if (currentAssetIndex > 0) {
+            setCurrentAssetIndex(prev => prev - 1);
+        } else {
+            // Let parent handle navigation (prev project or prev category)
+            onPrev();
+        }
+    };
+
+    const handleNext = () => {
+        if (currentAssetIndex < assets.length - 1) {
+            setCurrentAssetIndex(prev => prev + 1);
+        } else {
+            // Let parent handle navigation (next project or next category)
+            onNext();
+        }
+    };
+
+    // Disabled state is now controlled by global position, not just local project index
+    // If props are missing (e.g. usage without CategoryView logic), fallback to local logic
+
+    // First item globally? (First category, first project, first asset)
+    const disablePrev = isFirstGlobal !== undefined
+        ? (isFirstGlobal && currentAssetIndex === 0)
+        : (projectIndex === 0 && currentAssetIndex === 0);
+
+    // Last item globally? (Last category, last project, last asset)
+    const disableNext = isLastGlobal !== undefined
+        ? (isLastGlobal && currentAssetIndex === (assets.length - 1))
+        : (projectIndex === totalProjects - 1 && currentAssetIndex === (assets.length - 1));
+
     const currentAsset = assets[currentAssetIndex];
 
     return (
         <div className="gallery-wrapper" {...swipeHandlers}>
-            {/* Main Display Container with Navigation Buttons */}
-            <div className="main-display-wrapper">
-                {/* Prev Button - Only covers main display */}
+            {/* Main Display Container with Navigation Buttons Inside */}
+            <div className="main-display-container" ref={displayRef} style={{ position: 'relative' }}>
+                {/* Prev Button */}
                 <button
-                    className={`nav-sidebar-btn prev-btn ${projectIndex === 0 ? 'disabled' : ''}`}
-                    onClick={onPrev}
-                    disabled={projectIndex === 0}
-                    aria-label="Proyecto anterior"
+                    className={`nav-sidebar-btn prev-btn ${disablePrev ? 'disabled' : ''}`}
+                    onClick={handlePrev}
+                    disabled={disablePrev}
+                    aria-label="Previous"
                 >
-                    <span className="arrow-icon">&lt;</span>
-                    <span className="nav-hint">PREV</span>
+                    <span className="arrow-icon" style={{ fontSize: '1.5rem', color: '#fff' }}>&lt;</span>
                 </button>
 
-                {/* Main Display */}
-                <div className="main-display-container" ref={displayRef}>
-                    {currentAsset && (
-                        currentAsset.type === 'video' ? (
-                            <video
-                                key={currentAsset.src}
-                                className="main-display-media"
-                                src={currentAsset.src}
-                                controls
-                                autoPlay
-                                loop
-                                muted
-                            />
-                        ) : (
-                            <img
-                                key={currentAsset.src}
-                                className="main-display-media"
-                                src={currentAsset.src}
-                                alt={`${project.title} - Asset ${currentAssetIndex + 1}`}
-                            />
-                        )
-                    )}
-                </div>
+                {currentAsset && (
+                    currentAsset.type === 'video' ? (
+                        <video
+                            key={currentAsset.src}
+                            className="main-display-media"
+                            src={currentAsset.src}
+                            controls
+                            autoPlay
+                            loop
+                            muted
+                        />
+                    ) : (
+                        <img
+                            key={currentAsset.src}
+                            className="main-display-media"
+                            src={currentAsset.src}
+                            alt={`${project.title} - Asset ${currentAssetIndex + 1}`}
+                        />
+                    )
+                )}
 
-                {/* Next Button - Only covers main display */}
+                {/* Next Button */}
                 <button
-                    className={`nav-sidebar-btn next-btn ${projectIndex === totalProjects - 1 ? 'disabled' : ''}`}
-                    onClick={onNext}
-                    disabled={projectIndex === totalProjects - 1}
-                    aria-label="Proyecto siguiente"
+                    className={`nav-sidebar-btn next-btn ${disableNext ? 'disabled' : ''}`}
+                    onClick={handleNext}
+                    disabled={disableNext}
+                    aria-label="Next"
                 >
-                    <span className="arrow-icon">&gt;</span>
-                    <span className="nav-hint">NEXT</span>
+                    <span className="arrow-icon" style={{ fontSize: '1.5rem', color: '#fff' }}>&gt;</span>
                 </button>
             </div>
 
-            {/* Thumbnails Track - Outside of navigation buttons */}
+            {/* Thumbnails Track */}
             <div className="thumbnails-track">
                 {assets.map((asset, index) => (
                     <div

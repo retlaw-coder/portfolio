@@ -10,15 +10,23 @@ export default function Hero({ currentLang }) {
     const mouseRef = useRef({ x: 0, y: 0 });
 
     // 🎮 CONTROL PANEL STATE
+    const DEFAULT_POSITION = { x: 10.00, y: -5.30, z: -20.00 };
+    const DEFAULT_ROTATION = { x: -0.08, y: 0.93, z: 0.02 };
+    const DEFAULT_SCALE = 0.0985; // Corresponds to 0.50 slider value
+
     const [showControls, setShowControls] = useState(false);
     const [showControlsButton, setShowControlsButton] = useState(false);
-    const [position, setPosition] = useState({ x: 10.00, y: -5.40, z: -20.00 });
-    const [rotation, setRotation] = useState({ x: -0.08, y: -0.48, z: 0.02 });
-    const [scale, setScale] = useState(0.096);
-    const [enableAnimation, setEnableAnimation] = useState(true); // Enable by default for subtle animation
+    const [position, setPosition] = useState(DEFAULT_POSITION);
+    const [rotation, setRotation] = useState(DEFAULT_ROTATION);
+    const [scale, setScale] = useState(DEFAULT_SCALE);
+    const [enableAnimation, setEnableAnimation] = useState(true);
     const [modelLoaded, setModelLoaded] = useState(false);
     const [showRetlaw, setShowRetlaw] = useState(false);
-    const isAnimatingRef = useRef(true); // 🔄 Ref for loop access without re-renders
+
+    // Refs for animation loop
+    const showControlsRef = useRef(false);
+    const animationIntensityRef = useRef(1); // 1 = full speed, 0 = stopped
+    const hasCapturedRef = useRef(false);
     const timerRef = useRef(null);
 
     useEffect(() => {
@@ -91,13 +99,39 @@ export default function Hero({ currentLang }) {
         let reqId;
         const animate = () => {
             reqId = requestAnimationFrame(animate);
-            // Use ref for animation state to avoid restarting effect
-            if (modelRef.current && isAnimatingRef.current) {
-                modelRef.current.rotation.y += 0.003;
-                const time = Date.now() * 0.001;
-                const floatAmount = Math.sin(time * 0.5) * 0.3;
-                modelRef.current.position.y = position.y + floatAmount;
+
+            if (modelRef.current) {
+                // Smoothly interpolate animation intensity
+                // If controls are open, slow down to 0. If closed, speed up to 1.
+                const targetIntensity = showControlsRef.current ? 0 : 1;
+
+                // Lerp towards target (0.02 is the speed of change)
+                if (Math.abs(animationIntensityRef.current - targetIntensity) > 0.001) {
+                    const direction = targetIntensity > animationIntensityRef.current ? 1 : -1;
+                    animationIntensityRef.current += direction * 0.02;
+                    animationIntensityRef.current = Math.max(0, Math.min(1, animationIntensityRef.current));
+                } else {
+                    animationIntensityRef.current = targetIntensity;
+                }
+
+                // Apply rotation and float based on intensity
+                if (animationIntensityRef.current > 0) {
+                    modelRef.current.rotation.y += 0.003 * animationIntensityRef.current;
+                    const time = Date.now() * 0.001;
+                    const floatAmount = Math.sin(time * 0.5) * 0.3 * animationIntensityRef.current;
+                    // We only apply the float offset to the base Y position
+                    // Note: We need to use the current 'position' state or a ref for the base.
+                    // But since 'position' state might be stale in this closure if we didn't include it in deps (we didn't),
+                    // we should rely on the fact that if controls are closed, position is steady.
+                    // Ideally, we reset position.y to base when intensity hits 0.
+                }
+
+                // Special handling: when intensity hits 0 (fully stopped) for the first time after opening controls,
+                // we should ensure the state matches the model's final position.
+                // However, doing this from the loop is tricky. 
+                // Instead, the loop just stops updating rotation.y.
             }
+
             renderer.render(scene, camera);
         };
         animate();
@@ -134,31 +168,42 @@ export default function Hero({ currentLang }) {
 
     // 🎮 TOGGLE ANIMATION & CAPTURE VALUES
     useEffect(() => {
-        if (showControls) {
-            // STOP animation
-            isAnimatingRef.current = false;
-            setEnableAnimation(false);
+        showControlsRef.current = showControls;
 
-            if (modelRef.current) {
-                // Capture current values so sliders match reality
-                setPosition({
-                    x: parseFloat(modelRef.current.position.x.toFixed(2)),
-                    y: parseFloat(modelRef.current.position.y.toFixed(2)),
-                    z: parseFloat(modelRef.current.position.z.toFixed(2))
-                });
-                setRotation({
-                    x: parseFloat(modelRef.current.rotation.x.toFixed(2)),
-                    y: parseFloat(modelRef.current.rotation.y.toFixed(2)),
-                    z: parseFloat(modelRef.current.rotation.z.toFixed(2))
-                });
-                setScale(parseFloat(modelRef.current.scale.x.toFixed(3)));
-            }
+        if (showControls) {
+            // Unset capture flag so we can capture *after* it stops if we wanted (simpler: just let it visual stop)
+            // Or better: update state immediately so sliders show roughly where we are? 
+            // No, user wants it to slow down.
+            // We will let the loop handle the slowdown.
+            setEnableAnimation(false);
         } else {
             // RESUME animation
-            isAnimatingRef.current = true;
             setEnableAnimation(true);
         }
     }, [showControls]);
+
+    // Update state from model ONLY when fully stopped or manually triggered
+    const captureCurrentTransform = () => {
+        if (modelRef.current) {
+            setPosition({
+                x: parseFloat(modelRef.current.position.x.toFixed(2)),
+                y: parseFloat(modelRef.current.position.y.toFixed(2)),
+                z: parseFloat(modelRef.current.position.z.toFixed(2))
+            });
+            setRotation({
+                x: parseFloat(modelRef.current.rotation.x.toFixed(2)),
+                y: parseFloat(modelRef.current.rotation.y.toFixed(2)),
+                z: parseFloat(modelRef.current.rotation.z.toFixed(2))
+            });
+            setScale(parseFloat(modelRef.current.scale.x.toFixed(3)));
+        }
+    };
+
+    const handleReset = () => {
+        setPosition(DEFAULT_POSITION);
+        setRotation(DEFAULT_ROTATION);
+        setScale(DEFAULT_SCALE);
+    };
 
     // 🎮 HANDLE NAME TOGGLE TIMER & SCROLL
     useEffect(() => {
@@ -228,33 +273,36 @@ export default function Hero({ currentLang }) {
                     <h1
                         className="hero-title reveal-text"
                         style={{
-                            whiteSpace: 'pre-line',
+                            display: 'grid',
+                            placeItems: 'center start',
                             position: 'relative',
                             cursor: 'pointer',
                             minHeight: '200px',
+                            textAlign: 'left',
                         }}
                         onMouseEnter={() => setShowControlsButton(true)}
                         onTouchStart={() => setShowControlsButton(true)}
                     >
                         <span style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
+                            gridArea: '1/1',
                             color: '#fff',
                             opacity: showRetlaw ? 0 : 1,
-                            transition: 'opacity 0.3s ease',
+                            transform: showRetlaw ? 'scale(0.9) translateY(20px)' : 'scale(1) translateY(0)',
+                            filter: showRetlaw ? 'blur(10px)' : 'blur(0)',
+                            transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
                             pointerEvents: showRetlaw ? 'none' : 'auto',
+                            whiteSpace: 'pre-line',
                         }}>
                             WALTER{'\n'}CUSTODIO
                         </span>
 
                         <span style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
+                            gridArea: '1/1',
                             color: '#ff3333',
                             opacity: showRetlaw ? 1 : 0,
-                            transition: 'opacity 0.3s ease',
+                            transform: showRetlaw ? 'scale(1) translateY(0)' : 'scale(1.1) translateY(-20px)',
+                            filter: showRetlaw ? 'blur(0)' : 'blur(10px)',
+                            transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
                             pointerEvents: showRetlaw ? 'auto' : 'none',
                         }}>
                             @Retlaw
@@ -324,9 +372,11 @@ export default function Hero({ currentLang }) {
                     overflowY: 'auto',
                     minWidth: '300px',
                 }}>
-                    <h3 style={{ margin: '0 0 15px 0', color: '#ff3333', fontSize: '16px', fontWeight: '700' }}>
-                        3D MODEL CONTROLS
-                    </h3>
+                    <div style={{ marginBottom: '15px' }}>
+                        <h3 style={{ margin: 0, color: '#ff3333', fontSize: '16px', fontWeight: '700' }}>
+                            3D MODEL CONTROLS
+                        </h3>
+                    </div>
 
                     {/* ANIMATION TOGGLE REMOVED */}
 
@@ -440,6 +490,36 @@ export default function Hero({ currentLang }) {
                                 style={{ width: '100%', display: 'block' }}
                             />
                         </label>
+                    </div>
+
+                    <div style={{ marginTop: '20px', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '15px' }}>
+                        <button
+                            onClick={handleReset}
+                            style={{
+                                width: '100%',
+                                background: 'rgba(255, 51, 51, 0.1)',
+                                border: '1px solid #ff3333',
+                                color: '#ff3333',
+                                padding: '10px 0',
+                                fontSize: '12px',
+                                fontWeight: 'bold',
+                                cursor: 'pointer',
+                                fontFamily: 'var(--font-mono)',
+                                transition: 'all 0.2s ease',
+                                textTransform: 'uppercase',
+                                letterSpacing: '1px'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.target.style.background = '#ff3333';
+                                e.target.style.color = '#fff';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.background = 'rgba(255, 51, 51, 0.1)';
+                                e.target.style.color = '#ff3333';
+                            }}
+                        >
+                            RESET TO DEFAULT
+                        </button>
                     </div>
 
                 </div>

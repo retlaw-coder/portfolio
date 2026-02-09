@@ -3,7 +3,6 @@ logs
 *.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
@@ -30,3 +29,11 @@ MIGRATION_GUIDE.md
 QUICK_START.md
 START_HERE.md
 prepare-github.ps1
+iniciar.bat
+CONFIGURACION_FINAL_3D.md
+CORRECCIONES_RETLAW.md
+FIX_ROTACION.md
+MEJORAS_CONTROLES_3D.md
+PANEL_CONTROL_3D.md
+RESUMEN_COMPLETO_MEJORAS.md
+SISTEMA_NOMBRE_RETLAW.md
