@@ -490,6 +490,71 @@ body.category-page .sticky-nav {
 }
 
 /* =========================================
+   GLASS TRANSITION DIVIDER (Hero -> Projects)
+   ========================================= */
+.glass-divider {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  padding: 2px 0;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+}
+
+.glass-divider::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 300%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.06) 25%,
+      rgba(255, 51, 51, 0.03) 50%,
+      rgba(255, 255, 255, 0.06) 75%,
+      transparent 100%);
+  animation: glassShimmer 8s ease-in-out infinite;
+}
+
+.glass-divider-inner {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.glass-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.glass-line {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+}
+
+@keyframes glassShimmer {
+
+  0%,
+  100% {
+    transform: translateX(-30%);
+  }
+
+  50% {
+    transform: translateX(10%);
+  }
+}
+
+/* =========================================
    PROJECTS HOME
    ========================================= */
 .projects-container {
@@ -534,8 +599,12 @@ body.category-page .sticky-nav {
   overflow: hidden;
   text-decoration: none;
   cursor: pointer;
-  transition: opacity 0.3s;
-  will-change: transform;
+  transition: opacity 0.4s, transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform, opacity;
+}
+
+.project-item:hover {
+  transform: translateY(-6px);
 }
 
 .project-media {
@@ -573,6 +642,12 @@ body.category-page .sticky-nav {
   font-weight: 700;
   color: #fff;
   margin: 0;
+  transition: color 0.3s, letter-spacing 0.4s;
+}
+
+.project-item:hover .project-info h3 {
+  letter-spacing: 1px;
+  color: var(--accent-color);
 }
 
 /* =========================================
@@ -1112,6 +1187,12 @@ body.category-page .sticky-nav {
   font-family: var(--font-mono);
   font-size: 0.9rem;
   text-transform: uppercase;
+  transition: padding-left 0.3s, background 0.3s;
+}
+
+.tech-list li:hover {
+  padding-left: 10px;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .cv-entry {
@@ -1538,11 +1619,106 @@ body.category-page .sticky-nav {
   }
 }
 
-.reveal-text {
+/* =========================================
+   APPLE-STYLE SCROLL REVEALS
+   ========================================= */
+.reveal-text,
+.reveal-item {
   opacity: 0;
-  animation: fadeInUp 0.8s ease forwards;
+  transform: translateY(30px);
+  filter: blur(4px);
+  transition:
+    opacity 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    filter 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
+.reveal-text.visible,
+.reveal-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* Staggered children: cards, CV entries, tech list items */
+.project-item {
+  opacity: 0;
+  transform: translateY(40px);
+  filter: blur(3px);
+  transition:
+    opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    filter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.project-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* Stagger delays for consecutive items */
+.project-item:nth-child(2) {
+  transition-delay: 0.1s;
+}
+
+.project-item:nth-child(3) {
+  transition-delay: 0.2s;
+}
+
+.project-item:nth-child(4) {
+  transition-delay: 0.3s;
+}
+
+.project-item:nth-child(5) {
+  transition-delay: 0.4s;
+}
+
+.project-item:nth-child(6) {
+  transition-delay: 0.5s;
+}
+
+.section-title {
+  opacity: 0;
+  transform: translateY(20px);
+  filter: blur(4px);
+  transition:
+    opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    filter 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.section-title.visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+.cv-entry {
+  opacity: 0;
+  transform: translateY(25px);
+  filter: blur(3px);
+  transition:
+    opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    filter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.cv-entry.visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+.cv-entry:nth-child(2) {
+  transition-delay: 0.15s;
+}
+
+.cv-entry:nth-child(3) {
+  transition-delay: 0.3s;
+}
+
+/* Legacy keyframes removed — all reveals are now transition-based for scroll awareness */
 @keyframes fadeInUp {
   from {
     opacity: 0;

@@ -127,6 +127,17 @@ function HomePage({ currentLang, onContactClick }) {
         <>
             <Hero currentLang={currentLang} />
 
+            {/* Glass UI Transition Divider */}
+            <div className="glass-divider">
+                <div className="glass-divider-inner">
+                    <div className="glass-line"></div>
+                    <div className="glass-dot"></div>
+                    <div className="glass-dot"></div>
+                    <div className="glass-dot"></div>
+                    <div className="glass-line"></div>
+                </div>
+            </div>
+
             <section className="projects-container" id="projects-start">
                 <div className="projects-layout">
                     <div className="projects-sidebar">

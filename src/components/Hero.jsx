@@ -9,8 +9,24 @@ export default function Hero({ currentLang }) {
     const modelRef = useRef(null);
     const mouseRef = useRef({ x: 0, y: 0 });
 
+    // Runic Number Map - Procedural Generation
+    const toRunic = (num) => {
+        // Use the number as a seed for a deterministic but chaotic sequence
+        let seed = Math.floor(Math.abs(num) * 123456) + 789;
+        const runes = "ᚠᚢᚦᚨᚱᚲᚺᚾᛁᛃᛈᛉᛏᛒᛖᛗᛞᛟᛝᚩᚳᚷᛠ";
+        let str = "";
+
+        // Exactly 4 characters
+        for (let i = 0; i < 4; i++) {
+            // Simple Linear Congruential Generator for randomness
+            seed = (seed * 16807) % 2147483647;
+            str += runes[seed % runes.length];
+        }
+        return str;
+    };
+
     // 🎮 CONTROL PANEL STATE
-    const DEFAULT_POSITION = { x: 10.00, y: -5.30, z: -20.00 };
+    const DEFAULT_POSITION = { x: 10.00, y: -3.70, z: -20.00 };
     const DEFAULT_ROTATION = { x: -0.08, y: 0.93, z: 0.02 };
     const DEFAULT_SCALE = 0.0985; // Corresponds to 0.50 slider value
 
@@ -25,11 +41,21 @@ export default function Hero({ currentLang }) {
 
     // Refs for animation loop
     const showControlsRef = useRef(false);
-    const animationIntensityRef = useRef(1); // 1 = full speed, 0 = stopped
-    const hasCapturedRef = useRef(false);
+    const targetRef = useRef({
+        position: DEFAULT_POSITION,
+        rotation: DEFAULT_ROTATION,
+        scale: DEFAULT_SCALE
+    });
     const timerRef = useRef(null);
 
+    // Sync Ref with State for the animation loop
     useEffect(() => {
+        targetRef.current = { position, rotation, scale };
+    }, [position, rotation, scale]);
+
+    useEffect(() => {
+        let isMounted = true;
+
         // --- THREE.JS SETUP ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -63,6 +89,8 @@ export default function Hero({ currentLang }) {
         loader.load(
             modelPath,
             (gltf) => {
+                if (!isMounted) return;
+
                 const model = gltf.scene;
                 // Initial setup
                 model.position.set(position.x, position.y, position.z);
@@ -101,35 +129,52 @@ export default function Hero({ currentLang }) {
             reqId = requestAnimationFrame(animate);
 
             if (modelRef.current) {
-                // Smoothly interpolate animation intensity
-                // If controls are open, slow down to 0. If closed, speed up to 1.
-                const targetIntensity = showControlsRef.current ? 0 : 1;
+                const target = targetRef.current;
 
-                // Lerp towards target (0.02 is the speed of change)
-                if (Math.abs(animationIntensityRef.current - targetIntensity) > 0.001) {
-                    const direction = targetIntensity > animationIntensityRef.current ? 1 : -1;
-                    animationIntensityRef.current += direction * 0.02;
-                    animationIntensityRef.current = Math.max(0, Math.min(1, animationIntensityRef.current));
-                } else {
-                    animationIntensityRef.current = targetIntensity;
+                // IF CONTROLS ARE OPEN:
+                // Smoothly interpolate (Lerp) towards the target values set by sliders
+                if (showControlsRef.current) {
+                    // Position Lerp
+                    modelRef.current.position.x += (target.position.x - modelRef.current.position.x) * 0.1;
+                    modelRef.current.position.y += (target.position.y - modelRef.current.position.y) * 0.1;
+                    modelRef.current.position.z += (target.position.z - modelRef.current.position.z) * 0.1;
+
+                    // Rotation Lerp
+                    modelRef.current.rotation.x += (target.rotation.x - modelRef.current.rotation.x) * 0.1;
+                    modelRef.current.rotation.y += (target.rotation.y - modelRef.current.rotation.y) * 0.1;
+                    modelRef.current.rotation.z += (target.rotation.z - modelRef.current.rotation.z) * 0.1;
+
+                    // Scale Lerp
+                    const currentScale = modelRef.current.scale.x;
+                    const newScale = currentScale + (target.scale - currentScale) * 0.1;
+                    modelRef.current.scale.set(newScale, newScale, newScale);
                 }
+                // IF CONTROLS ARE CLOSED:
+                // Run automatic idle animation (rotation + float)
+                else {
+                    // Constant rotation
+                    modelRef.current.rotation.y += 0.003;
 
-                // Apply rotation and float based on intensity
-                if (animationIntensityRef.current > 0) {
-                    modelRef.current.rotation.y += 0.003 * animationIntensityRef.current;
+                    // Float effect
                     const time = Date.now() * 0.001;
-                    const floatAmount = Math.sin(time * 0.5) * 0.3 * animationIntensityRef.current;
-                    // We only apply the float offset to the base Y position
-                    // Note: We need to use the current 'position' state or a ref for the base.
-                    // But since 'position' state might be stale in this closure if we didn't include it in deps (we didn't),
-                    // we should rely on the fact that if controls are closed, position is steady.
-                    // Ideally, we reset position.y to base when intensity hits 0.
-                }
+                    const floatOffset = Math.sin(time * 0.5) * 0.3;
 
-                // Special handling: when intensity hits 0 (fully stopped) for the first time after opening controls,
-                // we should ensure the state matches the model's final position.
-                // However, doing this from the loop is tricky. 
-                // Instead, the loop just stops updating rotation.y.
+                    // Smoothly return to "Base Position + Float"
+                    // We use target.position as the base
+                    modelRef.current.position.x += (target.position.x - modelRef.current.position.x) * 0.05;
+                    modelRef.current.position.y += ((target.position.y + floatOffset) - modelRef.current.position.y) * 0.05;
+                    modelRef.current.position.z += (target.position.z - modelRef.current.position.z) * 0.05;
+
+                    // Smoothly return to "Base Rotation" (except Y which spins)
+                    modelRef.current.rotation.x += (target.rotation.x - modelRef.current.rotation.x) * 0.05;
+                    modelRef.current.rotation.z += (target.rotation.z - modelRef.current.rotation.z) * 0.05;
+                    // We DO NOT lerp Rotation Y because it's spinning freely
+
+                    // Smoothly return to Base Scale
+                    const currentScale = modelRef.current.scale.x;
+                    const newScale = currentScale + (target.scale - currentScale) * 0.05;
+                    modelRef.current.scale.set(newScale, newScale, newScale);
+                }
             }
 
             renderer.render(scene, camera);
@@ -145,59 +190,27 @@ export default function Hero({ currentLang }) {
         window.addEventListener("resize", handleResize);
 
         return () => {
+            isMounted = false;
             cancelAnimationFrame(reqId);
             document.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("resize", handleResize);
             // Dispose logic
             renderer.dispose();
+            draco.dispose();
             if (modelRef.current) {
                 scene.remove(modelRef.current);
+                modelRef.current = null;
             }
         };
     }, []); // Empty dependency array = Runs once on mount!
 
-    // 🎮 UPDATE MODEL IN REAL-TIME FROM SLIDERS
-    // This effect handles updates when sliders move, without reloading the scene
-    useEffect(() => {
-        if (modelRef.current) {
-            modelRef.current.position.set(position.x, position.y, position.z);
-            modelRef.current.scale.set(scale, scale, scale);
-            modelRef.current.rotation.set(rotation.x, rotation.y, rotation.z);
-        }
-    }, [position, rotation, scale]);
-
-    // 🎮 TOGGLE ANIMATION & CAPTURE VALUES
+    // 🎮 TOGGLE ANIMATION
     useEffect(() => {
         showControlsRef.current = showControls;
-
-        if (showControls) {
-            // Unset capture flag so we can capture *after* it stops if we wanted (simpler: just let it visual stop)
-            // Or better: update state immediately so sliders show roughly where we are? 
-            // No, user wants it to slow down.
-            // We will let the loop handle the slowdown.
-            setEnableAnimation(false);
-        } else {
-            // RESUME animation
-            setEnableAnimation(true);
-        }
     }, [showControls]);
 
-    // Update state from model ONLY when fully stopped or manually triggered
-    const captureCurrentTransform = () => {
-        if (modelRef.current) {
-            setPosition({
-                x: parseFloat(modelRef.current.position.x.toFixed(2)),
-                y: parseFloat(modelRef.current.position.y.toFixed(2)),
-                z: parseFloat(modelRef.current.position.z.toFixed(2))
-            });
-            setRotation({
-                x: parseFloat(modelRef.current.rotation.x.toFixed(2)),
-                y: parseFloat(modelRef.current.rotation.y.toFixed(2)),
-                z: parseFloat(modelRef.current.rotation.z.toFixed(2))
-            });
-            setScale(parseFloat(modelRef.current.scale.x.toFixed(3)));
-        }
-    };
+    // 🎮 UPDATE MODEL IN REAL-TIME FROM SLIDERS
+    // REMOVED: This logic is now handled in the animation loop for smoothness!
 
     const handleReset = () => {
         setPosition(DEFAULT_POSITION);
@@ -323,12 +336,27 @@ export default function Hero({ currentLang }) {
                 <button
                     onClick={() => {
                         if (showControls) {
-                            // Closing controls - reset name
+                            // Closing controls
                             setShowControls(false);
                             setShowRetlaw(false);
                             setShowControlsButton(false);
                         } else {
-                            // Opening controls
+                            // Opening controls - CAPTURE CURRENT MODEL STATE INSTANTLY
+                            if (modelRef.current) {
+                                const m = modelRef.current;
+                                setPosition({
+                                    x: parseFloat(m.position.x.toFixed(2)),
+                                    y: parseFloat(m.position.y.toFixed(2)),
+                                    z: parseFloat(m.position.z.toFixed(2))
+                                });
+                                // Capture rotation as is
+                                setRotation({
+                                    x: parseFloat(m.rotation.x.toFixed(2)),
+                                    y: parseFloat(m.rotation.y.toFixed(2)),
+                                    z: parseFloat(m.rotation.z.toFixed(2))
+                                });
+                                setScale(parseFloat(m.scale.x.toFixed(3)));
+                            }
                             setShowControls(true);
                         }
                     }}
@@ -385,7 +413,7 @@ export default function Hero({ currentLang }) {
                         <h4 style={{ color: '#ff3333', margin: '0 0 10px 0', fontSize: '13px', fontWeight: '700' }}>POSITION</h4>
 
                         <label style={{ display: 'block', marginBottom: '5px' }}>
-                            X: {position.x.toFixed(2)}
+                            X: <span style={{ fontFamily: '"Noto Sans Runic", sans-serif', letterSpacing: '2px', fontSize: '1.2em' }}>{toRunic(position.x)}</span>
                             <input
                                 type="range"
                                 min="5"
@@ -398,7 +426,7 @@ export default function Hero({ currentLang }) {
                         </label>
 
                         <label style={{ display: 'block', marginBottom: '5px' }}>
-                            Y: {position.y.toFixed(2)}
+                            Y: <span style={{ fontFamily: '"Noto Sans Runic", sans-serif', letterSpacing: '2px', fontSize: '1.2em' }}>{toRunic(position.y)}</span>
                             <input
                                 type="range"
                                 min="-10"
@@ -411,7 +439,7 @@ export default function Hero({ currentLang }) {
                         </label>
 
                         <label style={{ display: 'block', marginBottom: '5px' }}>
-                            Z: {position.z.toFixed(2)}
+                            Z: <span style={{ fontFamily: '"Noto Sans Runic", sans-serif', letterSpacing: '2px', fontSize: '1.2em' }}>{toRunic(position.z)}</span>
                             <input
                                 type="range"
                                 min="-25"
@@ -429,7 +457,7 @@ export default function Hero({ currentLang }) {
                         <h4 style={{ color: '#ff3333', margin: '0 0 10px 0', fontSize: '13px', fontWeight: '700' }}>ROTATION</h4>
 
                         <label style={{ display: 'block', marginBottom: '5px' }}>
-                            X: {rotation.x.toFixed(2)} rad
+                            X: <span style={{ fontFamily: '"Noto Sans Runic", sans-serif', letterSpacing: '2px', fontSize: '1.2em' }}>{toRunic(rotation.x)} <span style={{ fontSize: '0.6em', opacity: 0.7, fontFamily: 'monospace' }}>RAD</span></span>
                             <input
                                 type="range"
                                 min="0"
@@ -442,7 +470,7 @@ export default function Hero({ currentLang }) {
                         </label>
 
                         <label style={{ display: 'block', marginBottom: '5px' }}>
-                            Y: {rotation.y.toFixed(2)} rad
+                            Y: <span style={{ fontFamily: '"Noto Sans Runic", sans-serif', letterSpacing: '2px', fontSize: '1.2em' }}>{toRunic(rotation.y)} <span style={{ fontSize: '0.6em', opacity: 0.7, fontFamily: 'monospace' }}>RAD</span></span>
                             <input
                                 type="range"
                                 min="-3.14"
@@ -455,7 +483,7 @@ export default function Hero({ currentLang }) {
                         </label>
 
                         <label style={{ display: 'block', marginBottom: '5px' }}>
-                            Z: {rotation.z.toFixed(2)} rad
+                            Z: <span style={{ fontFamily: '"Noto Sans Runic", sans-serif', letterSpacing: '2px', fontSize: '1.2em' }}>{toRunic(rotation.z)} <span style={{ fontSize: '0.6em', opacity: 0.7, fontFamily: 'monospace' }}>RAD</span></span>
                             <input
                                 type="range"
                                 min="0.02"
@@ -473,7 +501,7 @@ export default function Hero({ currentLang }) {
                         <h4 style={{ color: '#ff3333', margin: '0 0 10px 0', fontSize: '13px', fontWeight: '700' }}>SCALE</h4>
 
                         <label style={{ display: 'block', marginBottom: '5px' }}>
-                            Size: {((scale - 0.075) / (0.122 - 0.075)).toFixed(2)}
+                            Size: <span style={{ fontFamily: '"Noto Sans Runic", sans-serif', letterSpacing: '2px', fontSize: '1.2em' }}>{toRunic((scale - 0.075) / (0.122 - 0.075))}</span>
                             <input
                                 type="range"
                                 min="0"
