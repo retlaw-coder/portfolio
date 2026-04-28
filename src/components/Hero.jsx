@@ -64,11 +64,21 @@ export default function Hero({ currentLang }) {
         const renderer = new THREE.WebGLRenderer({
             canvas: canvasRef.current,
             alpha: true,
-            antialias: true,
+            antialias: false, // Turned off for performance
             powerPreference: "high-performance",
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        // Limit pixel ratio to 1 for much better performance, especially on mobile/high-DPI screens
+        renderer.setPixelRatio(window.innerWidth < 768 ? 1 : Math.min(window.devicePixelRatio, 1.5));
+
+        // Setup Intersection Observer to pause rendering when off-screen
+        let isVisible = true;
+        const observer = new IntersectionObserver((entries) => {
+            isVisible = entries[0].isIntersecting;
+        });
+        if (canvasRef.current) {
+            observer.observe(canvasRef.current);
+        }
 
         scene.add(new THREE.AmbientLight(0xffffff, 0.6));
         const dirLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -127,6 +137,9 @@ export default function Hero({ currentLang }) {
         let reqId;
         const animate = () => {
             reqId = requestAnimationFrame(animate);
+
+            // Skip rendering completely if off-screen to save performance
+            if (!isVisible) return;
 
             if (modelRef.current) {
                 const target = targetRef.current;
@@ -194,6 +207,8 @@ export default function Hero({ currentLang }) {
             cancelAnimationFrame(reqId);
             document.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("resize", handleResize);
+            if (canvasRef.current) observer.unobserve(canvasRef.current);
+            observer.disconnect();
             // Dispose logic
             renderer.dispose();
             draco.dispose();
