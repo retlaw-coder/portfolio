@@ -44,22 +44,21 @@ const fragmentShader = `
       float startTime = uRipples[i].z;
       float elapsed = uTime - startTime;
 
-      if (elapsed < 0.0 || elapsed > 2.0) continue;
+      if (elapsed < 0.0 || elapsed > 1.2) continue;
 
       float dist = distance(coord, rippleCoord);
 
       // Max radius the ripple can reach (in UV-aspect space)
-      // ~0.15 = roughly 120-150px on a phone screen
-      float maxRadius = 0.18;
+      float maxRadius = 0.09;
 
       // Current expanding radius
-      float speed = 0.12; // units per second
+      float speed = 0.09; // units per second
       float currentRadius = elapsed * speed;
 
       if (currentRadius > maxRadius) currentRadius = maxRadius;
 
       // Time fade
-      float timeFade = 1.0 - smoothstep(0.0, 2.0, elapsed);
+      float timeFade = 1.0 - smoothstep(0.0, 1.2, elapsed);
       timeFade = timeFade * timeFade;
 
       // --- Concentric rings ---
@@ -75,13 +74,13 @@ const fragmentShader = `
       float ringLine = smoothstep(0.3, 0.7, ringWave);
 
       // Combine 
-      float ringAlpha = ringLine * inFront * distFade * timeFade * 0.7;
+      float ringAlpha = ringLine * inFront * distFade * timeFade * 0.3;
 
       // Central splash glow (bright dot at impact point)
-      float centerGlow = exp(-dist * 40.0) * timeFade * 0.6;
+      float centerGlow = exp(-dist * 40.0) * timeFade * 0.2;
 
       // Outer edge ring (the leading wave front)
-      float edgeRing = exp(-pow((dist - currentRadius) * 80.0, 2.0)) * timeFade * 0.8;
+      float edgeRing = exp(-pow((dist - currentRadius) * 80.0, 2.0)) * timeFade * 0.3;
 
       float alpha = ringAlpha + centerGlow + edgeRing;
 
@@ -232,7 +231,7 @@ export default function WaterRipple() {
 
             // Clean expired ripples
             ripplesRef.current = ripplesRef.current.filter(
-                r => elapsed - r.startTime < 2.0
+                r => elapsed - r.startTime < 1.2
             );
 
             const ripples = ripplesRef.current;
