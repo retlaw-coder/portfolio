@@ -1,16 +1,54 @@
 [
   {
+    "id": "10",
+    "category": "apps",
+    "title": "The Best Burgers – POS",
+    "title_en": "The Best Burgers – POS System",
+    "subtitle": "Sistema de Punto de Venta",
+    "subtitle_en": "Point of Sale System",
+    "desc": "POS completo desarrollado a medida para hamburguesería. Gestión de pedidos en tiempo real, panel de cocina, módulo de caja con filtros por período, impresión térmica de comandas y recibos, pagos divididos y reportes de ventas. Empaquetado como app de escritorio con Electron para el panel admin.",
+    "desc_en": "Custom-built full POS system for a burger restaurant. Real-time order management, kitchen display panel, cash register module with period filters, thermal printing for kitchen commands and receipts, split payments, and sales reports. Packaged as a desktop app with Electron for the admin panel.",
+    "stack": ["Next.js", "TypeScript", "Supabase", "Electron", "Tailwind CSS"],
+    "assets": [
+      {
+        "type": "image",
+        "src": "p10_0.webp",
+        "vertical": false
+      }
+    ]
+  },
+  {
+    "id": "11",
+    "category": "apps",
+    "title": "Asistente Restó",
+    "title_en": "Asistente Restó",
+    "subtitle": "App de gestión para restaurantes",
+    "subtitle_en": "Restaurant Management App",
+    "desc": "Aplicación web para asistir la gestión operativa de restaurantes. Interfaz optimizada para uso en tablet, con flujos diseñados para agilizar el trabajo del personal de sala.",
+    "desc_en": "Web application for restaurant operational management. Interface optimized for tablet use, with flows designed to streamline front-of-house staff workflows.",
+    "stack": ["React", "JavaScript", "CSS"],
+    "external_link": "https://asistente-resto.vercel.app/",
+    "assets": [
+      {
+        "type": "image",
+        "src": "p11_0.webp",
+        "vertical": false
+      }
+    ]
+  },
+  {
     "id": "1",
     "category": "3D",
     "title": "Tren entre Montañas",
     "title_en": "Train Through Mountains",
-    "subtitle": "Environment / Animation",
-    "subtitle_en": "Environment / Animation",
-    "desc": "Escenario natural generado proceduralmente.",
-    "desc_en": "Procedurally generated natural environment.",
+    "subtitle": "Environment / Procedural",
+    "subtitle_en": "Environment / Procedural",
+    "desc": "Ambiente natural generado proceduralmente en Blender. Terreno, vegetación e iluminación volumétrica controlados con Geometry Nodes. Renderizado final con Cycles.",
+    "desc_en": "Procedurally generated natural environment in Blender. Terrain, vegetation, and volumetric lighting controlled with Geometry Nodes. Final render with Cycles.",
     "stack": [
       "Blender",
-      "Cycles"
+      "Cycles",
+      "Geometry Nodes"
     ],
     "assets": [
       {
@@ -30,10 +68,10 @@
     "category": "3D",
     "title": "Departamento",
     "title_en": "Apartment",
-    "subtitle": "Archviz / Shading",
-    "subtitle_en": "Archviz / Shading",
-    "desc": "Renderizado fotorrealista de interiores.",
-    "desc_en": "Photorealistic interior rendering.",
+    "subtitle": "Archviz / Render Fotorrealista",
+    "subtitle_en": "Archviz / Photorealistic Render",
+    "desc": "Visualización arquitectónica fotorrealista de un interior moderno. Materiales PBR, iluminación HDRI y postprocesado con Octane.",
+    "desc_en": "Photorealistic architectural visualization of a modern interior. PBR materials, HDRI lighting, and post-processing with Octane.",
     "stack": [
       "Blender",
       "Octane"
@@ -56,10 +94,10 @@
     "category": "Motion",
     "title": "Abstract Simulation",
     "title_en": "Abstract Simulation",
-    "subtitle": "Abstract Simulation",
-    "subtitle_en": "Abstract Simulation",
-    "desc": "Motion graphics experimentales.",
-    "desc_en": "Experimental motion graphics.",
+    "subtitle": "Motion Graphics / Shaders",
+    "subtitle_en": "Motion Graphics / Shaders",
+    "desc": "Simulación experimental generada con shaders procedurales y sistemas de partículas en EEVEE. Exploración de formas orgánicas en movimiento a través de nodos de material.",
+    "desc_en": "Experimental simulation built with procedural shaders and particle systems in EEVEE. Exploration of organic shapes in motion through material nodes.",
     "stack": [
       "Blender",
       "Shaders",
@@ -83,10 +121,10 @@
     "category": "3D",
     "title": "Character Animation",
     "title_en": "Character Animation",
-    "subtitle": "Character Animation",
-    "subtitle_en": "Character Animation",
-    "desc": "Estudio de movimiento y rigging.",
-    "desc_en": "Movement and rigging study.",
+    "subtitle": "Rigging / Animación de Personaje",
+    "subtitle_en": "Rigging / Character Animation",
+    "desc": "Estudio completo de animación de personaje: desde el rigging y weight painting hasta la animación de un ciclo de caminata con secondary motion.",
+    "desc_en": "Full character animation study: from rigging and weight painting to animating a walk cycle with secondary motion.",
     "stack": [
       "Blender",
       "Rigging"
@@ -109,10 +147,10 @@
     "category": "drawing",
     "title": "Digital Illustration",
     "title_en": "Digital Illustration",
-    "subtitle": "Digital Illustration",
-    "subtitle_en": "Digital Illustration",
-    "desc": "Serie de bocetos rápidos en 2D.",
-    "desc_en": "Series of quick 2D sketches.",
+    "subtitle": "Ilustración 2D / Pintura Digital",
+    "subtitle_en": "2D Illustration / Digital Painting",
+    "desc": "Serie de ilustraciones digitales explorando técnicas de pintura digital y boceto rápido en Photoshop con tableta gráfica.",
+    "desc_en": "Series of digital illustrations exploring digital painting techniques and quick sketching in Photoshop with a graphics tablet.",
     "stack": [
       "Photoshop",
       "Tablet"
@@ -145,10 +183,10 @@
     "category": "design",
     "title": "App UI/UX",
     "title_en": "App UI/UX",
-    "subtitle": "Mobile Interface",
-    "subtitle_en": "Mobile Interface",
-    "desc": "Diseño de interfaz para aplicación móvil.",
-    "desc_en": "Mobile application interface design.",
+    "subtitle": "Diseño de Interfaz Móvil",
+    "subtitle_en": "Mobile Interface Design",
+    "desc": "Diseño completo de interfaz móvil en Figma: desde wireframes de baja fidelidad hasta prototipo interactivo con sistema de diseño propio y guía de estilos.",
+    "desc_en": "Full mobile interface design in Figma: from low-fidelity wireframes to interactive prototype with a custom design system and style guide.",
     "stack": [
       "Figma",
       "UI Design"
@@ -186,10 +224,10 @@
     "category": "design",
     "title": "UX Research",
     "title_en": "UX Research",
-    "subtitle": "Interactive Prototype",
+    "subtitle": "Prototipo Interactivo",
     "subtitle_en": "Interactive Prototype",
-    "desc": "Prototipado de alta fidelidad.",
-    "desc_en": "High-fidelity prototyping.",
+    "desc": "Proceso completo de UX: investigación de usuario, arquitectura de información, prototipado de alta fidelidad y test de usabilidad con iteraciones basadas en feedback real.",
+    "desc_en": "Full UX process: user research, information architecture, high-fidelity prototyping, and usability testing with iterations based on real feedback.",
     "stack": [
       "Figma",
       "Prototyping"
@@ -213,10 +251,10 @@
     "category": "motion",
     "title": "Data Driven Motion",
     "title_en": "Data Driven Motion",
-    "subtitle": "Procedural GeoNodes",
-    "subtitle_en": "Procedural GeoNodes",
-    "desc": "Animación controlada por datos externos.",
-    "desc_en": "Animation driven by external data.",
+    "subtitle": "Animación Procedimental / Geo Nodes",
+    "subtitle_en": "Procedural Animation / Geo Nodes",
+    "desc": "Sistema de animación procedimental donde datos externos controlan la geometría en tiempo real a través de Geometry Nodes. Exploración del límite entre diseño y programación.",
+    "desc_en": "Procedural animation system where external data drives geometry in real time through Geometry Nodes. An exploration of the boundary between design and programming.",
     "stack": [
       "Blender",
       "Geo Nodes"
@@ -239,10 +277,10 @@
     "category": "editing",
     "title": "Reel 2024",
     "title_en": "Reel 2024",
-    "subtitle": "Video Editing",
-    "subtitle_en": "Video Editing",
-    "desc": "Compilación de trabajos de edición y color.",
-    "desc_en": "Compilation of editing and color work.",
+    "subtitle": "Edición / Color Grading",
+    "subtitle_en": "Editing / Color Grading",
+    "desc": "Compilación de los mejores trabajos de edición y corrección de color del año. Desde spots publicitarios hasta contenido para redes sociales, con flujo de color en DaVinci.",
+    "desc_en": "Compilation of the best editing and color grading work of the year. From advertising spots to social media content, with a color grading workflow in DaVinci.",
     "stack": [
       "Premiere",
       "DaVinci"

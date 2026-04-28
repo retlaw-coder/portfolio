@@ -6,6 +6,7 @@ import Hero from './components/Hero';
 import ContactModal from './components/ContactModal';
 import CategoryView from './components/CategoryView';
 import CustomCursor from './components/CustomCursor';
+import WaterRipple from './components/WaterRipple';
 import useSmoothScroll from './hooks/useSmoothScroll';
 import useScrollReveal from './hooks/useScrollReveal';
 import { CATEGORIES_ORDER, CATEGORIES_CONFIG } from './utils/categories';
@@ -82,6 +83,7 @@ function AppContent() {
         <>
             <ScrollToTop />
             <CustomCursor />
+            <WaterRipple />
 
             {isLoading && <Loader onComplete={handleLoaderComplete} />}
 
@@ -169,7 +171,7 @@ function HomePage({ currentLang, onContactClick }) {
 
             <section className="cv-section">
                 <div className="cv-header">
-                    <h2>// PERFIL_DATA</h2>
+                    <h2>// ABOUT_ME</h2>
                     <span className="cv-id">ID:2026 v3.1</span>
                 </div>
                 <div className="cv-grid">
@@ -180,21 +182,25 @@ function HomePage({ currentLang, onContactClick }) {
                             <li><span>PHOTOSHOP</span> <span className="level">//// EXP</span></li>
                             <li><span>PREMIERE</span> <span className="level">/// ADV</span></li>
                             <li><span>AFTER EFFECTS</span> <span className="level">/// INT</span></li>
-                            <li><span>JAVA, HTML, CSS</span> <span className="level">/// ADV</span></li>
+                            <li><span>JS, HTML, CSS</span> <span className="level">//// ADV</span></li>
+                            <li><span>NEXT.JS / REACT</span> <span className="level">/// ADV</span></li>
                             <li><span>FIGMA</span> <span className="level">/// ADV</span></li>
                         </ul>
+                        <p className="stack-legend" title="EXP = Expert | ADV = Advanced | INT = Intermediate">
+                            <span>EXP</span> Expert&nbsp;&nbsp;<span>ADV</span> Advanced&nbsp;&nbsp;<span>INT</span> Intermediate
+                        </p>
                     </div>
 
                     <div className="cv-col">
                         <h4 className="cv-label">HISTORIAL_LOG</h4>
                         <div className="cv-entry">
                             <span className="year">/// 2023 - PRES.</span>
-                            <p>Artista 3D Freelance</p>
+                            <p>{currentLang === 'es' ? 'Diseñador & Desarrollador Freelance' : 'Freelance Designer & Developer'}</p>
                             <small>Global Remote</small>
                         </div>
                         <div className="cv-entry">
                             <span className="year">/// 2020 - PRES.</span>
-                            <p>Licenciatura en Diseño Multimedia</p>
+                            <p>{currentLang === 'es' ? 'Licenciatura en Diseño Multimedia' : 'Multimedia Design Degree'}</p>
                             <small>Universidad Nacional de La Plata</small>
                         </div>
                     </div>
@@ -206,7 +212,7 @@ function HomePage({ currentLang, onContactClick }) {
                         </p>
                         <button
                             className="contact-btn-red interactive-btn open-contact-trigger"
-                            aria-label="Iniciar nuevo proyecto"
+                            aria-label={currentLang === 'es' ? 'Iniciar nuevo proyecto' : 'Start a new project'}
                             onClick={onContactClick}
                         >
                             {currentLang === 'es' ? 'INICIAR PROYECTO ->' : 'START PROJECT ->'}

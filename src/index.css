@@ -443,6 +443,16 @@ body.category-page .sticky-nav {
   font-style: italic;
 }
 
+/* Role line below the year */
+.hero-role {
+  font-family: var(--font-mono);
+  font-size: clamp(0.6rem, 1.2vw, 0.8rem);
+  color: var(--accent-color);
+  letter-spacing: 3px;
+  margin-top: 10px;
+  opacity: 0.85;
+}
+
 .location {
   margin-top: 30px;
   display: inline-block;
@@ -487,6 +497,25 @@ body.category-page .sticky-nav {
     opacity: 0.5;
     transform: translate(-50%, 0);
   }
+}
+
+.scroll-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.scroll-arrow {
+  display: block;
+  font-size: 1.2rem;
+  animation: arrowBounce 1.4s ease-in-out infinite;
+  color: #ff3333;
+}
+
+@keyframes arrowBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50%       { transform: translateY(5px); opacity: 1; }
 }
 
 /* =========================================
@@ -1193,6 +1222,21 @@ body.category-page .sticky-nav {
 .tech-list li:hover {
   padding-left: 10px;
   background: rgba(255, 255, 255, 0.02);
+}
+
+/* Skill level legend */
+.stack-legend {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: #555;
+  margin-top: 16px;
+  letter-spacing: 0.5px;
+  line-height: 1.6;
+}
+
+.stack-legend span {
+  color: var(--accent-color);
+  margin-right: 2px;
 }
 
 .cv-entry {

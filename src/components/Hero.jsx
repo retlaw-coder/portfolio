@@ -324,11 +324,17 @@ export default function Hero({ currentLang }) {
                     <p className="hero-subtitle reveal-text" style={{ transitionDelay: '0.2s' }}>
                         PORTFOLIO <span className="glitch">2026</span>
                     </p>
-                    <div className="location reveal-text" style={{ transitionDelay: '0.4s' }}>
+                    <p className="hero-role reveal-text" style={{ transitionDelay: '0.3s' }}>
+                        {currentLang === 'es' ? 'DISEÑADOR & DESARROLLADOR MULTIMEDIA' : 'MULTIMEDIA DESIGNER & DEVELOPER'}
+                    </p>
+                    <div className="location reveal-text" style={{ transitionDelay: '0.5s' }}>
                         BASED IN ARGENTINA
                     </div>
                 </div>
-                <div className="scroll-indicator">SCROLL</div>
+                <div className="scroll-indicator">
+                    SCROLL
+                    <span className="scroll-arrow">&#8964;</span>
+                </div>
             </section>
 
             {/* 🎮 CONTROL PANEL BUTTON - Shows on hover or when panel is open */}

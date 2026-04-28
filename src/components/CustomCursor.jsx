@@ -7,9 +7,9 @@ export default function CustomCursor() {
     const requestRef = useRef();
 
     useEffect(() => {
-        // Only on desktop
-        // const isTouchDevice = window.matchMedia("(hover: none)").matches;
-        // if (isTouchDevice) return;
+        // Only on desktop — mobile/tablet uses WaterRipple
+        const isTouchDevice = window.matchMedia("(hover: none)").matches;
+        if (isTouchDevice) return;
 
         const cursor = cursorRef.current;
         const trailLength = 12;

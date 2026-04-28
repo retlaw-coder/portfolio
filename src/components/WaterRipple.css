@@ -1,0 +1,24 @@
+.water-ripple-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99998;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.water-ripple-container canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Hide on desktop (real mouse devices) */
+@media (hover: hover) and (pointer: fine) {
+    .water-ripple-container {
+        visibility: hidden;
+        opacity: 0;
+    }
+}
