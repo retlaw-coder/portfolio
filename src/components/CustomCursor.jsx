@@ -31,9 +31,11 @@ export default function CustomCursor() {
         const handleMouseMove = (e) => {
             mouse.x = e.clientX;
             mouse.y = e.clientY;
+        };
 
-            // Hover check
+        const handleMouseOver = (e) => {
             const target = e.target;
+            if (!target) return;
             const isClickable =
                 target.tagName === 'A' ||
                 target.tagName === 'BUTTON' ||
@@ -51,7 +53,8 @@ export default function CustomCursor() {
             }
         };
 
-        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mousemove', handleMouseMove, { passive: true });
+        window.addEventListener('mouseover', handleMouseOver, { passive: true });
 
         const animate = () => {
             // Head interpolation
@@ -90,6 +93,7 @@ export default function CustomCursor() {
 
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseover', handleMouseOver);
             if (requestRef.current) cancelAnimationFrame(requestRef.current);
         };
     }, []);

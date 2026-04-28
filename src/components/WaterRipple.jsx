@@ -156,7 +156,8 @@ export default function WaterRipple() {
             antialias: false, // Not needed for fullscreen shader
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        // Force pixel ratio to 1 for much better performance, water ripples don't need high-DPI
+        renderer.setPixelRatio(1);
         renderer.setClearColor(0x000000, 0);
         container.appendChild(renderer.domElement);
         rendererRef.current = renderer;
@@ -245,7 +246,15 @@ export default function WaterRipple() {
                 }
             }
 
-            renderer.render(scene, camera);
+            // Only render if there are active ripples, or 1 extra frame to clear
+            if (ripples.length > 0) {
+                renderer.render(scene, camera);
+                material.userData.needsClear = true;
+            } else if (material.userData.needsClear) {
+                renderer.clear();
+                material.userData.needsClear = false;
+            }
+
             frameRef.current = requestAnimationFrame(animate);
         };
 
