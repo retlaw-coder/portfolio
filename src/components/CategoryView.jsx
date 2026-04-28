@@ -21,6 +21,14 @@ export default function CategoryView({ currentLang }) {
 
     const currentProject = categoryProjects[projectIndex];
 
+    let nextProject = null;
+    if (projectIndex < categoryProjects.length - 1) {
+        nextProject = categoryProjects[projectIndex + 1];
+    } else if (currentCategoryIndex < CATEGORIES_ORDER.length - 1) {
+        const nextCategoryKey = CATEGORIES_ORDER[currentCategoryIndex + 1];
+        nextProject = projectsData.filter(p => p.category.toLowerCase() === nextCategoryKey)[0];
+    }
+
     const handleProjectChange = (newIndex) => {
         setSearchParams({ p: newIndex });
     };
@@ -116,6 +124,7 @@ export default function CategoryView({ currentLang }) {
                     {/* Project Viewer */}
                     <ProjectViewer
                         project={currentProject}
+                        nextProject={nextProject}
                         projectIndex={projectIndex}
                         totalProjects={categoryProjects.length}
                         onPrev={handlePrev}

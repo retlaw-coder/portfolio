@@ -11,8 +11,28 @@
     "stack": ["Next.js", "TypeScript", "Supabase", "Electron", "Tailwind CSS"],
     "assets": [
       {
+        "type": "video",
+        "src": "p10_0.mp4",
+        "vertical": false
+      },
+      {
         "type": "image",
-        "src": "p10_0.webp",
+        "src": "p10_1.webp",
+        "vertical": false
+      },
+      {
+        "type": "image",
+        "src": "p10_2.webp",
+        "vertical": false
+      },
+      {
+        "type": "image",
+        "src": "p10_3.webp",
+        "vertical": false
+      },
+      {
+        "type": "image",
+        "src": "p10_4.webp",
         "vertical": false
       }
     ]
@@ -31,7 +51,27 @@
     "assets": [
       {
         "type": "image",
-        "src": "p11_0.webp",
+        "src": "p11_1.webp",
+        "vertical": false
+      },
+      {
+        "type": "image",
+        "src": "p11_2.webp",
+        "vertical": false
+      },
+      {
+        "type": "image",
+        "src": "p11_3.webp",
+        "vertical": false
+      },
+      {
+        "type": "image",
+        "src": "p11_4.webp",
+        "vertical": false
+      },
+      {
+        "type": "image",
+        "src": "p11_5.webp",
         "vertical": false
       }
     ]

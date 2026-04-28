@@ -5,6 +5,7 @@ const ASSETS_PATH = import.meta.env.BASE_URL + 'assets/';
 
 export default function ProjectViewer({
     project,
+    nextProject,
     projectIndex,
     totalProjects,
     onPrev,
@@ -122,7 +123,7 @@ export default function ProjectViewer({
             </div>
 
             {/* Thumbnails Track */}
-            <div className="thumbnails-track">
+            <div className="thumbnails-track" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 {assets.map((asset, index) => (
                     <div
                         key={index}
@@ -136,6 +137,26 @@ export default function ProjectViewer({
                         )}
                     </div>
                 ))}
+                
+                {nextProject && nextProject.assets && nextProject.assets.length > 0 && (
+                    <>
+                        <div className="thumb-separator" style={{ width: '2px', height: '40px', backgroundColor: '#333', borderRadius: '2px' }}></div>
+                        {nextProject.assets.map((asset, index) => (
+                            <div
+                                key={`next-${index}`}
+                                className="thumb-item next-project-thumb"
+                                style={{ opacity: 0.3, cursor: 'pointer' }}
+                                onClick={onNext}
+                            >
+                                {asset.type === 'video' ? (
+                                    <video src={`${ASSETS_PATH}${asset.src}#t=0.1`} muted />
+                                ) : (
+                                    <img src={`${ASSETS_PATH}${asset.src}`} alt={`Next Project Thumbnail ${index + 1}`} />
+                                )}
+                            </div>
+                        ))}
+                    </>
+                )}
             </div>
         </div>
     );
