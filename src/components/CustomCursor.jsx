@@ -14,18 +14,15 @@ export default function CustomCursor() {
         const cursor = cursorRef.current;
         const trailLength = 12;
 
-        // Initialize ghosts
-        // We render them via JS to append to body or keep them in component? 
-        // For performance and structure matching original, let's create them dynamically or render them in JSX.
-        // Rendering in JSX is more React-friendly.
-
         const mouse = { x: 0, y: 0 };
         const cursorState = { x: 0, y: 0 };
         const ghosts = [];
 
-        // Initialize ghost states
+        // Precompute scales to avoid doing it in the animation loop
+        const ghostScales = [];
         for (let i = 0; i < trailLength; i++) {
             ghosts.push({ x: 0, y: 0 });
+            ghostScales.push(1 - (i / trailLength) * 0.5);
         }
 
         const handleMouseMove = (e) => {
@@ -35,16 +32,18 @@ export default function CustomCursor() {
 
         const handleMouseOver = (e) => {
             const target = e.target;
-            if (!target) return;
+            if (!target || target.nodeType !== Node.ELEMENT_NODE) return;
+            
+            // Remove the extremely slow window.getComputedStyle check
             const isClickable =
                 target.tagName === 'A' ||
                 target.tagName === 'BUTTON' ||
                 target.closest('a') ||
                 target.closest('button') ||
-                target.classList.contains('interactive-card') ||
-                target.classList.contains('project-item') ||
+                target.closest('.interactive-card') ||
                 target.closest('.project-item') ||
-                window.getComputedStyle(target).cursor === 'pointer';
+                target.closest('.interactive-btn') ||
+                target.closest('.open-contact-trigger');
 
             if (isClickable) {
                 cursor.classList.add('hover');
@@ -63,8 +62,8 @@ export default function CustomCursor() {
             cursorState.y += (mouse.y - cursorState.y) * headLerp;
 
             if (cursor) {
-                cursor.style.left = `${cursorState.x}px`;
-                cursor.style.top = `${cursorState.y}px`;
+                // Use hardware-accelerated translate3d instead of left/top
+                cursor.style.transform = `translate3d(${cursorState.x}px, ${cursorState.y}px, 0) translate(-50%, -50%)`;
             }
 
             // Tail interpolation
@@ -78,8 +77,8 @@ export default function CustomCursor() {
                     ghost.x += (prevX - ghost.x) * tailLerp;
                     ghost.y += (prevY - ghost.y) * tailLerp;
 
-                    el.style.left = `${ghost.x}px`;
-                    el.style.top = `${ghost.y}px`;
+                    // Use hardware-accelerated translate3d for ghosts too
+                    el.style.transform = `translate3d(${ghost.x}px, ${ghost.y}px, 0) translate(-50%, -50%) scale(${ghostScales[i]})`;
 
                     prevX = ghost.x;
                     prevY = ghost.y;
@@ -101,7 +100,6 @@ export default function CustomCursor() {
     // Render ghosts
     const trailLength = 12;
     const ghostElements = Array.from({ length: trailLength }).map((_, i) => {
-        const scale = 1 - (i / trailLength) * 0.5;
         const opacity = 1 - (i / trailLength) * 0.8;
         return (
             <div
@@ -109,8 +107,10 @@ export default function CustomCursor() {
                 ref={el => ghostsRef.current[i] = el}
                 className="cursor-ghost"
                 style={{
-                    transform: `translate(-50%, -50%) scale(${scale})`,
-                    opacity: opacity
+                    // Initial position offscreen or at 0,0 until JS takes over
+                    transform: `translate(-50%, -50%) scale(${1 - (i / trailLength) * 0.5})`,
+                    opacity: opacity,
+                    willChange: 'transform' // Hint to browser for GPU optimization
                 }}
             />
         );
@@ -118,7 +118,11 @@ export default function CustomCursor() {
 
     return (
         <>
-            <div ref={cursorRef} className="custom-cursor" />
+            <div 
+                ref={cursorRef} 
+                className="custom-cursor" 
+                style={{ willChange: 'transform' }} 
+            />
             {ghostElements}
         </>
     );

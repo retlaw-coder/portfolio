@@ -55,74 +55,13 @@ export default function Hero({ currentLang }) {
 
     useEffect(() => {
         let isMounted = true;
+        let reqId;
+        let observer;
+        let renderer;
+        let scene;
+        let camera;
+        let draco;
 
-        // --- THREE.JS SETUP ---
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 1, 5);
-
-        const renderer = new THREE.WebGLRenderer({
-            canvas: canvasRef.current,
-            alpha: true,
-            antialias: false, // Turned off for performance
-            powerPreference: "high-performance",
-        });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        // Limit pixel ratio to 1 for much better performance, especially on mobile/high-DPI screens
-        renderer.setPixelRatio(window.innerWidth < 768 ? 1 : Math.min(window.devicePixelRatio, 1.5));
-
-        // Setup Intersection Observer to pause rendering when off-screen
-        let isVisible = true;
-        const observer = new IntersectionObserver((entries) => {
-            isVisible = entries[0].isIntersecting;
-        });
-        if (canvasRef.current) {
-            observer.observe(canvasRef.current);
-        }
-
-        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-        dirLight.position.set(5, 5, 5);
-        scene.add(dirLight);
-
-        sceneRef.current = { scene, camera, renderer };
-
-        // --- MODEL LOADING ---
-        const loader = new GLTFLoader();
-        const draco = new DRACOLoader();
-        draco.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
-        loader.setDRACOLoader(draco);
-
-        const modelPath = import.meta.env.BASE_URL + 'assets/final-city.glb';
-        console.log('Loading model from:', modelPath);
-
-        loader.load(
-            modelPath,
-            (gltf) => {
-                if (!isMounted) return;
-
-                const model = gltf.scene;
-                // Initial setup
-                model.position.set(position.x, position.y, position.z);
-                model.scale.set(scale, scale, scale);
-                model.rotation.set(rotation.x, rotation.y, rotation.z);
-
-                model.traverse((c) => {
-                    if (c.isMesh) {
-                        c.material.transparent = false;
-                        c.material.opacity = 1;
-                    }
-                });
-
-                scene.add(model);
-                modelRef.current = model;
-                setModelLoaded(true);
-            },
-            undefined,
-            (error) => console.error("Error loading 3D model:", error)
-        );
-
-        // --- INTERACTION ---
         const handleMouseMove = (e) => {
             const halfX = window.innerWidth / 2;
             const halfY = window.innerHeight / 2;
@@ -131,88 +70,169 @@ export default function Hero({ currentLang }) {
                 y: e.clientY - halfY
             };
         };
-        document.addEventListener("mousemove", handleMouseMove);
 
-        // --- ANIMATION LOOP ---
-        let reqId;
-        const animate = () => {
-            reqId = requestAnimationFrame(animate);
-
-            // Skip rendering completely if off-screen to save performance
-            if (!isVisible) return;
-
-            if (modelRef.current) {
-                const target = targetRef.current;
-
-                // IF CONTROLS ARE OPEN:
-                // Smoothly interpolate (Lerp) towards the target values set by sliders
-                if (showControlsRef.current) {
-                    // Position Lerp
-                    modelRef.current.position.x += (target.position.x - modelRef.current.position.x) * 0.1;
-                    modelRef.current.position.y += (target.position.y - modelRef.current.position.y) * 0.1;
-                    modelRef.current.position.z += (target.position.z - modelRef.current.position.z) * 0.1;
-
-                    // Rotation Lerp
-                    modelRef.current.rotation.x += (target.rotation.x - modelRef.current.rotation.x) * 0.1;
-                    modelRef.current.rotation.y += (target.rotation.y - modelRef.current.rotation.y) * 0.1;
-                    modelRef.current.rotation.z += (target.rotation.z - modelRef.current.rotation.z) * 0.1;
-
-                    // Scale Lerp
-                    const currentScale = modelRef.current.scale.x;
-                    const newScale = currentScale + (target.scale - currentScale) * 0.1;
-                    modelRef.current.scale.set(newScale, newScale, newScale);
-                }
-                // IF CONTROLS ARE CLOSED:
-                // Run automatic idle animation (rotation + float)
-                else {
-                    // Constant rotation
-                    modelRef.current.rotation.y += 0.003;
-
-                    // Float effect
-                    const time = Date.now() * 0.001;
-                    const floatOffset = Math.sin(time * 0.5) * 0.3;
-
-                    // Smoothly return to "Base Position + Float"
-                    // We use target.position as the base
-                    modelRef.current.position.x += (target.position.x - modelRef.current.position.x) * 0.05;
-                    modelRef.current.position.y += ((target.position.y + floatOffset) - modelRef.current.position.y) * 0.05;
-                    modelRef.current.position.z += (target.position.z - modelRef.current.position.z) * 0.05;
-
-                    // Smoothly return to "Base Rotation" (except Y which spins)
-                    modelRef.current.rotation.x += (target.rotation.x - modelRef.current.rotation.x) * 0.05;
-                    modelRef.current.rotation.z += (target.rotation.z - modelRef.current.rotation.z) * 0.05;
-                    // We DO NOT lerp Rotation Y because it's spinning freely
-
-                    // Smoothly return to Base Scale
-                    const currentScale = modelRef.current.scale.x;
-                    const newScale = currentScale + (target.scale - currentScale) * 0.05;
-                    modelRef.current.scale.set(newScale, newScale, newScale);
-                }
-            }
-
-            renderer.render(scene, camera);
-        };
-        animate();
-
-        // --- RESIZE ---
         const handleResize = () => {
+            if (!camera || !renderer) return;
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         };
-        window.addEventListener("resize", handleResize);
+
+        // Delay heavy 3D initialization so main UI can render and animate smoothly first
+        const initTimeout = setTimeout(() => {
+            if (!isMounted) return;
+
+            // --- THREE.JS SETUP ---
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 1, 5);
+
+            renderer = new THREE.WebGLRenderer({
+                canvas: canvasRef.current,
+                alpha: true,
+                antialias: false, // Turned off for performance
+                powerPreference: "high-performance",
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            // Limit pixel ratio to 1 for much better performance, especially on mobile/high-DPI screens
+            renderer.setPixelRatio(window.innerWidth < 768 ? 1 : Math.min(window.devicePixelRatio, 1.5));
+
+            // Setup Intersection Observer to pause rendering when off-screen
+            let isVisible = true;
+            observer = new IntersectionObserver((entries) => {
+                isVisible = entries[0].isIntersecting;
+            });
+            if (canvasRef.current) {
+                observer.observe(canvasRef.current);
+            }
+
+            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+            dirLight.position.set(5, 5, 5);
+            scene.add(dirLight);
+
+            sceneRef.current = { scene, camera, renderer };
+
+            // --- MODEL LOADING ---
+            const loader = new GLTFLoader();
+            draco = new DRACOLoader();
+            draco.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
+            loader.setDRACOLoader(draco);
+
+            const modelPath = import.meta.env.BASE_URL + 'assets/final-city.glb';
+            console.log('Loading model from:', modelPath);
+
+            loader.load(
+                modelPath,
+                (gltf) => {
+                    if (!isMounted) return;
+
+                    const model = gltf.scene;
+                    // Initial setup
+                    model.position.set(position.x, position.y, position.z);
+                    model.scale.set(scale, scale, scale);
+                    model.rotation.set(rotation.x, rotation.y, rotation.z);
+
+                    model.traverse((c) => {
+                        if (c.isMesh) {
+                            c.material.transparent = false;
+                            c.material.opacity = 1;
+                        }
+                    });
+
+                    scene.add(model);
+                    modelRef.current = model;
+                    
+                    // Pre-compile to avoid shader compilation jank on first frame
+                    renderer.compile(scene, camera);
+                    
+                    setModelLoaded(true);
+                },
+                undefined,
+                (error) => console.error("Error loading 3D model:", error)
+            );
+
+            // --- INTERACTION ---
+            document.addEventListener("mousemove", handleMouseMove);
+
+            // --- ANIMATION LOOP ---
+            const animate = () => {
+                reqId = requestAnimationFrame(animate);
+
+                // Skip rendering completely if off-screen to save performance
+                if (!isVisible) return;
+
+                if (modelRef.current) {
+                    const target = targetRef.current;
+
+                    // IF CONTROLS ARE OPEN:
+                    // Smoothly interpolate (Lerp) towards the target values set by sliders
+                    if (showControlsRef.current) {
+                        // Position Lerp
+                        modelRef.current.position.x += (target.position.x - modelRef.current.position.x) * 0.1;
+                        modelRef.current.position.y += (target.position.y - modelRef.current.position.y) * 0.1;
+                        modelRef.current.position.z += (target.position.z - modelRef.current.position.z) * 0.1;
+
+                        // Rotation Lerp
+                        modelRef.current.rotation.x += (target.rotation.x - modelRef.current.rotation.x) * 0.1;
+                        modelRef.current.rotation.y += (target.rotation.y - modelRef.current.rotation.y) * 0.1;
+                        modelRef.current.rotation.z += (target.rotation.z - modelRef.current.rotation.z) * 0.1;
+
+                        // Scale Lerp
+                        const currentScale = modelRef.current.scale.x;
+                        const newScale = currentScale + (target.scale - currentScale) * 0.1;
+                        modelRef.current.scale.set(newScale, newScale, newScale);
+                    }
+                    // IF CONTROLS ARE CLOSED:
+                    // Run automatic idle animation (rotation + float)
+                    else {
+                        // Constant rotation
+                        modelRef.current.rotation.y += 0.003;
+
+                        // Float effect
+                        const time = Date.now() * 0.001;
+                        const floatOffset = Math.sin(time * 0.5) * 0.3;
+
+                        // Smoothly return to "Base Position + Float"
+                        // We use target.position as the base
+                        modelRef.current.position.x += (target.position.x - modelRef.current.position.x) * 0.05;
+                        modelRef.current.position.y += ((target.position.y + floatOffset) - modelRef.current.position.y) * 0.05;
+                        modelRef.current.position.z += (target.position.z - modelRef.current.position.z) * 0.05;
+
+                        // Smoothly return to "Base Rotation" (except Y which spins)
+                        modelRef.current.rotation.x += (target.rotation.x - modelRef.current.rotation.x) * 0.05;
+                        modelRef.current.rotation.z += (target.rotation.z - modelRef.current.rotation.z) * 0.05;
+                        // We DO NOT lerp Rotation Y because it's spinning freely
+
+                        // Smoothly return to Base Scale
+                        const currentScale = modelRef.current.scale.x;
+                        const newScale = currentScale + (target.scale - currentScale) * 0.05;
+                        modelRef.current.scale.set(newScale, newScale, newScale);
+                    }
+                }
+
+                renderer.render(scene, camera);
+            };
+            animate();
+
+            // --- RESIZE ---
+            window.addEventListener("resize", handleResize);
+        }, 800); // 800ms delay gives enough time for page load animations
 
         return () => {
             isMounted = false;
-            cancelAnimationFrame(reqId);
+            clearTimeout(initTimeout);
+            if (reqId) cancelAnimationFrame(reqId);
             document.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("resize", handleResize);
-            if (canvasRef.current) observer.unobserve(canvasRef.current);
-            observer.disconnect();
+            if (observer) {
+                if (canvasRef.current) observer.unobserve(canvasRef.current);
+                observer.disconnect();
+            }
             // Dispose logic
-            renderer.dispose();
-            draco.dispose();
-            if (modelRef.current) {
+            if (renderer) renderer.dispose();
+            if (draco) draco.dispose();
+            if (modelRef.current && scene) {
                 scene.remove(modelRef.current);
                 modelRef.current = null;
             }

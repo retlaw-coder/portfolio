@@ -651,7 +651,8 @@ body.category-page .sticky-nav {
   border-color: #444;
 }
 
-.project-media img {
+.project-media img,
+.project-media video {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -661,7 +662,8 @@ body.category-page .sticky-nav {
   transition: transform 0.6s;
 }
 
-.project-item:hover .project-media img {
+.project-item:hover .project-media img,
+.project-item:hover .project-media video {
   transform: scale(1.03);
 }
 
@@ -767,6 +769,7 @@ body.category-page .sticky-nav {
   flex-direction: column;
   gap: 20px;
   width: 100%;
+  min-width: 0; /* REQUIRED to prevent grid blowout from wide content */
 }
 
 .category-top-nav {
@@ -810,6 +813,7 @@ body.category-page .sticky-nav {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  min-width: 0; /* REQUIRED to prevent flex blowout from thumbnail track */
   /* Reduced gap from 25px */
   /* Removed padding for buttons, now they overlap naturally or we can add it back if desired */
   /* User wanted thumbnails aligned with video. if buttons overlap video, then alignment is 1:1. */
@@ -829,6 +833,8 @@ body.category-page .sticky-nav {
 .main-display-container {
   width: 100%;
   aspect-ratio: 16/9;
+  max-height: 65vh; /* Prevent huge videos from taking up the entire screen vertically */
+  min-height: 0;    /* Ensure the container can shrink and ignores intrinsic video height */
   background: #000;
   border: 1px solid #333;
   position: relative;
