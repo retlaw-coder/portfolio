@@ -6,12 +6,38 @@ export default function ContactModal({ currentLang, onClose }) {
         email: '',
         message: ''
     });
+    const [status, setStatus] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Add your form submission logic here
-        console.log('Form submitted:', formData);
-        onClose();
+        setStatus('loading');
+        
+        try {
+            const response = await fetch('https://formspree.io/f/xojarndw', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                setStatus('success');
+                setFormData({ name: '', email: '', message: '' });
+                setTimeout(() => {
+                    onClose();
+                    setStatus('');
+                }, 2000);
+            } else {
+                setStatus('error');
+                setTimeout(() => setStatus(''), 3000);
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            setStatus('error');
+            setTimeout(() => setStatus(''), 3000);
+        }
     };
 
     const handleChange = (e) => {
@@ -81,9 +107,15 @@ export default function ContactModal({ currentLang, onClose }) {
                         required
                     ></textarea>
 
-                    <button type="submit" className="submit-btn">
+                    <button type="submit" className="submit-btn" disabled={status === 'loading' || status === 'success'}>
                         <span data-es="ENVIAR" data-en="SEND">
-                            {currentLang === 'es' ? 'ENVIAR' : 'SEND'}
+                            {status === 'loading' 
+                                ? (currentLang === 'es' ? 'ENVIANDO...' : 'SENDING...') 
+                                : status === 'success' 
+                                    ? (currentLang === 'es' ? '¡ENVIADO!' : 'SENT!') 
+                                    : status === 'error'
+                                        ? (currentLang === 'es' ? 'ERROR - REINTENTAR' : 'ERROR - TRY AGAIN')
+                                        : (currentLang === 'es' ? 'ENVIAR' : 'SEND')}
                         </span>
                     </button>
                 </form>
