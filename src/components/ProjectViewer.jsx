@@ -5,18 +5,22 @@ const ASSETS_PATH = import.meta.env.BASE_URL + 'assets/';
 
 export default function ProjectViewer({
     project,
-    nextProject,
+    categoryProjects,
     projectIndex,
-    totalProjects,
+    assetIndex,
+    onProjectSelect,
+    nextCategoryName,
+    nextCategoryFirstProject,
     onPrev,
     onNext,
     currentLang,
-    isFirstGlobal,
-    isLastGlobal
+    dir
 }) {
-    const [currentAssetIndex, setCurrentAssetIndex] = useState(0);
+    const [currentAssetIndex, setCurrentAssetIndex] = useState(assetIndex || 0);
     const [assets, setAssets] = useState([]);
+    const [allCategoryAssets, setAllCategoryAssets] = useState([]);
     const displayRef = useRef(null);
+    const trackRef = useRef(null);
 
     // Load assets from project data
     useEffect(() => {
@@ -28,10 +32,52 @@ export default function ProjectViewer({
             }));
             setAssets(loadedAssets);
 
-            // Default to start, but could support "start at end" via prop if needed later
-            setCurrentAssetIndex(0);
+            // Set to end if coming from backward navigation
+            if (dir === 'prev') {
+                setCurrentAssetIndex(loadedAssets.length - 1);
+            } else {
+                setCurrentAssetIndex(assetIndex < loadedAssets.length ? assetIndex : 0);
+            }
         }
-    }, [project]);
+    }, [project, dir, assetIndex]);
+
+    // Build flattened list of all assets in category
+    useEffect(() => {
+        const flattened = [];
+        categoryProjects.forEach((proj, pIdx) => {
+            if (proj.assets && proj.assets.length > 0) {
+                proj.assets.forEach((asset, aIdx) => {
+                    flattened.push({
+                        type: asset.type,
+                        src: `${ASSETS_PATH}${asset.src}`,
+                        pIdx,
+                        aIdx,
+                        projTitle: currentLang === 'es' ? proj.title : (proj.title_en || proj.title)
+                    });
+                });
+            }
+        });
+        setAllCategoryAssets(flattened);
+    }, [categoryProjects, currentLang]);
+
+    // Auto-scroll thumbnails track so active item stays in ~3rd position
+    useEffect(() => {
+        if (trackRef.current) {
+            const activeItem = trackRef.current.querySelector('.thumb-item.active');
+            if (activeItem) {
+                // 3rd place means offset by 2 items (approx 150px each)
+                const itemWidth = activeItem.offsetWidth;
+                const gap = 10;
+                const offset = (itemWidth + gap) * 2;
+                const targetScroll = activeItem.offsetLeft - offset;
+                
+                trackRef.current.scrollTo({
+                    left: Math.max(0, targetScroll),
+                    behavior: 'smooth'
+                });
+            }
+        }
+    }, [currentAssetIndex, projectIndex, allCategoryAssets]);
 
     // Swipe gestures
     const swipeHandlers = useSwipe(
@@ -39,15 +85,11 @@ export default function ProjectViewer({
         () => handlePrev()  // swipe right = prev
     );
 
-    const handleThumbnailClick = (index) => {
-        setCurrentAssetIndex(index);
-    };
-
     const handlePrev = () => {
         if (currentAssetIndex > 0) {
             setCurrentAssetIndex(prev => prev - 1);
         } else {
-            // Let parent handle navigation (prev project or prev category)
+            // Let parent handle navigation to previous project
             onPrev();
         }
     };
@@ -56,23 +98,10 @@ export default function ProjectViewer({
         if (currentAssetIndex < assets.length - 1) {
             setCurrentAssetIndex(prev => prev + 1);
         } else {
-            // Let parent handle navigation (next project or next category)
+            // Let parent handle navigation to next project
             onNext();
         }
     };
-
-    // Disabled state is now controlled by global position, not just local project index
-    // If props are missing (e.g. usage without CategoryView logic), fallback to local logic
-
-    // First item globally? (First category, first project, first asset)
-    const disablePrev = isFirstGlobal !== undefined
-        ? (isFirstGlobal && currentAssetIndex === 0)
-        : (projectIndex === 0 && currentAssetIndex === 0);
-
-    // Last item globally? (Last category, last project, last asset)
-    const disableNext = isLastGlobal !== undefined
-        ? (isLastGlobal && currentAssetIndex === (assets.length - 1))
-        : (projectIndex === totalProjects - 1 && currentAssetIndex === (assets.length - 1));
 
     const currentAsset = assets[currentAssetIndex];
 
@@ -82,9 +111,8 @@ export default function ProjectViewer({
             <div className="main-display-container" ref={displayRef} style={{ position: 'relative' }}>
                 {/* Prev Button */}
                 <button
-                    className={`nav-sidebar-btn prev-btn ${disablePrev ? 'disabled' : ''}`}
+                    className="nav-sidebar-btn prev-btn"
                     onClick={handlePrev}
-                    disabled={disablePrev}
                     aria-label="Previous"
                 >
                     <span className="arrow-icon" style={{ fontSize: '1.5rem', color: '#fff' }}>&lt;</span>
@@ -100,6 +128,7 @@ export default function ProjectViewer({
                             autoPlay
                             loop
                             muted
+                            style={{ animation: 'fadeIn 0.3s ease-out' }}
                         />
                     ) : (
                         <img
@@ -107,51 +136,69 @@ export default function ProjectViewer({
                             className="main-display-media"
                             src={currentAsset.src}
                             alt={`${project.title} - Asset ${currentAssetIndex + 1}`}
+                            style={{ animation: 'fadeIn 0.3s ease-out' }}
                         />
                     )
                 )}
 
                 {/* Next Button */}
                 <button
-                    className={`nav-sidebar-btn next-btn ${disableNext ? 'disabled' : ''}`}
+                    className="nav-sidebar-btn next-btn"
                     onClick={handleNext}
-                    disabled={disableNext}
                     aria-label="Next"
                 >
                     <span className="arrow-icon" style={{ fontSize: '1.5rem', color: '#fff' }}>&gt;</span>
                 </button>
             </div>
 
-            {/* Thumbnails Track */}
-            <div className="thumbnails-track" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                {assets.map((asset, index) => (
-                    <div
-                        key={index}
-                        className={`thumb-item ${index === currentAssetIndex ? 'active' : ''}`}
-                        onClick={() => handleThumbnailClick(index)}
-                    >
-                        {asset.type === 'video' ? (
-                            <video src={`${asset.src}#t=0.1`} muted />
-                        ) : (
-                            <img src={asset.src} alt={`Thumbnail ${index + 1}`} />
-                        )}
-                    </div>
-                ))}
+            {/* Thumbnails Track (Assets Navigation) */}
+            <div className="thumbnails-track" ref={trackRef} style={{ display: 'flex', alignItems: 'center', gap: '10px', overflowX: 'auto', padding: '10px 0', scrollBehavior: 'smooth' }}>
+                {allCategoryAssets.map((item) => {
+                    const isActive = item.pIdx === projectIndex && item.aIdx === currentAssetIndex;
+                    return (
+                        <div
+                            key={`${item.pIdx}-${item.aIdx}`}
+                            className={`thumb-item ${isActive ? 'active' : ''}`}
+                            onClick={() => {
+                                if (item.pIdx === projectIndex) {
+                                    setCurrentAssetIndex(item.aIdx);
+                                } else {
+                                    onProjectSelect(item.pIdx, item.aIdx);
+                                }
+                            }}
+                            style={{ cursor: 'pointer', transition: 'all 0.3s' }}
+                            title={item.projTitle}
+                        >
+                            {item.type === 'video' ? (
+                                <video src={`${item.src}#t=0.1`} muted />
+                            ) : (
+                                <img src={item.src} alt={item.projTitle} />
+                            )}
+                        </div>
+                    );
+                })}
                 
-                {nextProject && nextProject.assets && nextProject.assets.length > 0 && (
+                {nextCategoryFirstProject && nextCategoryFirstProject.assets && (
                     <>
-                        <div className="thumb-separator" style={{ width: '2px', height: '40px', backgroundColor: '#333', borderRadius: '2px' }}></div>
-                        {nextProject.assets.map((asset, index) => (
+                        <div className="thumb-separator-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '0 10px', opacity: 0.6 }}>
+                            <span style={{ fontSize: '0.6rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-color)', whiteSpace: 'nowrap', marginBottom: '5px' }}>
+                                NEXT CATEGORY: <br/>{nextCategoryName}
+                            </span>
+                            <div className="thumb-separator" style={{ width: '2px', height: '30px', backgroundColor: '#444', borderRadius: '2px' }}></div>
+                        </div>
+                        
+                        {nextCategoryFirstProject.assets.map((asset, idx) => (
                             <div
-                                key={`next-${index}`}
+                                key={`next-${idx}`}
                                 className="thumb-item next-project-thumb"
-                                style={{ opacity: 0.3, cursor: 'pointer' }}
-                                onClick={onNext}
+                                style={{ opacity: 0.4, cursor: 'pointer', border: '1px dashed #444' }}
+                                onClick={() => onNext()}
+                                title={`Go to ${nextCategoryName}`}
                             >
                                 {asset.type === 'video' ? (
                                     <video src={`${ASSETS_PATH}${asset.src}#t=0.1`} muted />
                                 ) : (
-                                    <img src={`${ASSETS_PATH}${asset.src}`} alt={`Next Project Thumbnail ${index + 1}`} />
+                                    <img src={`${ASSETS_PATH}${asset.src}`} alt={`Next Category`} />
                                 )}
                             </div>
                         ))}

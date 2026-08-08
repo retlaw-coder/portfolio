@@ -88,17 +88,7 @@ a:focus-visible {
    ========================================= */
 @media (hover: hover) and (pointer: fine) {
 
-  body,
-  a,
-  button,
-  .interactive-btn,
-  .interactive-card,
-  .project-item,
-  .thumb-item,
-  .nav-sidebar-btn {
-    cursor: none !important;
-  }
-
+  /* Removed cursor: none !important; to allow native pointer */
   .cursor-head {
     position: fixed;
     top: 0;
@@ -267,7 +257,7 @@ a:focus-visible {
   height: 80px;
   overflow: hidden;
   font-size: 0.75rem;
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 15px;
   border-left: 2px solid #333;
   padding-left: 15px;
@@ -688,7 +678,6 @@ body.category-page .sticky-nav {
   display: grid;
   grid-template-columns: 1fr clamp(300px, 25vw, 400px);
   grid-template-areas:
-    "nav ."
     "content sidebar";
   gap: 20px 60px;
   /* Reduced vertical gap to bring nav closer */
@@ -733,7 +722,7 @@ body.category-page .sticky-nav {
 .detail-meta-label {
   font-family: var(--font-mono);
   font-size: 0.65rem;
-  color: #666;
+  color: var(--text-secondary);
   display: block;
   margin-bottom: 8px;
   letter-spacing: 1px;
@@ -741,11 +730,12 @@ body.category-page .sticky-nav {
 
 .detail-desc-text {
   font-size: 1rem;
-  line-height: 1.5;
+  line-height: 1.7;
   color: #ccc;
   margin-bottom: 30px;
   padding-left: 15px;
   border-left: 2px solid var(--accent-color);
+  max-width: 65ch;
 }
 
 .tech-tags-container {
@@ -773,10 +763,8 @@ body.category-page .sticky-nav {
 }
 
 .category-top-nav {
-  grid-area: nav;
   display: flex;
   gap: 15px;
-  /* margin-bottom moved to gap control */
   flex-wrap: wrap;
   width: 100%;
 }
@@ -784,7 +772,7 @@ body.category-page .sticky-nav {
 .cat-nav-link {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  color: #666;
+  color: var(--text-secondary);
   padding: 8px 16px;
   border: 1px solid #333;
   transition: 0.3s;
@@ -904,13 +892,13 @@ body.category-page .sticky-nav {
   }
 }
 
-.thumbnails-track::-webkit-scrollbar {
-  height: 6px;
+.thumbnails-track {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-.thumbnails-track::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 3px;
+.thumbnails-track::-webkit-scrollbar {
+  display: none;
 }
 
 .thumb-item {
@@ -1171,7 +1159,7 @@ body.category-page .sticky-nav {
   display: block;
   font-family: var(--font-mono);
   font-size: 0.6rem;
-  color: #666;
+  color: var(--text-secondary);
   /* dimmer */
 }
 
@@ -1205,7 +1193,7 @@ body.category-page .sticky-nav {
 .cv-label {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 30px;
   display: block;
   border-bottom: 1px solid #222;

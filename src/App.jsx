@@ -17,7 +17,7 @@ function ScrollToTop() {
     const { pathname } = useLocation();
 
     useEffect(() => {
-        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }, [pathname]);
 
     return null;
@@ -193,6 +193,11 @@ function HomePage({ currentLang, onContactClick }) {
 
                     <div className="cv-col">
                         <h4 className="cv-label">HISTORIAL_LOG</h4>
+                        <div className="cv-entry">
+                            <span className="year">/// 2025 - 2026</span>
+                            <p>{currentLang === 'es' ? 'Filmmaker & Video Editor' : 'Filmmaker & Video Editor'}</p>
+                            <small>Yacoub Real Estate, La Plata</small>
+                        </div>
                         <div className="cv-entry">
                             <span className="year">/// 2023 - PRES.</span>
                             <p>{currentLang === 'es' ? 'Diseñador & Desarrollador Freelance' : 'Freelance Designer & Developer'}</p>

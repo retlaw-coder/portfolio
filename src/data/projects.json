@@ -131,7 +131,7 @@
   },
   {
     "id": "3",
-    "category": "Motion",
+    "category": "3d",
     "title": "Abstract Simulation",
     "title_en": "Abstract Simulation",
     "subtitle": "Motion Graphics / Shaders",
@@ -288,7 +288,7 @@
   },
   {
     "id": "8",
-    "category": "motion",
+    "category": "3d",
     "title": "Data Driven Motion",
     "title_en": "Data Driven Motion",
     "subtitle": "Animación Procedimental / Geo Nodes",
@@ -314,9 +314,9 @@
   },
   {
     "id": "9",
-    "category": "editing",
-    "title": "Reel 2024",
-    "title_en": "Reel 2024",
+    "category": "3d",
+    "title": "Video Reel",
+    "title_en": "Video Reel",
     "subtitle": "Edición / Color Grading",
     "subtitle_en": "Editing / Color Grading",
     "desc": "Compilación de los mejores trabajos de edición y corrección de color del año. Desde spots publicitarios hasta contenido para redes sociales, con flujo de color en DaVinci.",
@@ -334,6 +334,94 @@
       {
         "type": "image",
         "src": "p9_0.webp",
+        "vertical": false
+      }
+    ]
+  },
+  {
+    "id": "12",
+    "category": "editing",
+    "title": "Spot Inmobiliario I",
+    "title_en": "Commercial Real Estate Spot I",
+    "subtitle": "Edición / Dron & 3D",
+    "subtitle_en": "Editing / Drone & 3D",
+    "desc": "Post-producción integral de video adaptada para clientes comerciales y del sector inmobiliario. Estos proyectos demuestran un flujo de trabajo completo, destacando la integración de elementos 3D con grabaciones de drones, motion graphics dinámicos, corrección de color profesional y diseño sonoro personalizado para entregar contenido visual pulido en múltiples plataformas.",
+    "desc_en": "End-to-end video post-production tailored for real estate and commercial clients. These projects demonstrate a comprehensive editing pipeline, featuring the integration of 3D assets with real-world drone footage, dynamic motion graphics, professional color grading, and custom sound design to deliver polished, cross-platform visual content.",
+    "stack": [
+      "Premiere",
+      "After Effects",
+      "DaVinci Resolve"
+    ],
+    "assets": [
+      {
+        "type": "video",
+        "src": "p12_v0.mp4",
+        "vertical": false
+      }
+    ]
+  },
+  {
+    "id": "13",
+    "category": "editing",
+    "title": "Spot Inmobiliario II",
+    "title_en": "Commercial Real Estate Spot II",
+    "subtitle": "Motion Graphics / Color Grading",
+    "subtitle_en": "Motion Graphics / Color Grading",
+    "desc": "Post-producción integral de video adaptada para clientes comerciales y del sector inmobiliario. Estos proyectos demuestran un flujo de trabajo completo, destacando la integración de elementos 3D con grabaciones de drones, motion graphics dinámicos, corrección de color profesional y diseño sonoro personalizado para entregar contenido visual pulido en múltiples plataformas.",
+    "desc_en": "End-to-end video post-production tailored for real estate and commercial clients. These projects demonstrate a comprehensive editing pipeline, featuring the integration of 3D assets with real-world drone footage, dynamic motion graphics, professional color grading, and custom sound design to deliver polished, cross-platform visual content.",
+    "stack": [
+      "Premiere",
+      "After Effects",
+      "DaVinci Resolve"
+    ],
+    "assets": [
+      {
+        "type": "video",
+        "src": "p13_v0.mp4",
+        "vertical": false
+      }
+    ]
+  },
+  {
+    "id": "14",
+    "category": "editing",
+    "title": "Spot Inmobiliario III",
+    "title_en": "Commercial Real Estate Spot III",
+    "subtitle": "Integración 3D / Sound Design",
+    "subtitle_en": "3D Integration / Sound Design",
+    "desc": "Post-producción integral de video adaptada para clientes comerciales y del sector inmobiliario. Estos proyectos demuestran un flujo de trabajo completo, destacando la integración de elementos 3D con grabaciones de drones, motion graphics dinámicos, corrección de color profesional y diseño sonoro personalizado para entregar contenido visual pulido en múltiples plataformas.",
+    "desc_en": "End-to-end video post-production tailored for real estate and commercial clients. These projects demonstrate a comprehensive editing pipeline, featuring the integration of 3D assets with real-world drone footage, dynamic motion graphics, professional color grading, and custom sound design to deliver polished, cross-platform visual content.",
+    "stack": [
+      "Premiere",
+      "After Effects",
+      "DaVinci Resolve"
+    ],
+    "assets": [
+      {
+        "type": "video",
+        "src": "p14_v0.mp4",
+        "vertical": false
+      }
+    ]
+  },
+  {
+    "id": "15",
+    "category": "editing",
+    "title": "Spot Inmobiliario IV",
+    "title_en": "Commercial Real Estate Spot IV",
+    "subtitle": "Post-Producción Completa",
+    "subtitle_en": "Full Post-Production",
+    "desc": "Post-producción integral de video adaptada para clientes comerciales y del sector inmobiliario. Estos proyectos demuestran un flujo de trabajo completo, destacando la integración de elementos 3D con grabaciones de drones, motion graphics dinámicos, corrección de color profesional y diseño sonoro personalizado para entregar contenido visual pulido en múltiples plataformas.",
+    "desc_en": "End-to-end video post-production tailored for real estate and commercial clients. These projects demonstrate a comprehensive editing pipeline, featuring the integration of 3D assets with real-world drone footage, dynamic motion graphics, professional color grading, and custom sound design to deliver polished, cross-platform visual content.",
+    "stack": [
+      "Premiere",
+      "After Effects",
+      "DaVinci Resolve"
+    ],
+    "assets": [
+      {
+        "type": "video",
+        "src": "p15_v0.mp4",
         "vertical": false
       }
     ]
