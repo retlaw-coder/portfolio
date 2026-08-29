@@ -1,5 +1,5 @@
 
-export const CATEGORIES_ORDER = ["apps", "3d", "design", "editing", "drawing"];
+export const CATEGORIES_ORDER = ["apps", "3d", "design", "editing", "drawing", "logofolio"];
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -38,6 +38,13 @@ export const CATEGORIES_CONFIG = {
         img: `${BASE}assets/p5_0_thumb.webp`,
         desc: "Ilustraciones y pinturas digitales creadas con tableta gráfica, explorando diversas técnicas y estilos visuales.",
         desc_en: "Digital illustrations and paintings created with a graphics tablet, exploring various techniques and visual styles."
+    },
+    "logofolio": { 
+        title: "Logofolio", 
+        title_en: "Logofolio", 
+        img: `${BASE}assets/logofolio-ecotech.png`,
+        desc: "Colección de logotipos e identidades visuales creadas para diversas marcas, destacando la síntesis gráfica y comunicación corporativa.",
+        desc_en: "Collection of logos and visual identities created for various brands, highlighting graphic synthesis and corporate communication."
     }
 };
 

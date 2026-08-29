@@ -425,5 +425,131 @@
         "vertical": false
       }
     ]
+  },
+  {
+    "id": "16",
+    "category": "logofolio",
+    "title": "EcoTech Solutions",
+    "title_en": "EcoTech Solutions",
+    "subtitle": "Logo Design",
+    "subtitle_en": "Logo Design",
+    "desc": "Diseño de logotipo e identidad visual.",
+    "desc_en": "Logo design and visual identity.",
+    "stack": ["Illustrator", "Branding"],
+    "assets": [
+      {
+        "type": "image",
+        "src": "logofolio-ecotech.png",
+        "vertical": false
+      }
+    ]
+  },
+  {
+    "id": "17",
+    "category": "logofolio",
+    "title": "Colorful Creations",
+    "title_en": "Colorful Creations",
+    "subtitle": "Logo Design",
+    "subtitle_en": "Logo Design",
+    "desc": "Diseño de logotipo e identidad visual.",
+    "desc_en": "Logo design and visual identity.",
+    "stack": ["Illustrator", "Branding"],
+    "assets": [
+      {
+        "type": "image",
+        "src": "logofolio-colorful.png",
+        "vertical": false
+      }
+    ]
+  },
+  {
+    "id": "18",
+    "category": "logofolio",
+    "title": "Handyman Services",
+    "title_en": "Handyman Services",
+    "subtitle": "Logo Design",
+    "subtitle_en": "Logo Design",
+    "desc": "Diseño de logotipo e identidad visual.",
+    "desc_en": "Logo design and visual identity.",
+    "stack": ["Illustrator", "Branding"],
+    "assets": [
+      {
+        "type": "image",
+        "src": "logofolio-handyman.png",
+        "vertical": false
+      }
+    ]
+  },
+  {
+    "id": "19",
+    "category": "logofolio",
+    "title": "Nature's Bounty",
+    "title_en": "Nature's Bounty",
+    "subtitle": "Logo Design",
+    "subtitle_en": "Logo Design",
+    "desc": "Diseño de logotipo e identidad visual.",
+    "desc_en": "Logo design and visual identity.",
+    "stack": ["Illustrator", "Branding"],
+    "assets": [
+      {
+        "type": "image",
+        "src": "logofolio-nature.png",
+        "vertical": false
+      }
+    ]
+  },
+  {
+    "id": "20",
+    "category": "logofolio",
+    "title": "Organic Harvest",
+    "title_en": "Organic Harvest",
+    "subtitle": "Logo Design",
+    "subtitle_en": "Logo Design",
+    "desc": "Diseño de logotipo e identidad visual.",
+    "desc_en": "Logo design and visual identity.",
+    "stack": ["Illustrator", "Branding"],
+    "assets": [
+      {
+        "type": "image",
+        "src": "logofolio-organic.png",
+        "vertical": false
+      }
+    ]
+  },
+  {
+    "id": "21",
+    "category": "logofolio",
+    "title": "Sunny Delights",
+    "title_en": "Sunny Delights",
+    "subtitle": "Logo Design",
+    "subtitle_en": "Logo Design",
+    "desc": "Diseño de logotipo e identidad visual.",
+    "desc_en": "Logo design and visual identity.",
+    "stack": ["Illustrator", "Branding"],
+    "assets": [
+      {
+        "type": "image",
+        "src": "logofolio-sunny.png",
+        "vertical": false
+      }
+    ]
+  },
+  {
+    "id": "22",
+    "category": "logofolio",
+    "title": "Velocity Ventures",
+    "title_en": "Velocity Ventures",
+    "subtitle": "Logo Design",
+    "subtitle_en": "Logo Design",
+    "desc": "Diseño de logotipo e identidad visual.",
+    "desc_en": "Logo design and visual identity.",
+    "stack": ["Illustrator", "Branding"],
+    "assets": [
+      {
+        "type": "image",
+        "src": "logofolio-velocity.png",
+        "vertical": false
+      }
+    ]
   }
 ]
