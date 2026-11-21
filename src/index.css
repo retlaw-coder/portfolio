@@ -606,7 +606,7 @@ body.category-page .sticky-nav {
 
 .projects-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 40px 30px;
   width: 100%;
 }
@@ -1219,6 +1219,73 @@ body.category-page .sticky-nav {
 .tech-list li:hover {
   padding-left: 10px;
   background: rgba(255, 255, 255, 0.02);
+}
+
+.tech-list li.tech-dropdown-item {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.tech-list li.tech-dropdown-item:hover {
+  padding-left: 0;
+  background: transparent;
+}
+
+.tech-dropdown-trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: none;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  padding: 0;
+  transition: padding-left 0.3s, background 0.3s, color 0.2s;
+}
+
+.tech-dropdown-trigger:hover {
+  padding-left: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--accent-color);
+}
+
+.dropdown-caret {
+  font-size: 0.75rem;
+  margin-left: 6px;
+  color: var(--accent-color);
+  display: inline-block;
+}
+
+.tech-sublist {
+  list-style: none;
+  margin-top: 10px;
+  padding-left: 14px;
+  border-left: 1px dashed rgba(255, 51, 51, 0.4);
+  animation: fadeIn 0.25s ease-out;
+}
+
+.tech-sublist li {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.08);
+  padding: 8px 0;
+  font-size: 0.8rem;
+  color: #bbb;
+}
+
+.tech-sublist li:last-child {
+  border-bottom: none;
+  padding-bottom: 4px;
+}
+
+.tech-sublist li:hover {
+  padding-left: 6px;
+  color: #fff;
+  background: rgba(255, 51, 51, 0.03);
 }
 
 /* Skill level legend */

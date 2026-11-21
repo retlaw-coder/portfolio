@@ -1,5 +1,4 @@
-
-export const CATEGORIES_ORDER = ["apps", "3d", "design", "editing", "drawing", "logofolio"];
+export const CATEGORIES_ORDER = ["editing", "apps", "ai-videos", "3d", "design", "drawing"];
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -22,8 +21,8 @@ export const CATEGORIES_CONFIG = {
         title: "Diseño", 
         title_en: "Design", 
         img: `${BASE}assets/p6_0_thumb.webp`,
-        desc: "Proceso completo de diseño de experiencia de usuario (UX) e interfaces de usuario (UI), incluyendo investigación, wireframing y prototipado interactivo.",
-        desc_en: "Complete User Experience (UX) and User Interface (UI) design process, including research, wireframing, and interactive prototyping."
+        desc: "Proceso completo de diseño: identidad visual, logotipos, diseño de experiencia de usuario (UX) e interfaces de usuario (UI), incluyendo investigación, wireframing y prototipado interactivo.",
+        desc_en: "Complete design process: visual identity, logos, user experience (UX) and user interface (UI), including research, wireframing, and interactive prototyping."
     },
     "editing": { 
         title: "Edición de video", 
@@ -39,12 +38,11 @@ export const CATEGORIES_CONFIG = {
         desc: "Ilustraciones y pinturas digitales creadas con tableta gráfica, explorando diversas técnicas y estilos visuales.",
         desc_en: "Digital illustrations and paintings created with a graphics tablet, exploring various techniques and visual styles."
     },
-    "logofolio": { 
-        title: "Logofolio", 
-        title_en: "Logofolio", 
-        img: `${BASE}assets/logofolio-ecotech.png`,
-        desc: "Colección de logotipos e identidades visuales creadas para diversas marcas, destacando la síntesis gráfica y comunicación corporativa.",
-        desc_en: "Collection of logos and visual identities created for various brands, highlighting graphic synthesis and corporate communication."
+    "ai-videos": { 
+        title: "AI Videos", 
+        title_en: "AI Videos", 
+        img: `${BASE}assets/p23_thumb.jpg`,
+        desc: "Generación y experimentación audiovisual impulsada por inteligencia artificial, integrando flujos de trabajo con modelos avanzados de video generativo, animación y diseño sonoro.",
+        desc_en: "Audiovisual generation and experimentation driven by artificial intelligence, integrating workflows with advanced generative video models, animation, and sound design."
     }
 };
-

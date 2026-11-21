@@ -428,7 +428,7 @@
   },
   {
     "id": "16",
-    "category": "logofolio",
+    "category": "design",
     "title": "EcoTech Solutions",
     "title_en": "EcoTech Solutions",
     "subtitle": "Logo Design",
@@ -446,7 +446,7 @@
   },
   {
     "id": "17",
-    "category": "logofolio",
+    "category": "design",
     "title": "Colorful Creations",
     "title_en": "Colorful Creations",
     "subtitle": "Logo Design",
@@ -464,7 +464,7 @@
   },
   {
     "id": "18",
-    "category": "logofolio",
+    "category": "design",
     "title": "Handyman Services",
     "title_en": "Handyman Services",
     "subtitle": "Logo Design",
@@ -482,7 +482,7 @@
   },
   {
     "id": "19",
-    "category": "logofolio",
+    "category": "design",
     "title": "Nature's Bounty",
     "title_en": "Nature's Bounty",
     "subtitle": "Logo Design",
@@ -500,7 +500,7 @@
   },
   {
     "id": "20",
-    "category": "logofolio",
+    "category": "design",
     "title": "Organic Harvest",
     "title_en": "Organic Harvest",
     "subtitle": "Logo Design",
@@ -518,7 +518,7 @@
   },
   {
     "id": "21",
-    "category": "logofolio",
+    "category": "design",
     "title": "Sunny Delights",
     "title_en": "Sunny Delights",
     "subtitle": "Logo Design",
@@ -536,7 +536,7 @@
   },
   {
     "id": "22",
-    "category": "logofolio",
+    "category": "design",
     "title": "Velocity Ventures",
     "title_en": "Velocity Ventures",
     "subtitle": "Logo Design",
@@ -549,6 +549,132 @@
         "type": "image",
         "src": "logofolio-velocity.png",
         "vertical": false
+      }
+    ]
+  },
+  {
+    "id": "23",
+    "category": "ai-videos",
+    "title": "Animación Motion Graphics AI",
+    "title_en": "Motion Graphics AI Animation",
+    "subtitle": "Video Generativo / AI Pipeline",
+    "subtitle_en": "Generative Video / AI Pipeline",
+    "desc": "Animación experimental que combina técnicas de motion graphics con modelos de video generativo por inteligencia artificial.",
+    "desc_en": "Experimental animation combining motion graphics techniques with generative AI video models.",
+    "stack": ["Kling AI", "Seedance", "Higgsfield", "After Effects"],
+    "assets": [
+      {
+        "type": "video",
+        "src": "p23_v0.mp4",
+        "vertical": true
+      }
+    ]
+  },
+  {
+    "id": "24",
+    "category": "ai-videos",
+    "title": "Hook Reel Animado AI",
+    "title_en": "AI Animated Hook Reel",
+    "subtitle": "Social Media Reel / AI Motion",
+    "subtitle_en": "Social Media Reel / AI Motion",
+    "desc": "Pieza audiovisual dinámica diseñada para alto impacto y retención, con personajes y animación generada por IA.",
+    "desc_en": "Dynamic audiovisual piece engineered for high impact and retention, featuring AI-generated characters and animation.",
+    "stack": ["Kling AI", "Higgsfield", "Premiere", "ElevenLabs"],
+    "assets": [
+      {
+        "type": "video",
+        "src": "p24_v0.mp4",
+        "vertical": true
+      }
+    ]
+  },
+  {
+    "id": "25",
+    "category": "ai-videos",
+    "title": "Steve Jobs — AI Storytelling",
+    "title_en": "Steve Jobs — AI Storytelling",
+    "subtitle": "Storytelling Visual / AI Voice & Motion",
+    "subtitle_en": "Visual Storytelling / AI Voice & Motion",
+    "desc": "Recreación conceptual y narrativa utilizando síntesis vocal y video generativo por IA, enfocado en storytelling cinematográfico.",
+    "desc_en": "Conceptual narrative recreation using AI voice synthesis and generative video, focused on cinematic storytelling.",
+    "stack": ["Kling AI", "ElevenLabs", "Suno", "Premiere"],
+    "assets": [
+      {
+        "type": "video",
+        "src": "p25_v0.mp4",
+        "vertical": true
+      }
+    ]
+  },
+  {
+    "id": "26",
+    "category": "ai-videos",
+    "title": "Podcast Visual AI",
+    "title_en": "AI Visual Podcast",
+    "subtitle": "Generación Audiovisual / AI Sync",
+    "subtitle_en": "Audiovisual Generation / AI Sync",
+    "desc": "Formato estilo podcast complementado con escenas visuales e hiperrealismo generado mediante modelos de difusión de video.",
+    "desc_en": "Podcast-style format augmented with visual scenes and hyperrealism generated through video diffusion models.",
+    "stack": ["Google Flow Studio", "Kling AI", "ElevenLabs", "Premiere"],
+    "assets": [
+      {
+        "type": "video",
+        "src": "p26_v0.mp4",
+        "vertical": true
+      }
+    ]
+  },
+  {
+    "id": "27",
+    "category": "ai-videos",
+    "title": "Pixar Style Song — Hook IV",
+    "title_en": "Pixar Style Song — Hook IV",
+    "subtitle": "Animación Estilo 3D / AI Music Video",
+    "subtitle_en": "3D Style Animation / AI Music Video",
+    "desc": "Clip musical animado con dirección de arte inspirada en animación 3D cinematográfica, generado íntegramente con pipelines de IA.",
+    "desc_en": "Animated music clip with art direction inspired by cinematic 3D animation, generated entirely with AI pipelines.",
+    "stack": ["Suno", "Kling AI", "Higgsfield", "Seedance"],
+    "assets": [
+      {
+        "type": "video",
+        "src": "p27_v0.mp4",
+        "vertical": true
+      }
+    ]
+  },
+  {
+    "id": "28",
+    "category": "ai-videos",
+    "title": "Canción Animada Estilo Pixar",
+    "title_en": "Pixar Style Animated Song",
+    "subtitle": "Video Musical Generativo / 3D Look",
+    "subtitle_en": "Generative Music Video / 3D Look",
+    "desc": "Video musical con personajes estilizados y banda sonora original generada mediante inteligencia artificial.",
+    "desc_en": "Music video featuring stylized characters and an original AI-generated soundtrack.",
+    "stack": ["Suno", "Seedance", "Kling AI", "After Effects"],
+    "assets": [
+      {
+        "type": "video",
+        "src": "p28_v0.mp4",
+        "vertical": true
+      }
+    ]
+  },
+  {
+    "id": "29",
+    "category": "ai-videos",
+    "title": "Pixar Style Song — Extended Cut",
+    "title_en": "Pixar Style Song — Extended Cut",
+    "subtitle": "Versión Extendida / Animación AI Completa",
+    "subtitle_en": "Extended Version / Full AI Animation",
+    "desc": "Versión extendida de la pieza musical animada estilo Pixar, con transiciones rítmicas completas y mayor detalle visual.",
+    "desc_en": "Extended version of the Pixar-style animated musical piece, featuring full rhythmic transitions and richer visual detail.",
+    "stack": ["Suno", "Kling AI", "Seedance", "ElevenLabs", "Premiere"],
+    "assets": [
+      {
+        "type": "video",
+        "src": "p29_v0.mp4",
+        "vertical": true
       }
     ]
   }

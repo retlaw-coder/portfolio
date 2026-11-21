@@ -46,6 +46,8 @@ export default function OtherProjects({
                         ? project.title
                         : (project.title_en || project.title);
 
+                    const isVideo = thumbnailSrc.endsWith('.mp4') || thumbnailSrc.endsWith('.webm');
+
                     return (
                         <div
                             key={project.id}
@@ -53,7 +55,16 @@ export default function OtherProjects({
                             onClick={() => onProjectSelect(actualIndex)}
                         >
                             <div className="other-project-thumb">
-                                <img src={thumbnailSrc} alt={projectTitle} loading="lazy" />
+                                {isVideo ? (
+                                    <video
+                                        src={`${thumbnailSrc}#t=0.1`}
+                                        muted
+                                        playsInline
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }}
+                                    />
+                                ) : (
+                                    <img src={thumbnailSrc} alt={projectTitle} loading="lazy" />
+                                )}
                             </div>
                             <div className="other-project-info">
                                 <h4>{projectTitle}</h4>

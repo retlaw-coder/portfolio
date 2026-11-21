@@ -360,7 +360,7 @@ export default function Hero({ currentLang }) {
                         PORTFOLIO <span className="glitch">2026</span>
                     </p>
                     <p className="hero-role reveal-text" style={{ transitionDelay: '0.3s' }}>
-                        {currentLang === 'es' ? 'DISEÑADOR & DESARROLLADOR MULTIMEDIA' : 'MULTIMEDIA DESIGNER & DEVELOPER'}
+                        {currentLang === 'es' ? 'DISEÑADOR MULTIMEDIA & VIDEO EDITOR' : 'MULTIMEDIA DESIGNER & VIDEO EDITOR'}
                     </p>
                     <div className="location reveal-text" style={{ transitionDelay: '0.5s' }}>
                         BASED IN ARGENTINA

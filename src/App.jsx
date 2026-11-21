@@ -124,6 +124,8 @@ function AppContent() {
 }
 
 function HomePage({ currentLang, onContactClick }) {
+    const [adobeOpen, setAdobeOpen] = useState(false);
+    const [aiToolsOpen, setAiToolsOpen] = useState(false);
 
     return (
         <>
@@ -179,9 +181,51 @@ function HomePage({ currentLang, onContactClick }) {
                         <h4 className="cv-label">STACK_TOOLS</h4>
                         <ul className="tech-list">
                             <li><span>BLENDER</span> <span className="level">//// ADV</span></li>
-                            <li><span>PHOTOSHOP</span> <span className="level">//// EXP</span></li>
-                            <li><span>PREMIERE</span> <span className="level">/// ADV</span></li>
-                            <li><span>AFTER EFFECTS</span> <span className="level">/// INT</span></li>
+                            
+                            {/* Adobe Dropdown */}
+                            <li className={`tech-dropdown-item ${adobeOpen ? 'open' : ''}`}>
+                                <button
+                                    type="button"
+                                    onClick={() => setAdobeOpen(prev => !prev)}
+                                    className="tech-dropdown-trigger interactive-btn"
+                                    aria-expanded={adobeOpen}
+                                >
+                                    <span>Adobe <span className="dropdown-caret">{adobeOpen ? '▾' : '▸'}</span></span>
+                                    <span className="level">//// EXP</span>
+                                </button>
+                                {adobeOpen && (
+                                    <ul className="tech-sublist">
+                                        <li><span>PHOTOSHOP</span> <span className="level">//// EXP</span></li>
+                                        <li><span>PREMIERE</span> <span className="level">/// ADV</span></li>
+                                        <li><span>AFTER EFFECTS</span> <span className="level">/// INT</span></li>
+                                        <li><span>ILLUSTRATOR</span> <span className="level">/// ADV</span></li>
+                                    </ul>
+                                )}
+                            </li>
+
+                            {/* AI Tools Dropdown */}
+                            <li className={`tech-dropdown-item ${aiToolsOpen ? 'open' : ''}`}>
+                                <button
+                                    type="button"
+                                    onClick={() => setAiToolsOpen(prev => !prev)}
+                                    className="tech-dropdown-trigger interactive-btn"
+                                    aria-expanded={aiToolsOpen}
+                                >
+                                    <span>AI TOOLS <span className="dropdown-caret">{aiToolsOpen ? '▾' : '▸'}</span></span>
+                                    <span className="level">/// ADV</span>
+                                </button>
+                                {aiToolsOpen && (
+                                    <ul className="tech-sublist">
+                                        <li><span>SEEDANCE</span> <span className="level">/// ADV</span></li>
+                                        <li><span>KLING</span> <span className="level">/// ADV</span></li>
+                                        <li><span>GOOGLE FLOW STUDIO</span> <span className="level">/// ADV</span></li>
+                                        <li><span>HIGGSFIELD</span> <span className="level">/// ADV</span></li>
+                                        <li><span>SUNO</span> <span className="level">/// ADV</span></li>
+                                        <li><span>ELEVEN LABS</span> <span className="level">/// ADV</span></li>
+                                    </ul>
+                                )}
+                            </li>
+
                             <li><span>JS, HTML, CSS</span> <span className="level">//// ADV</span></li>
                             <li><span>NEXT.JS / REACT</span> <span className="level">/// ADV</span></li>
                             <li><span>FIGMA</span> <span className="level">/// ADV</span></li>
